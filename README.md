@@ -1,8 +1,8 @@
 # Better Future For All
-Sandbox build to create react components as needed.
+This app is for rendering data visualizations from [Social Progress Initiative](https://www.socialprogress.org)
 
 
-imported wire frame React-Simple-Maps from [Map Chart With Tooltip](https://www.react-simple-maps.io/examples/map-chart-with-tooltip/)
+imported wire frame for Map Chart from React-Simple-Maps from [Map Chart With Tooltip](https://www.react-simple-maps.io/examples/map-chart-with-tooltip/)
 
 
 
