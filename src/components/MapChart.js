@@ -6,6 +6,9 @@ import {
   Geography
 } from "react-simple-maps";
 
+// Can Data from SPI spreadsheets be integrated here?    d3.csv(csvData,function (data) {};
+// add SPI score as a geo.property or reference to the CSV?
+
 const geoUrl =
   "https://raw.githubusercontent.com/zcreativelabs/react-simple-maps/master/topojson-maps/world-110m.json";
 
