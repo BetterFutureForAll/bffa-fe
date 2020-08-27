@@ -1,37 +1,49 @@
-import React, {Component} from 'react';
+import React from 'react';
 import * as csvData from '../assets/definitions.csv';
 import * as d3 from 'd3';
 
-export function Tabulate(data, display_columns, backend_columns) {
-    var table = d3.select("div#symbolTable").append("table")
-            .attr("style", "margin-left: 100px"),
-        thead = table.append("thead"),
-        tbody = table.append("tbody");
-    thead.append("tr")
-        .selectAll("th")
-        .data(display_columns)
+const Tabulate = () => {
+  
+  var tabulate = function (data,columns) {
+    var table = d3.select('body').append('table')
+    var thead = table.append('thead')
+    var tbody = table.append('tbody')
+  
+    thead.append('tr')
+      .selectAll('th')
+        .data(columns)
         .enter()
-        .append("th")
-            .text(function(column) { return column; });
-    var rows = tbody.selectAll("tr")
+      .append('th')
+        .text(function (d) { return d })
+  
+    var rows = tbody.selectAll('tr')
         .data(data)
         .enter()
-        .append("tr");
-    var cells = rows.selectAll("td")
+      .append('tr')
+  
+    var cells = rows.selectAll('td')
         .data(function(row) {
-            return backend_columns.map(function(column) {
-                return {column: column, value: row[column]};
-            });
+          return columns.map(function (column) {
+            return { column: column, value: row[column] }
+          })
         })
         .enter()
-        .append("td")
-        .attr("style", "font-family: Courier") // sets the font style
-            .html(function(d) { return d.value; });
-    
-    return table;
-};
+      .append('td')
+        .text(function (d) { return d.value })
   
-d3.csv(csvData,function (data) {
-    var columns = ['Dimension','Component','Indicator name','Definition','Source','Link']
-    Tabulate(data,columns)
+    return table;
+  }
+    
+  d3.csv(csvData,function (data) {
+      var columns = ['Dimension','Component','Indicator name','Definition','Source','Link']
+      tabulate(data,columns)
   })
+
+  return (
+    <body>
+      {table}
+    </body>
+  );
+};
+
+export default Tabulate;
