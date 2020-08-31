@@ -25,13 +25,19 @@ const rounded = num => {
   }
 };
 
-const spi = d3.csv(csvData,function (data) {
- 
+const spiData = d3.csv(csvData,function (data) {
 // this has access to SPI data, need to link data.Country to NAME, then attach the Social Progress Index score to its corresponding GeoLocation
 // geo.properties { NAME } corresponds to csvData { Country }
-
   console.log(data)
+  return data;
 });
+
+const getSPI = (Name, spiData) => {
+  // loop, map, or build a reducer to set the SPI data for Name = spitData.Country
+  
+  spiData.map()
+};
+
 
 
 const MapChart = ({ setTooltipContent }) => {
@@ -46,12 +52,12 @@ const MapChart = ({ setTooltipContent }) => {
                 key={geo.rsmKey}
                 geography={geo}
                 onMouseEnter={() => {
-                  console.log(geo.properties);
                     const { NAME, POP_EST } = geo.properties;
                     //Link cvsData to geo.property so the mouseover event sets the data from our cvsData instead of geo.
+                    const { SPI } = getSPI(NAME, spiData);
+                    console.log(SPI);
 
-
-                    setTooltipContent(`${NAME} — ${rounded(POP_EST)}, SPI ${spi}`);
+                    setTooltipContent(`${NAME} — ${rounded(POP_EST)}, SPI ${SPI}`);
                   }}
                   onMouseLeave={() => {
                     setTooltipContent("");
