@@ -29,8 +29,9 @@ const spi = d3.csv(csvData,function (data) {
  
 // this has access to SPI data, need to link data.Country to NAME, then attach the Social Progress Index score to its corresponding GeoLocation
 
-  console.log(data.Country)
+  console.log(data)
 });
+
 
 const MapChart = ({ setTooltipContent }) => {
   return (
@@ -41,10 +42,14 @@ const MapChart = ({ setTooltipContent }) => {
             {({ geographies }) =>
               geographies.map(geo => (
                 <Geography
-                  key={geo.rsmKey}
-                  geography={geo}
-                  onMouseEnter={() => {
+                key={geo.rsmKey}
+                geography={geo}
+                onMouseEnter={() => {
+                  console.log(geo.properties);
                     const { NAME, POP_EST } = geo.properties;
+                    //Link cvsData to geo.property so the mouseover event sets the data from our cvsData instead of geo.
+
+
                     setTooltipContent(`${NAME} — ${rounded(POP_EST)}, SPI ${spi}`);
                   }}
                   onMouseLeave={() => {
