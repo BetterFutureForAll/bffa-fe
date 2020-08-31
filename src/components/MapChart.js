@@ -28,6 +28,7 @@ const rounded = num => {
 const spi = d3.csv(csvData,function (data) {
  
 // this has access to SPI data, need to link data.Country to NAME, then attach the Social Progress Index score to its corresponding GeoLocation
+// geo.properties { NAME } corresponds to csvData { Country }
 
   console.log(data)
 });
