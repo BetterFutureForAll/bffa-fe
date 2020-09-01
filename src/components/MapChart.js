@@ -30,12 +30,15 @@ const rounded = num => {
 const spiData = d3.csv(csvData,function (data) {
   console.log(data)
   return data;
+  //returns a promise
 });
 
 // loop, map, or build a reducer to set the SPI data for Name = spitData.Country
 const getSPI = (Name, spiData) => {
   console.log(Name);
   console.log(spiData);
+//spiData comes in as a promise, need to await and use it as an array for this step.
+
   // spiData.map(Name => {
   //   if(Name===spiData.Country) {
   //     console.log(spiData.Country)
