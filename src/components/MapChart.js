@@ -5,12 +5,8 @@ import {
   Geographies,
   Geography
 } from "react-simple-maps";
+import { spiData, getScore } from '../services/SocialProgress';
 
-import * as csvData from '../assets/2019-global.csv';
-import * as d3 from 'd3';
-
-// Can Data from SPI spreadsheets be integrated here?    d3.csv(csvData,function (data) {};
-// add SPI score as a geo.property or reference to the CSV?
 
 const geoUrl =
   "https://raw.githubusercontent.com/zcreativelabs/react-simple-maps/master/topojson-maps/world-110m.json";
@@ -26,27 +22,7 @@ const rounded = num => {
 };
 
 // geo.properties { NAME } corresponds to csvData { Country }
-// this has access to SPI data, need to link data.Country to NAME, then attach the Social Progress Index score to its corresponding GeoLocation
-const spiData = d3.csv(csvData,function (data) {
-  console.log(data)
-  return data;
-  //returns a promise
-});
 
-// loop, map, or build a reducer to set the SPI data for Name = spitData.Country
-const getSPI = (Name, spiData) => {
-  console.log(Name);
-  console.log(spiData);
-//spiData comes in as a promise, need to await and use it as an array for this step.
-
-  // spiData.map(Name => {
-  //   if(Name===spiData.Country) {
-  //     console.log(spiData.Country)
-  //     return spiData.Country.SPI;
-  //   }
-  //   else return 'SPI not found';
-  // })
-};
 
 
 
@@ -64,10 +40,9 @@ const MapChart = ({ setTooltipContent }) => {
                 onMouseEnter={() => {
                     const { NAME, POP_EST } = geo.properties;
                     //Link cvsData to geo.property so the mouseover event sets the data from our cvsData instead of geo.
-                    const SPI = getSPI(NAME, spiData);
-                    console.log(SPI);
+                    const { SCORE } = getScore(NAME, spiData);
 
-                    setTooltipContent(`${NAME} — ${rounded(POP_EST)}, SPI ${SPI}`);
+                    setTooltipContent(`${NAME} — ${rounded(POP_EST)}, Social Progress Index - ${SCORE}`);
                   }}
                   onMouseLeave={() => {
                     setTooltipContent("");
