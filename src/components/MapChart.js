@@ -33,10 +33,9 @@ const MapChart = ({ setTooltipContent }) => {
                 geography={geo}
                 onMouseEnter={() => {
                     const { NAME, POP_EST } = geo.properties;
-                    //Link cvsData to geo.property so the mouseover event sets the data from our cvsData instead of geo.
+                    //SPI Score comes in here
                     const SCORE = getScore(NAME, spiData);
                     console.log(SCORE);
-
                     setTooltipContent(`${NAME} — ${rounded(POP_EST)}, Social Progress Index - ${SCORE}`);
                   }}
                   onMouseLeave={() => {
