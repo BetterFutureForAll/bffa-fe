@@ -3,7 +3,6 @@ import * as d3 from 'd3';
 
 // this has access to SPI data, need to link data.Country to NAME, then attach the Social Progress Index score to its corresponding GeoLocation
 export const spiData = d3.csv(csvData,function (data) {
-  console.log(data)
   return data;
   //returns a promise
 });
@@ -17,7 +16,7 @@ export const spiData = d3.csv(csvData,function (data) {
 export const getScore = (name, spiData) => {
   console.log(name);
   console.log(spiData);
-  return 'score not found';
+  return 'Score not found';
 };
 
   //spiData comes in as a promise, need to await and use it as an array for this step.

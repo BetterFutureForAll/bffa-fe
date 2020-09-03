@@ -40,7 +40,8 @@ const MapChart = ({ setTooltipContent }) => {
                 onMouseEnter={() => {
                     const { NAME, POP_EST } = geo.properties;
                     //Link cvsData to geo.property so the mouseover event sets the data from our cvsData instead of geo.
-                    const { SCORE } = getScore(NAME, spiData);
+                    const SCORE = getScore(NAME, spiData);
+                    console.log(SCORE);
 
                     setTooltipContent(`${NAME} — ${rounded(POP_EST)}, Social Progress Index - ${SCORE}`);
                   }}
