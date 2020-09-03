@@ -7,7 +7,6 @@ import {
 } from "react-simple-maps";
 import { spiData, getScore } from '../services/SocialProgress';
 
-
 const geoUrl =
   "https://raw.githubusercontent.com/zcreativelabs/react-simple-maps/master/topojson-maps/world-110m.json";
 
@@ -20,11 +19,6 @@ const rounded = num => {
     return Math.round(num / 100) / 10 + "K";
   }
 };
-
-// geo.properties { NAME } corresponds to csvData { Country }
-
-
-
 
 const MapChart = ({ setTooltipContent }) => {
   return (
