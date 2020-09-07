@@ -27,12 +27,12 @@ export const spiData = d3.csv(csvData, function(d) {
 export const getScore = (name, spiData) => {
   var score = spiData.then(function(data) {
     data.forEach((element, i) => { 
-      console.log(element.Country);
       console.log(name);
-      if(name===data[i].Country) {
-        return data[i]["Social Progress Index"];
+      if(element.Country === name) {
+        return score = element["Social Progress Index"];
       };
-      return 'Score not found';
+      console.log(score);
+      return score;
     });
   });
   console.log(score);
