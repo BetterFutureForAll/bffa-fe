@@ -24,9 +24,10 @@ export const spiData = d3.csv(csvData, function(d) {
 // });
 
 // loop, map, or build a reducer to set the SPI data for Name = spitData.Country
-export const getScore = (name, spiData) => {
+export function getScore(name, spiData) {
   return spiData.then(function(data) {
     var score = 'Score not Found';
+    //Need to find a better Name matcher
     console.log(name);
     data.forEach((element, i) => { 
       if(element.Country === name) {
