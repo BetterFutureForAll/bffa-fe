@@ -1,17 +1,25 @@
 import React, { useState } from "react";
 import ReactTooltip from "react-tooltip";
 import './App.css';
-import MapChart from './components/MapChart';
+import MapContainer from './containers/Map';
+import  { useSelector, useDispatch } from 'react-redux';
+import { getScore } from "./selectors/scoreSelector";
+
 
 function App() {
 
-  const [content, setContent] = useState("");
+  // const [content, setContent] = useState("");
+
+  const Route = ({...rest }) => {
+    const dispatch = useDispatch();
+    const score = useSelector(getScore);
+
+  };
 
   return (
     <div className="App">
       <header className="App-header">
-      <MapChart setTooltipContent={setContent} />
-      <ReactTooltip>{content}</ReactTooltip>
+      <MapContainer />
       </header>
     </div>
 
