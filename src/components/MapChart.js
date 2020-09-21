@@ -35,7 +35,7 @@ const MapChart = ({ setTooltipContent }) => {
                     const { NAME, POP_EST, NAME_LONG } = geo.properties;
                     //SPI Score comes in here
                     getScore(NAME, NAME_LONG, spiData).then((SCORE)=> {
-                      console.log(SCORE);
+                      console.log(NAME + ' : ' + SCORE);
                       setTooltipContent(`${NAME} — ${rounded(POP_EST)}, Social Progress Index - ${SCORE}`);
                     })
                   }}

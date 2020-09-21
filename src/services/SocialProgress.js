@@ -34,7 +34,6 @@ export function getScore(name, longName, spiData) {
       };
       return score;
     });
-    console.log(score);
     return score;
   });
 };
