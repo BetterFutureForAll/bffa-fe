@@ -32,11 +32,12 @@ const MapChart = ({ setTooltipContent }) => {
                 key={geo.rsmKey}
                 geography={geo}
                 onMouseEnter={() => {
-                    const { NAME, POP_EST } = geo.properties;
+                    const { NAME, POP_EST, NAME_LONG } = geo.properties;
                     //SPI Score comes in here
-                    var SCORE = getScore(NAME, spiData);
-                    console.log(SCORE);
-                    setTooltipContent(`${NAME} — ${rounded(POP_EST)}, Social Progress Index - ${SCORE}`);
+                    getScore(NAME, NAME_LONG, spiData).then((SCORE)=> {
+                      console.log(NAME + ' : ' + SCORE);
+                      setTooltipContent(`${NAME} — ${rounded(POP_EST)}, Social Progress Index - ${SCORE}`);
+                    })
                   }}
                   onMouseLeave={() => {
                     setTooltipContent("");
