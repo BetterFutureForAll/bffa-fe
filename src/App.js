@@ -1,22 +1,21 @@
-import React from 'react';
+import React, { useState } from "react";
+import ReactTooltip from "react-tooltip";
 import './App.css';
-import * as d3 from 'd3';
-import * as california_data from './assets/2019-california-results.csv';
+import MapChart from './components/MapChart';
 
 function App() {
-  d3.csv(california_data).then(function(data) {
-    console.log(data);
-  });
+
+  const [content, setContent] = useState("");
+
   return (
     <div className="App">
       <header className="App-header">
-        <p>
-          Hello World
-        </p>
-        
-
+      <MapChart setTooltipContent={setContent} />
+      <ReactTooltip>{content}</ReactTooltip>
       </header>
     </div>
+
+
   );
 }
 
