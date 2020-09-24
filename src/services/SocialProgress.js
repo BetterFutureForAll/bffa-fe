@@ -1,8 +1,15 @@
 import * as csvData from '../assets/2019-global.csv';  //Change csvData to 2019
 import * as d3 from 'd3';
 
+import * as csvDefinitions from '../assets/definitions.csv';
+
+
 // this has access to SPI data, need to link data.Country to NAME, then attach the Social Progress Index score to its corresponding GeoLocation
 export const spiData = d3.csv(csvData, function(d) {
+    return d;
+  });
+
+export const definitions = d3.csv(csvDefinitions, function(d) {
     return d;
   });
   

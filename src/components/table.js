@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 // import ReactDOM from ReactDOM;
-import * as csvData from '../assets/definitions.csv';
-import { csv }from 'd3';
+import definitions from '../services/SocialProgress'
+
+// This will be a table of definitions. Need to actually make it into a REACT COMPONENT, so that D3 and React don't fight for DOM.
+
 
 const Tabulate = () => {
 
@@ -39,7 +41,7 @@ const Tabulate = () => {
           return table;
     }
       
-    d3.csv(csvData,function (data) {
+    d3.csv(definitions,function (data) {
         var columns = ['Dimension','Component','Indicator name','Definition','Source','Link']
         tabulate(data,columns)
     })
