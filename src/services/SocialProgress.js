@@ -1,5 +1,6 @@
 import * as csvData from '../assets/2019-global.csv';  //Change csvData to 2019
 import * as d3 from 'd3';
+import * as allYears from '../assets/2011-2020-Social-Progress-Index.csv';
 
 import * as csvDefinitions from '../assets/definitions.csv';
 
@@ -14,6 +15,9 @@ export const definitions = d3.csv(csvDefinitions, function(d) {
   });
   
 // spiData = getDataForYear(year){};
+
+
+
 
 
 // Set data to State eventually to keep in React thinking, maybe add Redux? (MapChart uses Memo)
