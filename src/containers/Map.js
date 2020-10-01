@@ -9,18 +9,18 @@ import ReactTooltip from "react-tooltip";
 
 export default function MapContainer() {
   const dispatch = useDispatch();
-  const map = useSelector(getMap);
-  const score = useSelector(getScore);
+  const setContent = useSelector(getMap);
+  const content = useSelector(getScore);
   // const [content, setContent] = map;
 
   useEffect(()=>{
-    // dispatch(createScore);
+    dispatch(setContent);
   }, []);
 
 return (
   <div>
-    <MapChart setTooltipContent={map} score={score}/>
-    <ReactTooltip>{map}</ReactTooltip>
+    <MapChart setTooltipContent={setContent} />
+    <ReactTooltip>{content}</ReactTooltip>
   </div>
 
 )};
