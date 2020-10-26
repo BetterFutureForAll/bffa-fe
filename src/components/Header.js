@@ -1,6 +1,6 @@
 import React from "react";
 
-const Header = ({ data }) => {
+export default Header = ({ data }) => {
   return (
     <div>
       <h2>Select a year</h2>

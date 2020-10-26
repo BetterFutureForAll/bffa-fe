@@ -14,7 +14,7 @@ export default function MapContainer() {
   // const [content, setContent] = map;
 
   useEffect(()=>{
-    dispatch(setContent);
+    dispatch(createScore(content));
   }, []);
 
 return (
