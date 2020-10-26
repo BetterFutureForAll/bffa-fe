@@ -3,13 +3,13 @@ import { useSelector, useDispatch } from 'react-redux';
 import MapChart from '../components/MapChart';
 import { getScore } from '../selectors/scoreSelector';
 import { createScore } from '../actions/scoreActions';
-import { getMap } from '../selectors/mapSelector';
+import { getContent } from '../selectors/contentSelector';
 import ReactTooltip from "react-tooltip";
 
 
 export default function MapContainer() {
   const dispatch = useDispatch();
-  const setContent = useSelector(getMap);
+  const setContent = useSelector(getContent);
   const content = useSelector(getScore);
   // const [content, setContent] = map;
 
