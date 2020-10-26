@@ -1,6 +1,12 @@
 import { GET_SCORE } from '../actions/scoreActions';
 
-export default function reducer(state = {}, action) {
+const initialState = {
+  name: '',
+  longName: '',
+  spiData: {}
+}
+
+export default function reducer(state = initialState, action) {
   switch(action.type) {
     case GET_SCORE:
       return action.payload;

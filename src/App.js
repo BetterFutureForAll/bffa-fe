@@ -10,11 +10,11 @@ function App() {
 
   // const [content, setContent] = useState("");
 
-  const Route = ({...rest }) => {
-    const dispatch = useDispatch();
-    const score = useSelector(getScore);
+  // const Route = ({...rest }) => {
+  //   const dispatch = useDispatch();
+  //   const score = useSelector(getScore);
 
-  };
+  // };
 
   return (
     <div className="App">
