@@ -13,6 +13,9 @@ export default function MapContainer() {
   const content = useSelector(getContent);
   const score = useSelector(getScore);
 
+  //Check Swizec teller advice for Tooltips with DJ and React. 
+
+
   useEffect(()=>{
    if(!content) dispatch(createScore(setContent));
    dispatch(getScore(score))
