@@ -13,7 +13,8 @@ export default function MapContainer() {
   const content = useSelector(getContent);
   const score = useSelector(getScore);
 
-  //Check Swizec teller advice for Tooltips with DJ and React. 
+// Check Swizec teller advice for Tooltips with DJ and React. 
+// https://swizec.com/blog/tooltips-tooltips-are-not-so-easy
 
 
   useEffect(()=>{
