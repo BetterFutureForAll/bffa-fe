@@ -1,4 +1,4 @@
-import { GET_SCORE } from '../actions/scoreActions';
+import { GET_SCORE, GET_SPI } from '../actions/scoreActions';
 
 const initialState = {
   name: '',
@@ -11,7 +11,7 @@ export default function reducer(state = initialState, action) {
     case GET_SCORE:
       return action.payload;
     case GET_SPI:
-      return {...state, spiData };
+      return {...action.payload, state };
     default:
       return state;
   }
