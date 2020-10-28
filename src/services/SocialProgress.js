@@ -32,6 +32,7 @@ export const getSpiDataByYear = (year) => {
 
 
 
+
 // Set data to State eventually to keep in React thinking, maybe add Redux? (MapChart uses Memo)
 // spiData().then((data) => {
 //   this.setState({ spi: data });
