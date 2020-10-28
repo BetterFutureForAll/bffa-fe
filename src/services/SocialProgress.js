@@ -16,9 +16,17 @@ export const definitions = d3.csv(csvDefinitions, function(d) {
     return d;
   });
   
-// export const getSpiDataByYear = (year) => {
-
-// } 
+export const getSpiDataByYear = (year) => {
+  let spiYear = [];
+  let data = d3.csv(allYears, function(d) {
+    data.forEach((element, i) => {
+      if(element['SPI Year'] === year) {
+        spiYear.push(element);
+      };
+      return spiYear;
+    });
+  });
+};
 
 
 
