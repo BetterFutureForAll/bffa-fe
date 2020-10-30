@@ -11,11 +11,8 @@ describe('Tests Functions on the SocialProgress.js services', () => {
   it('should get all the data for a specific year', () => {
     let year = '2020';
     let result = getSpiDataByYear(year);
-
-    result.then((d)=> {
-      console.log('results=', d);
-      expect(d).toBeDefined();
-    });
+    Promise.resolve(result).then((r)=>console.log(r));
+    expect(Promise.resolve(result)).toBeUndefined();
   });
 
 

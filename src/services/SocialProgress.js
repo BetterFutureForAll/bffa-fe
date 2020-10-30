@@ -5,28 +5,19 @@ import * as csvDefinitions from '../assets/definitions.csv';
 
 
 // this has access to SPI data, need to link data.Country to NAME, then attach the Social Progress Index score to its corresponding GeoLocation
-export const spiData = d3.csv(csvData, function(d) {
-    return d;
-  });
-export const spiAllData = d3.csv(allYears, function(d) {
-    return d;
-  });
-export const definitions = d3.csv(csvDefinitions, function(d) {
-    return d;
-  });
+export const spiData = d3.csv(csvData);
+export const spi2020 = d3.csv(allYears);
+export const definitions = d3.csv(csvDefinitions);
   
-export const getSpiDataByYear = (spiData, year) => {
-  let spiYear = [];
-  return spiAllData.then(function(data) {
-    d3.csv(data, function(d) {
+export const getSpiDataByYear = (year) => {
+  return spi2020.then((data)=> {
       data.forEach((element, i) => {
         if(element['SPI Year'] === year) {
-          spiYear.push(element);
+          return element;
         };
-        return spiYear;
+        return element;
       });
     });
-  });
 };
 // Set data to State eventually to keep in React thinking, maybe add Redux? (MapChart uses Memo)
 // spiData().then((data) => {
