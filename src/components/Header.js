@@ -1,10 +1,12 @@
 import React from "react";
 
-export default Header = ({ data }) => {
+export default Header = ({ years }) => {
   return (
     <div>
-      <h2>Select a year</h2>
-      Data Selections will go here.
+      <label for="years">Select a year</label>
+      <select >
+        <option value={year}>{year}</option>
+      </select>
     </div>
   );
 
