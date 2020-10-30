@@ -8,19 +8,23 @@ import * as csvDefinitions from '../assets/definitions.csv';
 export const spiData = d3.csv(csvData, function(d) {
     return d;
   });
-
+export const spiAllData = d3.csv(allYears, function(d) {
+    return d;
+  });
 export const definitions = d3.csv(csvDefinitions, function(d) {
     return d;
   });
   
 export const getSpiDataByYear = (spiData, year) => {
   let spiYear = [];
-  let data = d3.csv(spiData, function(d) {
-    data.forEach((element, i) => {
-      if(element['SPI Year'] === year) {
-        spiYear.push(element);
-      };
-      return spiYear;
+  return spiAllData.then(function(data) {
+    d3.csv(data, function(d) {
+      data.forEach((element, i) => {
+        if(element['SPI Year'] === year) {
+          spiYear.push(element);
+        };
+        return spiYear;
+      });
     });
   });
 };
