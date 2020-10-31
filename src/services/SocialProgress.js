@@ -5,26 +5,37 @@ import * as csvDefinitions from '../assets/definitions.csv';
 
 
 // this has access to SPI data
-export const spiData = d3.csv(csvData);
-export const definitions = d3.csv(csvDefinitions);
+
+// Columns ['SPI Rank', 'Country', 'SPI country code', 'SPI year', 'Status', 'Social Progress Index']
+
+export const spiData = d3.csv(csvData, function(d){
+  return d;
+});
+export const definitions = d3.csv(csvDefinitions, function(d){
+  return d;
+});
 
 export const spi2020 = d3.csv(allYears, function(data) {
-  let byCountry = data.sort(function (a,b) {
-    return d3.ascending(a['Country'], b['Country']);
-  });
+  console.log(data);
+  return data;
+  // let byCountry = data.sort(function (a,b) {
+  //   return d3.ascending(a['Country'], b['Country']);
+  // });
 });
 
 
 export const getSpiDataByYear = (year) => {
   return spi2020.then((data)=> {
-      data.forEach((element, i) => {
-        if(element['SPI year'] === year) {
-          return element;
+      console.log(data);
+      data.forEach((d) => {
+        if(d['SPI year'] === year) {
+          return d;
         };
-        return element;
+        return d;
       });
     });
 };
+
 // Set data to State eventually to keep in React thinking, maybe add Redux? (MapChart uses Memo)
 // spiData().then((data) => {
 //   this.setState({ spi: data });
