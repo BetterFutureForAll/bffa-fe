@@ -4,15 +4,21 @@ import * as allYears from '../assets/2011-2020-Social-Progress-Index.csv';
 import * as csvDefinitions from '../assets/definitions.csv';
 
 
-// this has access to SPI data, need to link data.Country to NAME, then attach the Social Progress Index score to its corresponding GeoLocation
+// this has access to SPI data
 export const spiData = d3.csv(csvData);
-export const spi2020 = d3.csv(allYears);
 export const definitions = d3.csv(csvDefinitions);
-  
+
+export const spi2020 = d3.csv(allYears, function(data) {
+  let byCountry = data.sort(function (a,b) {
+    return d3.ascending(a['Country'], b['Country']);
+  });
+});
+
+
 export const getSpiDataByYear = (year) => {
   return spi2020.then((data)=> {
       data.forEach((element, i) => {
-        if(element['SPI Year'] === year) {
+        if(element['SPI year'] === year) {
           return element;
         };
         return element;
