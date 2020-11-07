@@ -16,7 +16,6 @@ export const definitions = d3.csv(csvDefinitions, function(d){
 });
 
 export const spi2020 = d3.csv(allYears, function(data) {
-  console.log(data);
   return data;
   // let byCountry = data.sort(function (a,b) {
   //   return d3.ascending(a['Country'], b['Country']);
@@ -25,8 +24,7 @@ export const spi2020 = d3.csv(allYears, function(data) {
 
 
 export const getSpiDataByYear = (year) => {
-  return spi2020.then((data)=> {
-      console.log(data);
+  return spi2020.then(function(data) {
       data.forEach((d) => {
         if(d['SPI year'] === year) {
           return d;
