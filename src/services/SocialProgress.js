@@ -22,6 +22,11 @@ export const spi2020 = d3.csv(allYears, function(data) {
   // });
 });
 
+// d3.csv.parseRows(string[, accessor])
+// d3.csv.format(rows)
+// d3.csv.formatRows(rows)
+
+
 
 export const getSpiDataByYear = (year) => {
   return spi2020.then(function(data) {
