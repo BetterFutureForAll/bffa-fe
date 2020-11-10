@@ -1,7 +1,7 @@
-import d3 from 'd3';
-import world from '../assets/world.topojson';
+import * as d3 from 'd3';
+import * as world from '../assets/world.topojson';
 
-(function () {
+export default function visualization() {
   var margin = { top: 50, left: 50, right: 50, bottom: 50 },
     height = 400 - margin.top - margin.bottom,
     width = 800 - margin.right - margin.left;
@@ -14,10 +14,12 @@ import world from '../assets/world.topojson';
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
   // import topoJSON and CSV here
-
-  d3.queue()
-    .defer(d3.json, world)
-    .await(ready)
+  // Possibly use a remote hosted topoJSON file
+  
+  Promise.all([
+    d3.json(world),
+    ready()
+  ])
 
   // Projection is created here, round globe to flat monitor.
   var projection = d3.geoMercator()
@@ -30,7 +32,7 @@ import world from '../assets/world.topojson';
   function ready(error, data) {
     console.log(data);
 
-    var countries = topojson.feature(data, data.objects.countries).features
+    var countries = world.feature(data, data.objects.countries).features
 
     svg.selectAll(".country")
       .data(countries)
@@ -40,4 +42,4 @@ import world from '../assets/world.topojson';
 
   }
 
-})
+};
