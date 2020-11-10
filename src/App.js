@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import ReactTooltip from "react-tooltip";
 import './App.css';
 import MapContainer from './containers/Map';
-import  { useSelector, useDispatch, connect } from 'react-redux';
+import { useSelector, useDispatch, connect } from 'react-redux';
 import actions from './actions/contentActions';
 
 function App(props) {
@@ -10,7 +10,7 @@ function App(props) {
   return (
     <div className="App">
       <header className="App-header">
-      <MapContainer {...props}/>
+        <MapContainer {...props} />
       </header>
     </div>
   );
