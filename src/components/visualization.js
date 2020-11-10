@@ -1,6 +1,8 @@
 import * as d3 from 'd3';
 import * as world from '../assets/world.topojson';
 
+//importing topojson isnt working in a React context
+
 export default function visualization() {
   var margin = { top: 50, left: 50, right: 50, bottom: 50 },
     height = 400 - margin.top - margin.bottom,
@@ -15,7 +17,9 @@ export default function visualization() {
 
   // import topoJSON and CSV here
   // Possibly use a remote hosted topoJSON file
-  
+
+  console.log(world);
+
   Promise.all([
     d3.json(world),
     ready()
