@@ -22,6 +22,7 @@ const mapStateToProps = (state) => {
 };
 const mapDispatchToProps = {
   ...actions
+  //setToolip
 };
 
 export default connect(

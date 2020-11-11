@@ -1,11 +1,9 @@
 import * as d3 from 'd3';
-// import * as topojson from "topojson-client";
+import * as topojson from "topojson-client";
 
-
-
-//importing topojson isnt working in a React context
 
 export default function visualization() {
+
   var margin = { top: 50, left: 50, right: 50, bottom: 50 },
     height = 400 - margin.top - margin.bottom,
     width = 800 - margin.right - margin.left;
@@ -19,12 +17,15 @@ export default function visualization() {
 
   // import topoJSON and CSV here
   // Possibly use a remote hosted topoJSON file
-  var world = fetch('../assets/world.topojson');
-  world.then((x)=>console.log(x));
-  Promise.all([
-    world.then((d)=> d3.json(d)),
+  var world = require('../assets/world.topojson.json');
+  
+  console.log(world.objects.countries);
+
+  d3.json(world).then((d)=>{
+    console.log(d);
     ready()
-  ])
+  });
+
 
   // Projection is created here, round globe to flat monitor.
   var projection = d3.geoMercator()
@@ -35,13 +36,14 @@ export default function visualization() {
     .projection(projection)
 
   function ready(error, data) {
-    console.log(world);
-
-    var countries = world.feature(data, data.objects.countries).features
+    console.log(data)
+    var countries = topojson.feature(data, data.objects.countries).features
 
     svg.selectAll(".country")
       .data(countries)
       .enter().append("path")
+      //attr can be set for anything we want. attr(property, value)
+      //this is how we can mix a bar chart with "Z indexes" representing the SPI score.
       .attr("class", "country")
       .attr("d", path)
 
