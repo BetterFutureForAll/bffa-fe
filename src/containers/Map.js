@@ -16,7 +16,7 @@ export default function MapContainer() {
 
   useEffect(() => {
     dispatch(setContent(content));
-  }, [content, dispatch]);
+  }, [content]);
 
 return (
   <div id="map"> 
