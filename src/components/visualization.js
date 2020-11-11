@@ -1,5 +1,7 @@
 import * as d3 from 'd3';
-import * as world from '../assets/world.topojson';
+// import * as topojson from "topojson-client";
+
+
 
 //importing topojson isnt working in a React context
 
@@ -17,11 +19,10 @@ export default function visualization() {
 
   // import topoJSON and CSV here
   // Possibly use a remote hosted topoJSON file
-
-  console.log(world);
-
+  var world = fetch('../assets/world.topojson');
+  world.then((x)=>console.log(x));
   Promise.all([
-    d3.json(world),
+    world.then((d)=> d3.json(d)),
     ready()
   ])
 
@@ -34,7 +35,7 @@ export default function visualization() {
     .projection(projection)
 
   function ready(error, data) {
-    console.log(data);
+    console.log(world);
 
     var countries = world.feature(data, data.objects.countries).features
 
