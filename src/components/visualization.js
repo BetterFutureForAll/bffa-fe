@@ -24,7 +24,7 @@ export default function visualization() {
   d3.json(world).then((d)=>{
     console.log(d);
     ready()
-  });
+  })
 
 
   // Projection is created here, round globe to flat monitor.

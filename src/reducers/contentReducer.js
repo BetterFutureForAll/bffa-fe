@@ -8,7 +8,7 @@ export default function reducer(state = initialState, action) {
       state = [...state, action.payload ]
       return state;
     case GET_CONTENT:
-      return {...action.payload, state };
+      return state;
     default:
       return state;
   }
