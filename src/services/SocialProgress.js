@@ -29,7 +29,7 @@ export const spi2020 = d3.csv(allYears, function(data) {
 
 
 export const getSpiDataByYear = (year) => {
-  return spi2020.then(function(data) {
+  spi2020.then(function(data) {
       data.forEach((d) => {
         if(d['SPI year'] === year) {
           return d;

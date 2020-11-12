@@ -4,23 +4,23 @@ import MapChart from '../components/MapChart';
 import { getContent } from '../selectors/contentSelector';
 import { setContent } from '../actions/contentActions';
 import ReactTooltip from "react-tooltip";
-
+import Header from '../components/Header';
 
 export default function MapContainer() {
-  const dispatch = useDispatch();
   const content = useSelector(getContent);
+  const dispatch = useDispatch();
 
 // Check Swizec teller advice for Tooltips with DJ and React. 
 // https://swizec.com/blog/tooltips-tooltips-are-not-so-easy
 
-
   useEffect(() => {
-    dispatch(setContent(content));
-  }, [content]);
+    dispatch(setContent())
+  }, []);
 
 return (
-  <div id="map"> 
-    <MapChart setTooltipContent={setContent} />
+  <div> 
+    <Header />
+    <MapChart setTooltipContent={setContent} id="MapChart" />
     <ReactTooltip>{content}</ReactTooltip>
   </div>
 

@@ -31,6 +31,7 @@ const MapChart = ({ setTooltipContent }) => {
                 <Geography
                 key={geo.rsmKey}
                 geography={geo}
+                //with Redux onMouseEnter will have to be dispatched.
                 onMouseEnter={() => {
                     const { NAME, POP_EST, NAME_LONG } = geo.properties;
                     //SPI Score comes in here

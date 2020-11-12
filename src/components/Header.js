@@ -1,6 +1,7 @@
 import React from "react";
 
-export default Header = ({ years }) => {
+const Header = () => {
+  var year = ['2020']
   return (
     <div>
       <label for="years">Select a year</label>
@@ -9,5 +10,5 @@ export default Header = ({ years }) => {
       </select>
     </div>
   );
-
 }
+export default Header;

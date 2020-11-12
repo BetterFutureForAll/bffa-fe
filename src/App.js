@@ -4,13 +4,11 @@ import MapContainer from './containers/Map';
 import { connect } from 'react-redux';
 import { setContent }from './actions/contentActions';
 
-function App(state) {
+function App() {
 
   return (
     <div className="App">
-      <header className="App-header">
-        <MapContainer {...state} />
-      </header>
+        <MapContainer />
     </div>
   );
 }
@@ -19,11 +17,11 @@ const mapStateToProps = (state) => {
     content: state.content
   }
 };
-const mapDispatchToProps = dispatch => {
-  dispatch(setContent)
-};
+// const mapDispatchToProps = dispatch => {
+//   dispatch(setContent())
+// };
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps
+  setContent
 )(App);
