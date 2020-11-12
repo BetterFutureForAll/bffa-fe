@@ -6,12 +6,12 @@ import { setContent } from '../actions/contentActions';
 import ReactTooltip from "react-tooltip";
 import Header from '../components/Header';
 
+// Check Swizec teller advice for Tooltips with DJ and React. 
+// https://swizec.com/blog/tooltips-tooltips-are-not-so-easy
+
 export default function MapContainer() {
   const content = useSelector(getContent);
   const dispatch = useDispatch();
-
-// Check Swizec teller advice for Tooltips with DJ and React. 
-// https://swizec.com/blog/tooltips-tooltips-are-not-so-easy
 
   useEffect(() => {
     dispatch(setContent())
