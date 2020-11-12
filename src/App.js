@@ -12,11 +12,11 @@ function App() {
     </div>
   );
 }
-const mapStateToProps = (state) => {
-  return {
-    content: state.content
-  }
-};
+const mapStateToProps = state => ({
+  content: state.content,
+  scores: state.scores
+});
+
 const mapDispatchToProps = { setContent };
 
 export default connect(
