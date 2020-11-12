@@ -1,22 +1,27 @@
-import React, { useState } from "react";
-import ReactTooltip from "react-tooltip";
+import React from "react";
 import './App.css';
-import MapChart from './components/MapChart';
+import MapContainer from './containers/Map';
+import { connect } from 'react-redux';
+import { setContent }from './actions/contentActions';
 
 function App() {
 
-  const [content, setContent] = useState("");
-
   return (
     <div className="App">
-      <header className="App-header">
-      <MapChart setTooltipContent={setContent} />
-      <ReactTooltip>{content}</ReactTooltip>
-      </header>
+        <MapContainer />
     </div>
-
-
   );
 }
+const mapStateToProps = (state) => {
+  return {
+    content: state.content
+  }
+};
+// const mapDispatchToProps = dispatch => {
+//   dispatch(setContent())
+// };
 
-export default App;
+export default connect(
+  mapStateToProps,
+  setContent
+)(App);
