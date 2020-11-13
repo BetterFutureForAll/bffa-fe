@@ -2,7 +2,7 @@ import React from "react";
 import './App.css';
 import MapContainer from './containers/Map';
 import { connect } from 'react-redux';
-import { setContent }from './actions/contentActions';
+import { setContent, SET_CONTENT }from './actions/contentActions';
 
 function App() {
 
@@ -17,8 +17,10 @@ const mapStateToProps = state => ({
   scores: state.scores
 });
 
-const mapDispatchToProps = (content) => {
-  setContent(content)
+const mapDispatchToProps = dispatch => {
+  return{
+    setContent: ()=> dispatch({ type: SET_CONTENT })
+  }
 };
 
 export default connect(

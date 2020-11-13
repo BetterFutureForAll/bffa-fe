@@ -5,5 +5,5 @@ export const setContent = (content) => dispatch => {
   dispatch({
     type: SET_CONTENT,
     payload: content
-  })
+  });
 };
