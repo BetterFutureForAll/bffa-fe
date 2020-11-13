@@ -17,7 +17,9 @@ const mapStateToProps = state => ({
   scores: state.scores
 });
 
-const mapDispatchToProps = { setContent };
+const mapDispatchToProps = (content) => {
+  setContent(content)
+};
 
 export default connect(
   mapStateToProps,

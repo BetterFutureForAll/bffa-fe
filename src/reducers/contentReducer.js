@@ -5,8 +5,8 @@ const initialState = "";
 export default function reducer(state = initialState, action) {
   switch(action.type) {
     case SET_CONTENT:
-      state = [...state, action.payload ]
-      return state;
+      // state = [...state, action.payload ]
+      return [ action.payload, state ];
     case GET_CONTENT:
       return state;
     default:

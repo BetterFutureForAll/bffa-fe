@@ -30,12 +30,13 @@ export const spi2020 = d3.csv(allYears, function(data) {
 
 export const getSpiDataByYear = (year) => {
   spi2020.then(function(data) {
+    let year = [];
       data.forEach((d) => {
         if(d['SPI year'] === year) {
-          return d;
+          year.push(d);
         };
-        return d;
       });
+      return year;
     });
 };
 
@@ -53,7 +54,6 @@ export function getScore(name, longName, spiData) {
       if(element.Country === name || element.Country === longName) {
         return score = element["Social Progress Index"];
       };
-      return score;
     });
     return score;
   });
