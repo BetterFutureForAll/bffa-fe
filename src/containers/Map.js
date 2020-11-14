@@ -10,14 +10,14 @@ import Header from '../components/Header';
 // https://swizec.com/blog/tooltips-tooltips-are-not-so-easy
 
 const MapContainer = () => {
-  // const stateContent = useSelector(getContent);
+  const content = useSelector(getContent);
   // const dispatch = useDispatch();
 
-  // useEffect(() => {
-  //   dispatch(setContent())
-  // }, []);
+  useEffect(() => {
+    // console.log(content);
+  }, []);
 
-  const [content, setContent] = useState('');
+  const [readContent, setContent] = useState();
   
   
   return (

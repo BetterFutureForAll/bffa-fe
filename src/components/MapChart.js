@@ -6,6 +6,11 @@ import {
   Geography
 } from "react-simple-maps";
 import { spiData, getScore } from '../services/SocialProgress';
+//REDUX
+import PropTypes from 'prop-types';
+import { connect } from "react-redux";
+import { setContent } from '../actions/contentActions';
+
 
 const geoUrl =
   "https://raw.githubusercontent.com/zcreativelabs/react-simple-maps/master/topojson-maps/world-110m.json";
@@ -68,4 +73,13 @@ const MapChart = ({ setTooltipContent }) => {
   );
 };
 
-export default memo(MapChart);
+MapChart.propTypes = {
+  setTooltipContent: PropTypes.func.isRequired
+};
+
+const mapStateToProps = state => ({
+  content: state.content,
+  scores: state.scores
+});
+
+export default connect(mapStateToProps, [setContent])(MapChart);
