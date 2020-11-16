@@ -9,22 +9,22 @@ import { connect } from 'react-redux';
 
 
 function MapContainer(state) {
-//   const content = useSelector(getContent);
-//   const dispatch = useDispatch();
+  const content = useSelector(getContent);
+  const dispatch = useDispatch();
 
 // // Check Swizec teller advice for Tooltips with DJ and React. 
 // // https://swizec.com/blog/tooltips-tooltips-are-not-so-easy
 
-//   useEffect(() => ({
-//     setToolTipContent: dispatch(setContent)
-//   }), []);
+  useEffect(() => {
+    return ()=> { dispatch(setContent) }
+  }, []);
 
   
   return (
     <div> 
     <Header />
-    <MapChart setTooltipContent={setContent(state.content)} id="MapChart" />
-    <ReactTooltip>{state.content}</ReactTooltip>
+    <MapChart setTooltipContent={state.setContent} id="MapChart" />
+    <ReactTooltip>{content}</ReactTooltip>
   </div>
 
 )};

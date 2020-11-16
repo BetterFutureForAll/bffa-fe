@@ -4,11 +4,11 @@ import MapContainer from './containers/Map';
 import { connect } from 'react-redux';
 import { setContent }from './actions/contentActions';
 
-function App() {
+function App(state) {
 
   return (
     <div className="App">
-        <MapContainer />
+        <MapContainer state={state}/>
     </div>
   );
 }
