@@ -5,23 +5,40 @@ import { getContent } from '../selectors/contentSelector';
 import { setContent } from '../actions/contentActions';
 import ReactTooltip from "react-tooltip";
 import Header from '../components/Header';
+import { connect } from 'react-redux';
 
-export default function MapContainer() {
-  const content = useSelector(getContent);
-  const dispatch = useDispatch();
 
-// Check Swizec teller advice for Tooltips with DJ and React. 
-// https://swizec.com/blog/tooltips-tooltips-are-not-so-easy
+function MapContainer(state) {
+//   const content = useSelector(getContent);
+//   const dispatch = useDispatch();
 
-  useEffect(() => {
-    dispatch(setContent())
-  }, []);
+// // Check Swizec teller advice for Tooltips with DJ and React. 
+// // https://swizec.com/blog/tooltips-tooltips-are-not-so-easy
 
-return (
-  <div> 
+//   useEffect(() => ({
+//     setToolTipContent: dispatch(setContent)
+//   }), []);
+
+  
+  return (
+    <div> 
     <Header />
-    <MapChart setTooltipContent={setContent} id="MapChart" />
-    <ReactTooltip>{content}</ReactTooltip>
+    <MapChart setTooltipContent={setContent(state.content)} id="MapChart" />
+    <ReactTooltip>{state.content}</ReactTooltip>
   </div>
 
 )};
+
+// Already Mapped to props in App, change to PropTypes.
+const mapStateToProps = (state) => {
+  return {
+    content: state.content
+  }
+};
+const mapDispatchToProps = dispatch => {
+  dispatch(setContent())
+};
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(MapContainer, MapChart);

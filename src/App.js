@@ -17,11 +17,11 @@ const mapStateToProps = (state) => {
     content: state.content
   }
 };
-// const mapDispatchToProps = dispatch => {
-//   dispatch(setContent())
-// };
+const mapDispatchToProps = dispatch => {
+  dispatch(setContent())
+};
 
 export default connect(
   mapStateToProps,
-  setContent
+  mapDispatchToProps
 )(App);
