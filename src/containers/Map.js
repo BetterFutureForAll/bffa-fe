@@ -8,7 +8,7 @@ import Header from '../components/Header';
 import { connect } from 'react-redux';
 
 
-function MapContainer(state) {
+function MapContainer() {
   const content = useSelector(getContent);
   const dispatch = useDispatch();
 
@@ -16,29 +16,28 @@ function MapContainer(state) {
 // // https://swizec.com/blog/tooltips-tooltips-are-not-so-easy
 
   useEffect(() => {
-    return ()=> { dispatch(setContent) }
+    return ()=> dispatch(setContent(content)) 
   }, []);
 
   
   return (
     <div> 
     <Header />
-    <MapChart setTooltipContent={state.setContent} id="MapChart" />
+    <MapChart setTooltipContent={setContent} id="MapChart" />
     <ReactTooltip>{content}</ReactTooltip>
   </div>
 
 )};
 
-// Already Mapped to props in App, change to PropTypes.
 const mapStateToProps = (state) => {
   return {
     content: state.content
   }
 };
-const mapDispatchToProps = dispatch => {
-  dispatch(setContent())
-};
+const mapDispatchToProps = (dispatch) => (
+    (content)=> dispatch(setContent(content))
+);
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(MapContainer, MapChart);
+)(MapContainer);
