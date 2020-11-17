@@ -6,6 +6,9 @@ import {
   Geography
 } from "react-simple-maps";
 import { spiData, getScore } from '../services/SocialProgress';
+import PropTypes from 'prop-types';
+
+
 
 const geoUrl =
   "https://raw.githubusercontent.com/zcreativelabs/react-simple-maps/master/topojson-maps/world-110m.json";
@@ -66,6 +69,10 @@ const MapChart = ({ setTooltipContent }) => {
       </ComposableMap>
     </>
   );
+};
+
+MapChart.propTypes = {
+  setTooltipContent: PropTypes.func.isRequired
 };
 
 export default memo(MapChart);

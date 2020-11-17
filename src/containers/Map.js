@@ -12,18 +12,14 @@ function MapContainer() {
   const content = useSelector(getContent);
   const dispatch = useDispatch();
 
-// // Check Swizec teller advice for Tooltips with DJ and React. 
-// // https://swizec.com/blog/tooltips-tooltips-are-not-so-easy
-
   useEffect(() => {
     return ()=> dispatch(setContent(content)) 
   }, []);
 
-  
   return (
     <div> 
     <Header />
-    <MapChart setTooltipContent={setContent} id="MapChart" />
+    <MapChart setTooltipContent={()=> setContent} id="MapChart" />
     <ReactTooltip>{content}</ReactTooltip>
   </div>
 
@@ -37,6 +33,7 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => (
     (content)=> dispatch(setContent(content))
 );
+
 export default connect(
   mapStateToProps,
   mapDispatchToProps
