@@ -6,6 +6,7 @@ import { setContent } from '../actions/contentActions';
 import ReactTooltip from "react-tooltip";
 import Header from '../components/Header';
 import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 
 
 function MapContainer() {
@@ -13,26 +14,30 @@ function MapContainer() {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    return ()=> dispatch(setContent(content)) 
-  }, []);
+    dispatch(setContent(content)); 
+  });
 
   return (
     <div> 
     <Header />
-    <MapChart setTooltipContent={()=> setContent} id="MapChart" />
+    <MapChart setTooltipContent={()=> setContent(content)} id="MapChart" />
     <ReactTooltip>{content}</ReactTooltip>
   </div>
 
 )};
 
-const mapStateToProps = (state) => {
-  return {
-    content: state.content
-  }
+MapContainer.propTypes = {
+  content: PropTypes.string.isRequired
 };
-const mapDispatchToProps = (dispatch) => (
-    (content)=> dispatch(setContent(content))
-);
+
+const mapStateToProps = state => ({
+  content: getContent(state)
+});
+const mapDispatchToProps = (dispatch) => ({
+  setToolTipContent(content) {
+    dispatch(setContent(content))
+  }
+});
 
 export default connect(
   mapStateToProps,
