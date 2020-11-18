@@ -1,21 +1,20 @@
 import React, { useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector, useDispatch, connect } from 'react-redux';
 import MapChart from '../components/MapChart';
 import { getContent } from '../selectors/contentSelector';
 import { setContent } from '../actions/contentActions';
 import ReactTooltip from "react-tooltip";
 import Header from '../components/Header';
-import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
 
 
 function MapContainer() {
-  const content = useSelector(getContent);
-  const dispatch = useDispatch();
+  let content = useSelector(state => state.content);
+  let dispatch = useDispatch();
 
   useEffect(() => {
+    console.log(content);
     dispatch(setContent(content)); 
-  });
+  }, [content]);
 
   return (
     <div> 
@@ -26,16 +25,16 @@ function MapContainer() {
 
 )};
 
-MapContainer.propTypes = {
-  content: PropTypes.string.isRequired
-};
+// MapContainer.propTypes = {
+//   content: PropTypes.string.isRequired
+// };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   content: getContent(state)
 });
 const mapDispatchToProps = (dispatch) => ({
   setToolTipContent(content) {
-    dispatch(setContent(content))
+    dispatch({ type: setContent(content)})
   }
 });
 
