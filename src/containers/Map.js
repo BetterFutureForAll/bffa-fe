@@ -8,13 +8,13 @@ import Header from '../components/Header';
 
 
 function MapContainer() {
-  let content = useSelector(state => state.content);
+  let content = useSelector(getContent);
   let dispatch = useDispatch();
 
   useEffect(() => {
     console.log(content);
     dispatch(setContent(content)); 
-  }, [content]);
+  }, []);
 
   return (
     <div> 
@@ -34,7 +34,7 @@ const mapStateToProps = (state) => ({
 });
 const mapDispatchToProps = (dispatch) => ({
   setToolTipContent(content) {
-    dispatch({ type: setContent(content)})
+    dispatch(setContent(content))
   }
 });
 
