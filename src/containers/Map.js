@@ -13,7 +13,7 @@ function MapContainer() {
 
   useEffect(() => {
     console.log('Content Updated');
-    dispatch(setContent(content)); 
+    dispatch(setContent()); 
   }, []);
 
 
@@ -21,17 +21,20 @@ function MapContainer() {
   return (
     <div id="MapContainer" > 
     <Header />
-    <MapChart setTooltipContent={()=> setContent(content)} id="MapChart" />
+    <MapChart setTooltipContent={()=> setContent()} id="MapChart" />
     <ReactTooltip>{content}</ReactTooltip>
   </div>
 
 )};
 
+// [content, setContent] = useState('');
+
 const mapStateToProps = (state) => ({
   content: getContent(state)
 });
-const mapDispatchToProps = (content) => (
-  setContent(content)
+const mapDispatchToProps = (content) => ({
+  setToolTipContent: setContent(content)
+}
 );
 
 export default connect(

@@ -7,6 +7,7 @@ import {
 } from "react-simple-maps";
 import { spiData, getScore } from '../services/SocialProgress';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 
 
 
@@ -79,5 +80,5 @@ const MapChart = ({ setTooltipContent }) => {
 MapChart.propTypes = {
   setTooltipContent: PropTypes.func.isRequired
 };
-
+//connect or memo, or both? 
 export default memo(MapChart);
