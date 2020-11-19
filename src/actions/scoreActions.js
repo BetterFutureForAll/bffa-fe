@@ -1,8 +1,10 @@
+import { dispatch } from 'd3';
 import { getSpiData } from '../selectors/contentSelector';
-import { getScore } from '../services/SocialProgress';
+import { getScore, spiData, makeYearsArray } from '../services/SocialProgress';
 
 export const GET_SCORE = 'GET_SCORE';
 export const GET_SPI = 'GET_SPI';
+export const GET_YEARS = 'GET_YEARS';
 
 export const createScore = (name, longName, spiData) => dispatch => {
   return getScore(name, longName, spiData)
@@ -19,3 +21,12 @@ export const createSPI = (data) => dispatch => {
       payload: createdSPI
     }));
 };
+
+export const createYears = () => dispatch => {
+  return makeYearsArray()
+    .then(array => dispatch({
+      type: GET_YEARS,
+      payload: array
+    }));
+
+}

@@ -1,9 +1,10 @@
-import { GET_SCORE, GET_SPI } from '../actions/scoreActions';
+import { GET_SCORE, GET_SPI, GET_YEARS } from '../actions/scoreActions';
 
 const initialState = {
   name: '',
   longName: '',
-  spiData: {}
+  spiData: {},
+  years: []
 }
 
 export default function reducer(state = initialState, action) {
@@ -12,6 +13,8 @@ export default function reducer(state = initialState, action) {
       return action.payload;
     case GET_SPI:
       return {...action.payload, state };
+    case GET_YEARS:
+      return state.years;
     default:
       return state;
   }
