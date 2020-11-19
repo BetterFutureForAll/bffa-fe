@@ -12,9 +12,9 @@ function MapContainer() {
   let dispatch = useDispatch();
 
   useEffect(() => {
-    console.log(content);
+    console.log('Content Updated');
     dispatch(setContent(content)); 
-  }, [content, dispatch]);
+  }, []);
 
 
 
@@ -30,9 +30,9 @@ function MapContainer() {
 const mapStateToProps = (state) => ({
   content: getContent(state)
 });
-const mapDispatchToProps = (content) => ({
-  setToolTipContent: setContent(content)
-});
+const mapDispatchToProps = (content) => (
+  setContent(content)
+);
 
 export default connect(
   mapStateToProps,
