@@ -17,7 +17,6 @@ function MapContainer() {
   useEffect(() => {
     console.log('Content Updated');
     dispatch(setContent()); 
-    dispatch(getYears);
   }, []);
 
 
@@ -34,7 +33,7 @@ function MapContainer() {
 // [content, setContent] = useState('');
 
 const mapStateToProps = (state) => ({
-  years: state.score.years,
+  years: state.scores.years,
   content: getContent(state)
 });
 const mapDispatchToProps = (dispatch) => ({
