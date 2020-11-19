@@ -81,4 +81,4 @@ MapChart.propTypes = {
   setTooltipContent: PropTypes.func.isRequired
 };
 //connect or memo, or both? 
-export default memo(MapChart);
+export default connect()(memo(MapChart));

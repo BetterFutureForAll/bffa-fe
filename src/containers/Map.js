@@ -32,8 +32,10 @@ function MapContainer() {
 const mapStateToProps = (state) => ({
   content: getContent(state)
 });
-const mapDispatchToProps = (content) => ({
-  setToolTipContent: setContent(content)
+const mapDispatchToProps = (dispatch) => ({
+  setToolTipContent(setContent) {
+    dispatch(setContent)
+  }
 });
 
 export default connect(
