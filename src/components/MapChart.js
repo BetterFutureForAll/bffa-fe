@@ -41,9 +41,10 @@ const MapChart = ({ setTooltipContent }) => {
                 onMouseEnter={() => {
                     const { NAME, POP_EST, NAME_LONG } = geo.properties;
                     //SPI Score comes in here
-                    // spiData.then((d)=>console.log(d));
+                    // getScore will have to be extracted to MapContainer, in order to keep the data at the state level
                     getScore(NAME, NAME_LONG, spiData).then((SCORE)=> {
                       console.log(NAME + ' : ' + SCORE);
+                      //setToolTip may be able to stay here but will need its data as props
                       setTooltipContent(`${NAME} — ${rounded(POP_EST)}, Social Progress Index - ${SCORE}`);
                     })
                   }}
