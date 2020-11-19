@@ -34,8 +34,7 @@ const mapStateToProps = (state) => ({
 });
 const mapDispatchToProps = (content) => ({
   setToolTipContent: setContent(content)
-}
-);
+});
 
 export default connect(
   mapStateToProps,
