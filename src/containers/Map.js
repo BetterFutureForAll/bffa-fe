@@ -4,9 +4,12 @@ import MapChart from '../components/MapChart';
 import { getContent } from '../selectors/contentSelector';
 import { getYears } from '../selectors/scoreSelector';
 import { setContent } from '../actions/contentActions';
+import { createYears } from '../actions/scoreActions';
 import ReactTooltip from "react-tooltip";
 import Header from '../components/Header';
 
+import * as spiData from '../assets/2011-2020-Social-Progress-Index.csv'
+import { spi2020 } from '../services/SocialProgress';
 
 function MapContainer() {
   let content = useSelector(getContent);
@@ -16,6 +19,8 @@ function MapContainer() {
 
   useEffect(() => {
     console.log('Content Updated');
+    spi2020.then(d=> console.log(d));
+    dispatch(createYears(spi2020));
     dispatch(setContent()); 
   }, []);
 
