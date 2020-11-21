@@ -17,10 +17,15 @@ function MapContainer() {
   let dispatch = useDispatch();
 
 
+  async function fetchData() {
+    // You can await here
+    const response = await spi2020;
+    console.log(response);
+    dispatch(createYears(response));
+  };
   useEffect(() => {
     console.log('Content Updated');
-    spi2020.then(d=> console.log(d));
-    dispatch(createYears(spi2020));
+    fetchData();
     dispatch(setContent()); 
   }, []);
 
