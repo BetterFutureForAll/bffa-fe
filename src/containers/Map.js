@@ -27,6 +27,7 @@ function MapContainer() {
   //   dispatch(createYears(response));
   // };
 
+  // [content, setContent] = useState('');
 
   return (
     <div id="MapContainer" > 
@@ -37,18 +38,11 @@ function MapContainer() {
 
 )};
 
-// [content, setContent] = useState('');
 
 const mapStateToProps = (state) => ({
   years: state.scores.years,
   content: getContent(state)
 });
-
-// const mapDispatchToProps = (dispatch) => ({
-//   setToolTipContent(setContent) {
-//     dispatch(setContent)
-//   }
-// });
 
 export default connect(
   mapStateToProps,
