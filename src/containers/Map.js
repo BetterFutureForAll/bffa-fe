@@ -17,7 +17,7 @@ function MapContainer() {
   let dispatch = useDispatch();
 
   let contentCallback = useCallback(
-    () => dispatch(setContent(content)), [dispatch, content]
+    () => dispatch(setContent(content)), [content]
   );
 
   // async function fetchData() {
@@ -31,7 +31,7 @@ function MapContainer() {
   return (
     <div id="MapContainer" > 
     <Header years={years} />
-    <MapChart setTooltipContent={contentCallback} id="MapChart" />
+    <MapChart setTooltipContent={contentCallback()} id="MapChart" />
     <ReactTooltip>{content}</ReactTooltip>
   </div>
 
@@ -44,13 +44,13 @@ const mapStateToProps = (state) => ({
   content: getContent(state)
 });
 
-const mapDispatchToProps = (dispatch) => ({
-  setToolTipContent(setContent) {
-    dispatch(setContent)
-  }
-});
+// const mapDispatchToProps = (dispatch) => ({
+//   setToolTipContent(setContent) {
+//     dispatch(setContent)
+//   }
+// });
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps
+  null
 )(MapContainer);

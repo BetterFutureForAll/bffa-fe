@@ -3,8 +3,8 @@ import React from "react";
 const Header = ({ years }) => {
 
   //Years will have to come from SPI data as an array.
-  let yearsOptions = years.forEach(year => {
-    return <option value={year}>{year}</option>
+  let yearsOptions = years.map((year, i )=> {
+    return <option key={year[i]} value={year}>{year}</option>
   });
 
 
