@@ -33,18 +33,18 @@ const MapChart = ({ setTooltipContent }) => {
             {({ geographies }) =>
               geographies.map(geo => (
                 <Geography
-                key={geo.rsmKey}
-                geography={geo}
-                //with Redux onMouseEnter will have to be dispatched.
+                  key={geo.rsmKey}
+                  geography={geo}
+                  //with Redux onMouseEnter will have to be dispatched.
 
-// May have to extract onMouseEnter/onMouseLeave and set it a prop function to work with Redux
-            
-                onMouseEnter={() => {
+                  // May have to extract onMouseEnter/onMouseLeave and set it a prop function to work with Redux
+
+                  onMouseEnter={() => {
                     const { NAME, POP_EST, NAME_LONG } = geo.properties;
                     //SPI Score comes in here
                     // getScore will have to be extracted to MapContainer, in order to keep the data at the state level
                     // Or will have to be wired to have access to setting data in State
-                    getScore(NAME, NAME_LONG, spiData).then((SCORE)=> {
+                    getScore(NAME, NAME_LONG, spiData).then((SCORE) => {
                       console.log(NAME + ' : ' + SCORE);
                       //setToolTip may be able to stay here but will need its data as props
                       setTooltipContent(`${NAME} — ${rounded(POP_EST)}, Social Progress Index - ${SCORE}`);
