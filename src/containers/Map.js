@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { useSelector, useDispatch, connect } from 'react-redux';
 import MapChart from '../components/MapChart';
 import { getContent } from '../selectors/contentSelector';
@@ -16,25 +16,22 @@ function MapContainer() {
   let years = useSelector(getYears);
   let dispatch = useDispatch();
 
+  let contentCallback = useCallback(
+    () => dispatch(setContent(content)), [dispatch, content]
+  );
 
-  async function fetchData() {
-    // You can await here
-    const response = await spi2020;
-    console.log(response);
-    dispatch(createYears(response));
-  };
-  useEffect(() => {
-    console.log('Content Updated');
-    fetchData();
-    dispatch(setContent()); 
-  }, []);
-
+  // async function fetchData() {
+  //   // You can await here
+  //   const response = await spi2020;
+  //   console.log(response);
+  //   dispatch(createYears(response));
+  // };
 
 
   return (
     <div id="MapContainer" > 
     <Header years={years} />
-    <MapChart setTooltipContent={()=> setContent()} id="MapChart" />
+    <MapChart setTooltipContent={contentCallback} id="MapChart" />
     <ReactTooltip>{content}</ReactTooltip>
   </div>
 
@@ -46,6 +43,7 @@ const mapStateToProps = (state) => ({
   years: state.scores.years,
   content: getContent(state)
 });
+
 const mapDispatchToProps = (dispatch) => ({
   setToolTipContent(setContent) {
     dispatch(setContent)
