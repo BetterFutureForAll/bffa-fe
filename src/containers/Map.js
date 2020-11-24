@@ -32,7 +32,7 @@ function MapContainer() {
   return (
     <div id="MapContainer" > 
     <Header years={years} />
-    <MapChart setTooltipContent={contentCallback()} id="MapChart" />
+    <MapChart setTooltipContent={contentCallback} id="MapChart" />
     <ReactTooltip>{content}</ReactTooltip>
   </div>
 
