@@ -28,10 +28,9 @@ export const spi2020 = d3.csv(allYears, function (data) {
 
 export async function makeYearsArray(spi2020) {
   let years = [];
-  await spi2020.then(function (data) {
-    console.log('data' + data);
+  spi2020.then(function (data) {
     data.forEach((element, i) => {
-      console.log('element' + element);
+      console.log('element' + element[0]);
       if (element === 'SPI year') {
         if (!years.includes(element)) {
           years.push(element);

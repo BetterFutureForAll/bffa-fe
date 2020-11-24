@@ -3,8 +3,6 @@ import './App.css';
 import MapContainer from './containers/Map';
 
 function App() {
-  const dispatch = useDispatch();
-  const controlContent = useSelector(state => state.content);
 
   return (
     <div className="App">
