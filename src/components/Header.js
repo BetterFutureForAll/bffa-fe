@@ -1,15 +1,18 @@
 import React from "react";
 
-// Year, and other Data Selections will have to be done here
-// <Header> will need access to the CSV to make selections.
+const Header = ({ years }) => {
 
-const Header = () => {
-  var year = ['2020']
+  //Years will have to come from SPI data as an array.
+  let yearsOptions = years.map((year, i )=> {
+    return <option key={year[i]} value={year}>{year}</option>
+  });
+
+
   return (
     <div>
-      <label for="years">Select a year</label>
+      <label id="years">Select a year</label>
       <select >
-        <option value={year}>{year}</option>
+        {yearsOptions}
       </select>
     </div>
   );

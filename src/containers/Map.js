@@ -1,45 +1,50 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { useSelector, useDispatch, connect } from 'react-redux';
 import MapChart from '../components/MapChart';
 import { getContent } from '../selectors/contentSelector';
-import { setContent, SET_CONTENT } from '../actions/contentActions';
+import { getYears } from '../selectors/scoreSelector';
+import { setContent } from '../actions/contentActions';
+import { createYears } from '../actions/scoreActions';
 import ReactTooltip from "react-tooltip";
 import Header from '../components/Header';
 
-// Check Swizec teller advice for Tooltips with DJ and React. 
-// https://swizec.com/blog/tooltips-tooltips-are-not-so-easy
+import * as spiData from '../assets/2011-2020-Social-Progress-Index.csv'
+import { spi2020 } from '../services/SocialProgress';
 
-const MapContainer = () => {
-  const content = useSelector(getContent);
-  // const dispatch = useDispatch();
+function MapContainer() {
+  let content = useSelector(getContent);
+  let years = useSelector(getYears);
+  let dispatch = useDispatch();
 
-  useEffect(() => {
-    // console.log(content);
-  }, []);
+  let contentCallback = useCallback(
+    () => dispatch(setContent(content)), [content]
+  );
 
-  const [readContent, setContent] = useState();
-  
-  
+  // async function fetchData() {
+  //   // You can await here
+  //   const response = await spi2020;
+  //   console.log(response);
+  //   dispatch(createYears(response));
+  // };
+
+  // [content, setContent] = useState('');
+
   return (
-    <div> 
-    <Header />
-    <MapChart setTooltipContent={setContent} id="MapChart" />
+    <div id="MapContainer" > 
+    <Header years={years} />
+    <MapChart setTooltipContent={contentCallback} id="MapChart" />
     <ReactTooltip>{content}</ReactTooltip>
   </div>
 
 )};
 
-//setToolTipContent needs to be passed as a function 
 
-const mapStateToProps = state => ({
-  content: state.content,
-  scores: state.scores
+const mapStateToProps = (state) => ({
+  years: state.scores.years,
+  content: getContent(state)
 });
 
-const mapDispatchToProps = dispatch => {
-  return{
-    setToolTipContent: ()=> dispatch({ type: SET_CONTENT })
-  }
-};
-
-export default MapContainer;
+export default connect(
+  mapStateToProps,
+  null
+)(MapContainer);
