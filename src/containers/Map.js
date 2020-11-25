@@ -18,7 +18,7 @@ function MapContainer() {
   let [years, setYears ] = useState([]);
 
     useEffect(()=> {
-      makeYearsArray(spi2020)
+      makeYearsArray()
         .then(parsedYears => setYears(parsedYears))
     }, []);
 

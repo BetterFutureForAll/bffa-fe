@@ -17,7 +17,7 @@ export const definitions = d3.csv(csvDefinitions, function (d) {
 
 export const spi2020 = d3.csv(allYears, function (data) {
   // Format Data here to assign Keys and parse the Header rows properly.
-
+  // var allGroup = d3.map(data, function(d){return(d['SPI year'])}).keys()
 
   return data;
 });
@@ -26,20 +26,20 @@ export const spi2020 = d3.csv(allYears, function (data) {
 // d3.csv.format(rows)
 // d3.csv.formatRows(rows)
 
-export function makeYearsArray(spi2020) {
+export async function makeYearsArray() {
   let years = [];
-  spi2020.then(function (data) {
+  await spi2020.then(x=>console.log(x));
+  await spi2020.then(function (data) {
     data.forEach((element, i) => {
-      console.log('element' + element[0]);
-      if (element === 'SPI year') {
-        if (!years.includes(element)) {
-          years.push(element);
+      if (element['SPI year']) {
+        if (!years.includes(element['SPI year'])) {
+          years.push(element['SPI year']);
         };
       };
     });
-    console.log('years =' + years);
-    return years;
   });
+  console.log('years =' + years);
+  return years;
 };
 
 
