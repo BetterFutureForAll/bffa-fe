@@ -26,7 +26,7 @@ export const spi2020 = d3.csv(allYears, function (data) {
 // d3.csv.format(rows)
 // d3.csv.formatRows(rows)
 
-export async function makeYearsArray(spi2020) {
+export function makeYearsArray(spi2020) {
   let years = [];
   spi2020.then(function (data) {
     data.forEach((element, i) => {
