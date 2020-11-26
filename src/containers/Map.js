@@ -23,10 +23,24 @@ function MapContainer() {
     }, []);
 
   let [content, setContent] = useState('');
+  let [yearValue, setYearValue] = useState();
+  let handleYearChange = {};
+
+    useEffect(()=> {
+      setYearValue()
+    }, [yearValue])
+
+  let yearsOptions = years.map((year, i )=> {
+    return <option key={i} value={year}>{year}</option>
+  });
 
   return (
     <div id="MapContainer" > 
-    <Header years={years} />
+    <Header 
+      years={yearsOptions}
+      handleYearChange={()=> setYearValue} 
+      selectedYear={yearValue}
+      />
     <MapChart setTooltipContent={setContent} id="MapChart" />
     <ReactTooltip>{content}</ReactTooltip>
   </div>

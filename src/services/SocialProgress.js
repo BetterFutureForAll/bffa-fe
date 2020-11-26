@@ -17,6 +17,9 @@ export const definitions = d3.csv(csvDefinitions, function (d) {
 
 export const spi2020 = d3.csv(allYears, function (data) {
   // Format Data here to assign Keys and parse the Header rows properly.
+
+  // nest each 'SPI year', then d3 rollup to select them as an object
+
   // var allGroup = d3.map(data, function(d){return(d['SPI year'])}).keys()
 
   return data;
