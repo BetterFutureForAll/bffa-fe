@@ -24,11 +24,14 @@ function MapContainer() {
 
   let [content, setContent] = useState('');
   let [yearValue, setYearValue] = useState();
-  let handleYearChange = {};
+  let handleYearChange = () => {
+    setYearValue();
+  };
 
     useEffect(()=> {
       setYearValue()
-    }, [yearValue])
+      console.log('chosen year = ' + yearValue)
+    }, [])
 
   let yearsOptions = years.map((year, i )=> {
     return <option key={i} value={year}>{year}</option>

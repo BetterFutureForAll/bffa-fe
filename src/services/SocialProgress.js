@@ -15,23 +15,31 @@ export const definitions = d3.csv(csvDefinitions, function (d) {
   return d;
 });
 
-export const spi2020 = d3.csv(allYears, function (data) {
-  // Format Data here to assign Keys and parse the Header rows properly.
-
-  // nest each 'SPI year', then d3 rollup to select them as an object
-
-  // var allGroup = d3.map(data, function(d){return(d['SPI year'])}).keys()
-
-  return data;
+export const spi2020 = d3.csv(allYears, function (d) {
+  return d;
 });
 
-// d3.csv.parseRows(string[, accessor])
-// d3.csv.format(rows)
-// d3.csv.formatRows(rows)
+export function byYear(chosenYear) {
+  let result = []
+  d3.csv(allYears, function (data) {
+    // var allGroup = d3.map(data, function(d){return(d['SPI year'])}).keys()
+
+    // nest each 'SPI year', then d3 rollup to select them as an object
+
+    data.forEach((element, i) => {
+      console.log(element);
+      if (element['SPI year'] === chosenYear) {
+        result.push(element)
+      };
+    });
+  });
+  return result;
+};
 
 export async function makeYearsArray() {
   let years = [];
-  await spi2020.then(x=>console.log(x));
+  // await byYear('2020').then((x) => console.log('nested data = ' + x));
+  await spi2020.then(x => console.log(x));
   await spi2020.then(function (data) {
     data.forEach((element, i) => {
       if (element['SPI year']) {
@@ -46,14 +54,16 @@ export async function makeYearsArray() {
 };
 
 
-export const getSpiDataByYear = (year) => {
-  return spi2020.then(function (data) {
+export async function getSpiDataByYear(year) {
+
+  await spi2020.then(function (data) {
+    let result = [];
     data.forEach((d, i) => {
       if (d['SPI year'] === year) {
-        return d;
+        result.push(d);
       };
-      return d;
     });
+    return result;
   });
 };
 

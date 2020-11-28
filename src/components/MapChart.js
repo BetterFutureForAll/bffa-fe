@@ -24,6 +24,21 @@ const rounded = num => {
   }
 };
 
+function scoreToColor(score) {
+	var r, g, b = 0;
+	if(score < 50) {
+		r = 255;
+		g = Math.round(5.1 * score);
+	}
+	else {
+		g = 255;
+		r = Math.round(510 - 5.10 * score);
+	}
+	var h = r * 0x10000 + g * 0x100 + b * 0x1;
+	return '#' + ('000000' + h.toString(16)).slice(-6);
+};
+
+
 const MapChart = ({ setTooltipContent }) => {
   return (
     <>
@@ -36,7 +51,6 @@ const MapChart = ({ setTooltipContent }) => {
                   key={geo.rsmKey}
                   geography={geo}
                   //with Redux onMouseEnter will have to be dispatched.
-
                   // May have to extract onMouseEnter/onMouseLeave and set it a prop function to work with Redux
 
                   onMouseEnter={() => {
@@ -48,6 +62,7 @@ const MapChart = ({ setTooltipContent }) => {
                       console.log(NAME + ' : ' + SCORE);
                       //setToolTip may be able to stay here but will need its data as props
                       setTooltipContent(`${NAME} — ${rounded(POP_EST)}, Social Progress Index - ${SCORE}`);
+                      let color = scoreToColor(SCORE);
                     })
                   }}
                   onMouseLeave={() => {
