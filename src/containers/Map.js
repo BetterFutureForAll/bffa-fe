@@ -29,8 +29,8 @@ function MapContainer() {
   //   handleYearChange(yearValue)
   // }, [yearValue])
 
-  function handleYearChange(yearValue) {
-    setYearValue(yearValue)
+  function handleYearChange() {
+    setYearValue()
     console.log('chosen year = ' + yearValue)
     document.title = `SPI for ${yearValue}`;
   };
