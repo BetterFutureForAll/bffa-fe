@@ -24,14 +24,17 @@ function MapContainer() {
 
   let [content, setContent] = useState('');
   let [yearValue, setYearValue] = useState();
-  let handleYearChange = () => {
-    setYearValue();
+
+  useEffect(()=> {
+    handleYearChange(yearValue)
+  }, [yearValue])
+
+  function handleYearChange() {
+    setYearValue()
+    console.log('chosen year = ' + yearValue)
+    document.title = `SPI for ${yearValue}`;
   };
 
-    useEffect(()=> {
-      setYearValue()
-      console.log('chosen year = ' + yearValue)
-    }, [])
 
   let yearsOptions = years.map((year, i )=> {
     return <option key={i} value={year}>{year}</option>
@@ -41,7 +44,7 @@ function MapContainer() {
     <div id="MapContainer" > 
     <Header 
       years={yearsOptions}
-      handleYearChange={()=> setYearValue} 
+      handleYearChange={handleYearChange} 
       selectedYear={yearValue}
       />
     <MapChart setTooltipContent={setContent} id="MapChart" />
