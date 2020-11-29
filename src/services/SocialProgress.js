@@ -38,7 +38,6 @@ export function byYear(chosenYear) {
 
 export async function makeYearsArray() {
   let years = [];
-  // await byYear('2020').then((x) => console.log('nested data = ' + x));
   await spi2020.then(x => console.log(x));
   await spi2020.then(function (data) {
     data.forEach((element, i) => {
