@@ -1,12 +1,13 @@
 import React from "react";
 
 const Header = ({ years, handleYearChange, selectedYear }) => {
-  //Years will have to come from SPI data as an array.
+  //Years come in as an array.
 
+//value needs to be controlled by Map.js
   return (
     <div>
       <label id="years">Select a year</label>
-      <select value={selectedYear} onChange={handleYearChange}>
+      <select value={selectedYear} onSelect={handleYearChange}>
         {years}
       </select>
     </div>

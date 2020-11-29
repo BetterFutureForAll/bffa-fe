@@ -16,23 +16,23 @@ import { spi2020, makeYearsArray } from '../services/SocialProgress';
 function MapContainer() {
   
   let [years, setYears ] = useState([]);
-
     useEffect(()=> {
       makeYearsArray()
         .then(parsedYears => setYears(parsedYears))
     }, []);
-
   let [content, setContent] = useState('');
   let [yearValue, setYearValue] = useState();
-
+  
   // useEffect(()=> {
-  //   handleYearChange(yearValue)
-  // }, [yearValue])
-
-  function handleYearChange() {
-    setYearValue()
-    console.log('chosen year = ' + yearValue)
-    document.title = `SPI for ${yearValue}`;
+    //   handleYearChange(yearValue)
+    // }, [yearValue])
+    
+  const handleYearChange = (selection) => {
+    console.log('yearValue ' + yearValue);
+    console.log('chosen year = ' + selection)
+    document.title = `SPI for ${selection}`;
+    setYearValue(selection);
+    console.log('yearValue ' + yearValue);
   };
 
   let yearsOptions = years.map((year, i )=> {
@@ -43,7 +43,7 @@ function MapContainer() {
     <div id="MapContainer" > 
     <Header 
       years={yearsOptions}
-      handleYearChange={handleYearChange} 
+      onSelect={()=>handleYearChange} 
       selectedYear={yearValue}
       />
     <MapChart setTooltipContent={setContent} id="MapChart" />
