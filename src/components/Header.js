@@ -1,14 +1,14 @@
 import React from "react";
 
-const Header = ({ years, handleYearChange, selectedYear }) => {
+const Header = ({ yearsOptions, handleYearChange, yearValue }) => {
   //Years come in as an array.
-
-//value needs to be controlled by Map.js
+  //value needs to be controlled by Map.js
+  
   return (
     <div>
-      <label id="years">Select a year</label>
-      <select value={selectedYear} onSelect={handleYearChange}>
-        {years}
+      <label id="years">Select a year </label>
+      <select value={yearValue} onChange={handleYearChange}>
+        {yearsOptions}
       </select>
     </div>
   );

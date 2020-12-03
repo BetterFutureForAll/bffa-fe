@@ -60,6 +60,7 @@ export async function getSpiDataByYear(year) {
     data.forEach((d, i) => {
       if (d['SPI year'] === year) {
         result.push(d);
+        //d3.append('') instead of push
       };
     });
     return result;

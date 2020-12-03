@@ -50,14 +50,19 @@ const MapChart = ({ setTooltipContent }) => {
                   key={geo.rsmKey}
                   geography={geo}
                   //with Redux onMouseEnter will have to be dispatched.
-                  // May have to extract onMouseEnter/onMouseLeave and set it a prop function to work with Redux
 
+                  // `${()=>getScore(geo.properties.NAME, geo.properties.NAME_LONG, spiData)
+                  //   .then(SCORE => {
+                  //     scoreToColor(SCORE)
+                  //   })}`
+
+                  // May have to extract onMouseEnter/onMouseLeave and set it a prop function to work with Redux
                   onMouseEnter={() => {
                     const { NAME, POP_EST, NAME_LONG } = geo.properties;
                     getScore(NAME, NAME_LONG, spiData).then((SCORE) => {
                       console.log(NAME + ' : ' + SCORE);
                       setTooltipContent(`${NAME} — ${rounded(POP_EST)}, Social Progress Index - ${SCORE}`);
-                      let color = scoreToColor(SCORE);
+                      let color = scoreToColor(SCORE)
                     })
                   }}
                   onMouseLeave={() => {
