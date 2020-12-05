@@ -1,16 +1,12 @@
-import React from "react";
+import React, { memo } from "react";
 
-const Header = ({ yearsOptions, handleYearChange, yearValue }) => {
-  //Years come in as an array.
-  //value needs to be controlled by Map.js
-  
+const Header = ({ selectYears }) => {
   return (
     <div>
       <label id="years">Select a year </label>
-      <select value={yearValue} onChange={handleYearChange}>
-        {yearsOptions}
-      </select>
+        {selectYears}
     </div>
   );
 }
+
 export default Header;

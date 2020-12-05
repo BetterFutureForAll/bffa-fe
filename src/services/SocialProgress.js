@@ -38,7 +38,6 @@ export function byYear(chosenYear) {
 
 export async function makeYearsArray() {
   let years = [];
-  await spi2020.then(x => console.log(x));
   await spi2020.then(function (data) {
     data.forEach((element, i) => {
       if (element['SPI year']) {
@@ -54,15 +53,11 @@ export async function makeYearsArray() {
 
 
 export async function getSpiDataByYear(year) {
-
   await spi2020.then(function (data) {
-    let result = [];
-    data.forEach((d, i) => {
-      if (d['SPI year'] === year) {
-        result.push(d);
-        //d3.append('') instead of push
-      };
+    let result = data.filter(function(d) { 
+      return d['SPI year'] === year 
     });
+    console.log(result);
     return result;
   });
 };
@@ -72,12 +67,12 @@ export async function getSpiDataByYear(year) {
 //   this.setState({ spi: data });
 // });
 
-// loop, map, or build a reducer to set the SPI data for Name = spitData.Country
-export function getScore(name, longName, spiData) {
-  return spiData.then(function (data) {
+export function getScore(name, longName) {
+  getSpiDataByYear().then(function (data) {
     var score = 'Score not Found';
+    console.log(data);
     //Need to find a better Name matcher
-    data.forEach((element, i) => {
+    data.map((element, i) => {
       if (element.Country === name || element.Country === longName) {
         return score = element["Social Progress Index"];
       };

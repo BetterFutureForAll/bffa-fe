@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { makeYearsArray } from '../services/SocialProgress';
+import { useState, useEffect, useRef } from 'react';
+import { makeYearsArray, getScore, getSpiDataByYear } from '../services/SocialProgress';
 
 
 export const useContent = () => {
@@ -8,9 +8,9 @@ export const useContent = () => {
 };
 
 export const useYears = () => {
-  let [years, setYears ] = useState([]);
-  useEffect(()=> {
-    if(years.length < 1 || !years ) {
+  let [years, setYears] = useState([]);
+  useEffect(() => {
+    if(years.length < 1 || !years) {
       makeYearsArray()
         .then(parsedYears => setYears(parsedYears))
     }
@@ -19,11 +19,25 @@ export const useYears = () => {
 };
 
 export const useHandleYearChange = () => {
-  let [yearValue, setYearValue] = useState('2020');
-  let handleYearChange = (yearValue) => setYearValue(yearValue);
-  useEffect(()=> {
+  let [yearValue, setYearValue] = useState({ yearValue: '2020' });
+  let handleYearChange = (e) => setYearValue({
+    ...yearValue,
+    yearValue: e
+  })
+  useEffect(() => {
+    setYearValue(yearValue);
     console.log('chosen year = ' + yearValue)
-    handleYearChange(yearValue)
   }, [yearValue])
   return [yearValue, handleYearChange];
+};
+
+export const useDataByYear = (year) => {
+  let [spiByYear, setSpiByYear] = useState();
+  useEffect(() => {
+    if (!spiByYear) {
+      getSpiDataByYear(year)
+        .then(d => setSpiByYear(d))
+    };
+  }, [year, spiByYear])
+  return [spiByYear, setSpiByYear];
 };

@@ -8,33 +8,38 @@ import Header from '../components/Header';
 // import * as spiData from '../assets/2011-2020-Social-Progress-Index.csv'
 // import { spi2020, makeYearsArray } from '../services/SocialProgress';
 
-import { useHandleYearChange, useYears, useContent } from '../hooks/hooks';
+import { useHandleYearChange, useYears, useContent, useDataByYear } from '../hooks/hooks';
 
 function MapContainer() {
 
   let [years] = useYears();
   let [content, setContent] = useContent();
   let [yearValue, handleYearChange] = useHandleYearChange();
+  let spiByYear = useDataByYear();
 
-  let yearsOptions = years.map((year, i) => {
-    return <option key={i} value={year} onChange={handleYearChange}>{year}</option>
-  });
+
+  let selectYears = (
+    <select onChange={handleYearChange} defaultValue={yearValue} >
+      {years.map(item => (
+        <option
+          key={item}
+          value={item}
+          onSelect={(e) => handleYearChange(e)}
+        >
+          {item}
+        </option>
+      ))}
+    </select>
+  );
 
   return (
     <div id="MapContainer" >
-      <Header
-        yearsOptions={yearsOptions}
-        onChange={handleYearChange}
-        value={yearValue}
-      />
-      <MapChart setTooltipContent={setContent} id="MapChart" />
+      <Header selectYears={selectYears} />
+      <MapChart setTooltipContent={setContent} year={yearValue} id="MapChart" />
       <ReactTooltip>{content}</ReactTooltip>
     </div>
 
   )
 };
 
-export default connect(
-  null,
-  null
-)(MapContainer);
+export default MapContainer;

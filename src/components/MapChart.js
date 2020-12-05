@@ -38,7 +38,7 @@ function scoreToColor(score) {
 	return '#' + ('000000' + h.toString(16)).slice(-6);
 };
 
-const MapChart = ({ setTooltipContent }) => {
+const MapChart = ({ setTooltipContent, year }) => {
   return (
     <>
       <ComposableMap data-tip="" projectionConfig={{ scale: 200 }}>
