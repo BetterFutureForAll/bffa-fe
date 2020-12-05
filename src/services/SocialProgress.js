@@ -52,10 +52,12 @@ export async function makeYearsArray() {
 };
 
 
-export async function getSpiDataByYear(year) {
-  await spi2020.then(function (data) {
+export function getSpiDataByYear() {
+  return spi2020.then(function (data) {
     let result = data.filter(function(d) { 
-      return d['SPI year'] === year 
+
+      //currently hard coded for 2020, change to {year}
+      return d['SPI year'] === "2020" 
     });
     console.log(result);
     return result;
@@ -67,8 +69,8 @@ export async function getSpiDataByYear(year) {
 //   this.setState({ spi: data });
 // });
 
-export function getScore(name, longName) {
-  getSpiDataByYear().then(function (data) {
+export function getScore(name, longName, getSpiDataByYear) {
+  return getSpiDataByYear.then(function (data) {
     var score = 'Score not Found';
     console.log(data);
     //Need to find a better Name matcher
