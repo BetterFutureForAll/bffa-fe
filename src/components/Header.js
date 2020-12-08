@@ -1,11 +1,11 @@
 import React, { memo } from "react";
 
-const Header = ({ selectYears }) => {
+const Header = ({ selectYears, yearValue, handleSubmit }) => {
   return (
-    <div>
-      <label id="years">Select a year </label>
+    <form onSubmit={handleSubmit}>
+      <label id="years" value={yearValue} >Select a year </label>
         {selectYears}
-    </div>
+    </form>
   );
 }
 
