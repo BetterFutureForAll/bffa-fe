@@ -31,11 +31,10 @@ export const useHandleYearChange = () => {
 export const useDataByYear = (yearValue) => {
   let [spiByYear, setSpiByYear] = useState(null);
   useEffect(() => {
-    if(!spiByYear) {
       getSpiDataByYear(yearValue)
         .then(d => setSpiByYear(d))
-    };
-  }, [yearValue, spiByYear])
+  }, [yearValue])
   console.log('SPI data changed to ' + yearValue);
+  console.log(spiByYear);
   return [spiByYear, setSpiByYear];
 };

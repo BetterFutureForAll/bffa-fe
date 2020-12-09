@@ -1,5 +1,4 @@
 import React from 'react';
-import { connect } from 'react-redux';
 import MapChart from '../components/MapChart';
 import ReactTooltip from "react-tooltip";
 import Header from '../components/Header';
@@ -15,20 +14,17 @@ function MapContainer() {
   let [years] = useYears();
   let [content, setContent] = useContent();
   let [yearValue, handleYearChange] = useHandleYearChange();
-  let [spiByYear, setSpiByYear]  = useDataByYear(yearValue);
+  let [spiByYear]  = useDataByYear(yearValue);
 
   let handleSubmit = (e) => {
     e.preventDefault();
-    setSpiByYear(yearValue);
+    // spiByYear;
     console.log(spiByYear);
     console.log((yearValue));
   };
 
-
-
-
   let selectYears = (
-    <select onChange={handleYearChange} defaultValue={yearValue} >
+    <select onChange={handleYearChange} defaultValue={yearValue} onSubmit={handleSubmit} >
       {years.map(item => (
         <option
           key={item}
