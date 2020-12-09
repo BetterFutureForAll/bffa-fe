@@ -5,11 +5,9 @@ import {
   Geographies,
   Geography
 } from "react-simple-maps";
-import { getScore, spi2020 } from '../services/SocialProgress';
+import { getScore } from '../services/SocialProgress';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-
-
 
 const geoUrl =
   "https://raw.githubusercontent.com/zcreativelabs/react-simple-maps/master/topojson-maps/world-110m.json";
@@ -50,7 +48,7 @@ const MapChart = ({ setTooltipContent, year, data }) => {
                   key={geo.rsmKey}
                   geography={geo}
                   onMouseEnter={() => {
-                    const { NAME, POP_EST, NAME_LONG, ISO_A3 } = geo.properties;
+                    const { NAME, POP_EST, ISO_A3 } = geo.properties;
                     console.log(data);
                     getScore(NAME, ISO_A3, data).then((SCORE) => {
                       console.log('Year = ' + year);
@@ -89,5 +87,6 @@ const MapChart = ({ setTooltipContent, year, data }) => {
 MapChart.propTypes = {
   setTooltipContent: PropTypes.func.isRequired
 };
+
 //connect or memo, or both? 
 export default connect()(memo(MapChart));
