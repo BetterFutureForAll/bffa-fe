@@ -49,10 +49,8 @@ const MapChart = ({ setTooltipContent, year, data }) => {
                   geography={geo}
                   onMouseEnter={() => {
                     const { NAME, POP_EST, ISO_A3 } = geo.properties;
-                    console.log(data);
                     getScore(NAME, ISO_A3, data).then((SCORE) => {
-                      console.log('Year = ' + year);
-                      console.log(NAME + ' : ' + SCORE);
+                      console.log('Year = ' + year + ' | ' + NAME + ' : ' + SCORE);
                       setTooltipContent(`${NAME} — ${rounded(POP_EST)}, Social Progress Index - ${SCORE}`);
                       let color = scoreToColor(SCORE)
                     })

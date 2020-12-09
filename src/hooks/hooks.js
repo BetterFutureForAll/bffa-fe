@@ -1,5 +1,5 @@
-import { useState, useEffect, useRef } from 'react';
-import { makeYearsArray, getScore, getSpiDataByYear } from '../services/SocialProgress';
+import { useState, useEffect } from 'react';
+import { makeYearsArray, getSpiDataByYear } from '../services/SocialProgress';
 
 
 export const useContent = () => {
@@ -33,8 +33,8 @@ export const useDataByYear = (yearValue) => {
   useEffect(() => {
       getSpiDataByYear(yearValue)
         .then(d => setSpiByYear(d))
+        console.log('SPI data changed to ' + yearValue);
+        console.log(spiByYear);
   }, [yearValue])
-  console.log('SPI data changed to ' + yearValue);
-  console.log(spiByYear);
   return [spiByYear, setSpiByYear];
 };

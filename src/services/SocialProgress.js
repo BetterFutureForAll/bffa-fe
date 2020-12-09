@@ -36,7 +36,6 @@ export async function makeYearsArray() {
       };
     });
   });
-  console.log('years =' + years);
   return years;
 };
 
@@ -45,18 +44,17 @@ export async function getSpiDataByYear(year) {
     let result = data.filter(function (d) {
       return d['SPI year'] === year
     });
-    console.log(result);
     return result;
   });
 };
 
 export async function getScore(NAME, ISO_A3, data) {
-  console.log(data, ISO_A3);
   var score = 'Score not Found';
   data.filter((element, i) => {
     if (element["SPI country code"] === ISO_A3 || element.Country === NAME) {
       return score = element["Social Progress Index"];
     };
+    return score;
   });
   return score;
 };
