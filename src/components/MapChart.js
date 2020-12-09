@@ -5,7 +5,7 @@ import {
   Geographies,
   Geography
 } from "react-simple-maps";
-import { spiData, getScore } from '../services/SocialProgress';
+import { getScore, spi2020 } from '../services/SocialProgress';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
@@ -38,7 +38,7 @@ function scoreToColor(score) {
 	return '#' + ('000000' + h.toString(16)).slice(-6);
 };
 
-const MapChart = ({ setTooltipContent, year }) => {
+const MapChart = ({ setTooltipContent, year, data }) => {
   return (
     <>
       <ComposableMap data-tip="" projectionConfig={{ scale: 200 }}>
@@ -50,8 +50,10 @@ const MapChart = ({ setTooltipContent, year }) => {
                   key={geo.rsmKey}
                   geography={geo}
                   onMouseEnter={() => {
-                    const { NAME, POP_EST, NAME_LONG } = geo.properties;
-                    getScore(NAME, NAME_LONG, spiData).then((SCORE) => {
+                    const { NAME, POP_EST, NAME_LONG, ISO_A3 } = geo.properties;
+                    console.log(data);
+                    getScore(NAME, ISO_A3, data).then((SCORE) => {
+                      console.log('Year = ' + year);
                       console.log(NAME + ' : ' + SCORE);
                       setTooltipContent(`${NAME} — ${rounded(POP_EST)}, Social Progress Index - ${SCORE}`);
                       let color = scoreToColor(SCORE)

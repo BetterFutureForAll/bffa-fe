@@ -52,12 +52,11 @@ export async function makeYearsArray() {
 };
 
 
-export function getSpiDataByYear() {
+export async function getSpiDataByYear(year) {
   return spi2020.then(function (data) {
-    let result = data.filter(function(d) { 
-
+    let result = data.filter(function (d) {
       //currently hard coded for 2020, change to {year}
-      return d['SPI year'] === "2020" 
+      return d['SPI year'] === year
     });
     console.log(result);
     return result;
@@ -69,17 +68,16 @@ export function getSpiDataByYear() {
 //   this.setState({ spi: data });
 // });
 
-export function getScore(name, longName, getSpiDataByYear) {
-  return getSpiDataByYear.then(function (data) {
-    var score = 'Score not Found';
-    console.log(data);
-    //Need to find a better Name matcher
-    data.map((element, i) => {
-      if (element.Country === name || element.Country === longName) {
-        return score = element["Social Progress Index"];
-      };
-    });
-    return score;
+export async function getScore(NAME, ISO_A3, data) {
+  console.log(data, ISO_A3);
+  var score = 'Score not Found';
+  data.filter((element, i) => {
+    if (element["SPI country code"] === ISO_A3 || element.Country === NAME) {
+      console.log(element);
+      return score = element["Social Progress Index"];
+    };
   });
+  console.log(score);
+  return score;
 };
 
