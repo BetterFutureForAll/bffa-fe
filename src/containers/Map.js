@@ -18,7 +18,6 @@ function MapContainer() {
 
   let handleSubmit = (e) => {
     e.preventDefault();
-    // spiByYear;
     console.log(spiByYear);
     console.log((yearValue));
   };
@@ -45,8 +44,8 @@ function MapContainer() {
         onSubmit={handleSubmit}/>
       <MapChart 
         setTooltipContent={setContent} 
-        year={yearValue}
         data={spiByYear} 
+        year={yearValue}
         id="MapChart" />
       <ReactTooltip>{content}</ReactTooltip>
     </div>

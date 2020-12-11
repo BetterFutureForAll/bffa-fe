@@ -22,21 +22,21 @@ const rounded = num => {
   }
 };
 
-function scoreToColor(score) {
-	var r, g, b = 0;
-	if(score < 50) {
-		r = 255;
-		g = Math.round(5.1 * score);
-	}
-	else {
-		g = 255;
-		r = Math.round(510 - 5.10 * score);
-	}
-	var h = r * 0x10000 + g * 0x100 + b * 0x1;
-	return '#' + ('000000' + h.toString(16)).slice(-6);
-};
+// function scoreToColor(score) {
+// 	var r, g, b = 0;
+// 	if(score < 50) {
+// 		r = 255;
+// 		g = Math.round(5.1 * score);
+// 	}
+// 	else {
+// 		g = 255;
+// 		r = Math.round(510 - 5.10 * score);
+// 	}
+// 	var h = r * 0x10000 + g * 0x100 + b * 0x1;
+// 	return '#' + ('000000' + h.toString(16)).slice(-6);
+// };
 
-const MapChart = ({ setTooltipContent, year, data }) => {
+const MapChart = ({ setTooltipContent, data, year }) => {
   return (
     <>
       <ComposableMap data-tip="" projectionConfig={{ scale: 200 }}>
@@ -50,9 +50,8 @@ const MapChart = ({ setTooltipContent, year, data }) => {
                   onMouseEnter={() => {
                     const { NAME, POP_EST, ISO_A3 } = geo.properties;
                     getScore(NAME, ISO_A3, data).then((SCORE) => {
-                      console.log('Year = ' + year + ' | ' + NAME + ' : ' + SCORE);
-                      setTooltipContent(`${NAME} — ${rounded(POP_EST)}, Social Progress Index - ${SCORE}`);
-                      let color = scoreToColor(SCORE)
+                      setTooltipContent(`${NAME} — ${rounded(POP_EST)}, Year: ${year}, Social Progress Index - ${SCORE}`);
+                      // let color = scoreToColor(SCORE)
                     })
                   }}
                   onMouseLeave={() => {

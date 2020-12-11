@@ -10,7 +10,7 @@ export const useContent = () => {
 export const useYears = () => {
   let [years, setYears] = useState([]);
   useEffect(() => {
-    if(years.length < 1 || !years) {
+    if (years.length < 1 || !years) {
       makeYearsArray()
         .then(parsedYears => setYears(parsedYears))
     }
@@ -20,7 +20,9 @@ export const useYears = () => {
 
 export const useHandleYearChange = () => {
   let [yearValue, setYearValue] = useState("2020");
-  let handleYearChange = (e) => setYearValue(e.target.value)
+  let handleYearChange = (e) => {
+    setYearValue(e.target.value);
+  }
   useEffect(() => {
     setYearValue(yearValue);
     console.log('chosen year = ' + yearValue);
@@ -29,12 +31,10 @@ export const useHandleYearChange = () => {
 };
 
 export const useDataByYear = (yearValue) => {
-  let [spiByYear, setSpiByYear] = useState(null);
+  let [spiByYear, setSpiByYear] = useState({});
   useEffect(() => {
-      getSpiDataByYear(yearValue)
-        .then(d => setSpiByYear(d))
-        console.log('SPI data changed to ' + yearValue);
-        console.log(spiByYear);
-  }, [yearValue])
+    getSpiDataByYear(yearValue)
+      .then(d => setSpiByYear(d))
+    }, [yearValue])
   return [spiByYear, setSpiByYear];
 };
