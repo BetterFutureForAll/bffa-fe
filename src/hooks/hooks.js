@@ -38,3 +38,37 @@ export const useDataByYear = (yearValue) => {
     }, [yearValue])
   return [spiByYear, setSpiByYear];
 };
+
+function scoreToColor(score) {
+  var r, g, b = 0;
+  if (score < 50) {
+    r = 255;
+    g = Math.round(5.1 * score);
+  }
+  else {
+    g = 255;
+    r = Math.round(510 - 5.10 * score);
+  }
+  var h = r * 0x10000 + g * 0x100 + b * 0x1;
+  return '#' + ('000000' + h.toString(16)).slice(-6);
+};
+
+export const colorMaker = () => {
+  let score = '30';
+  let color = scoreToColor(score);
+  let coloredStyle = {
+    default: {
+      fill: `${color}`,
+      outline: "none"
+    },
+    hover: {
+      fill: "#F53",
+      outline: "none"
+    },
+    pressed: {
+      fill: "#E42",
+      outline: "none"
+    }
+  };
+  return coloredStyle;
+};
