@@ -1,21 +1,13 @@
-import React, { useState } from "react";
-import ReactTooltip from "react-tooltip";
+import React from "react";
 import './App.css';
-import MapChart from './components/MapChart';
+import MapContainer from './containers/Map';
 
 function App() {
 
-  const [content, setContent] = useState("");
-
   return (
     <div className="App">
-      <header className="App-header">
-      <MapChart setTooltipContent={setContent} />
-      <ReactTooltip>{content}</ReactTooltip>
-      </header>
+        <MapContainer />
     </div>
-
-
   );
 }
 
