@@ -1,6 +1,5 @@
-import { dispatch } from 'd3';
 import { getSpiData } from '../selectors/contentSelector';
-import { getScore, spiData, makeYearsArray } from '../services/SocialProgress';
+import { getScore, makeYearsArray } from '../services/SocialProgress';
 
 export const GET_SCORE = 'GET_SCORE';
 export const GET_SPI = 'GET_SPI';

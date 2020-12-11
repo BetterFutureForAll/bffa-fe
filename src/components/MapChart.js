@@ -5,11 +5,9 @@ import {
   Geographies,
   Geography
 } from "react-simple-maps";
-import { spiData, getScore } from '../services/SocialProgress';
+import { getScore } from '../services/SocialProgress';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-
-
 
 const geoUrl =
   "https://raw.githubusercontent.com/zcreativelabs/react-simple-maps/master/topojson-maps/world-110m.json";
@@ -24,7 +22,21 @@ const rounded = num => {
   }
 };
 
-const MapChart = ({ setTooltipContent }) => {
+// function scoreToColor(score) {
+// 	var r, g, b = 0;
+// 	if(score < 50) {
+// 		r = 255;
+// 		g = Math.round(5.1 * score);
+// 	}
+// 	else {
+// 		g = 255;
+// 		r = Math.round(510 - 5.10 * score);
+// 	}
+// 	var h = r * 0x10000 + g * 0x100 + b * 0x1;
+// 	return '#' + ('000000' + h.toString(16)).slice(-6);
+// };
+
+const MapChart = ({ setTooltipContent, data, year }) => {
   return (
     <>
       <ComposableMap data-tip="" projectionConfig={{ scale: 200 }}>
@@ -35,19 +47,11 @@ const MapChart = ({ setTooltipContent }) => {
                 <Geography
                   key={geo.rsmKey}
                   geography={geo}
-                  //with Redux onMouseEnter will have to be dispatched.
-
-                  // May have to extract onMouseEnter/onMouseLeave and set it a prop function to work with Redux
-
                   onMouseEnter={() => {
-                    const { NAME, POP_EST, NAME_LONG } = geo.properties;
-                    //SPI Score comes in here
-                    // getScore will have to be extracted to MapContainer, in order to keep the data at the state level
-                    // Or will have to be wired to have access to setting data in State
-                    getScore(NAME, NAME_LONG, spiData).then((SCORE) => {
-                      console.log(NAME + ' : ' + SCORE);
-                      //setToolTip may be able to stay here but will need its data as props
-                      setTooltipContent(`${NAME} — ${rounded(POP_EST)}, Social Progress Index - ${SCORE}`);
+                    const { NAME, POP_EST, ISO_A3 } = geo.properties;
+                    getScore(NAME, ISO_A3, data).then((SCORE) => {
+                      setTooltipContent(`${NAME} — ${rounded(POP_EST)}, Year: ${year}, Social Progress Index - ${SCORE}`);
+                      // let color = scoreToColor(SCORE)
                     })
                   }}
                   onMouseLeave={() => {
@@ -80,5 +84,6 @@ const MapChart = ({ setTooltipContent }) => {
 MapChart.propTypes = {
   setTooltipContent: PropTypes.func.isRequired
 };
+
 //connect or memo, or both? 
 export default connect()(memo(MapChart));

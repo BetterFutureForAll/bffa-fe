@@ -1,50 +1,56 @@
-import React, { useEffect, useCallback } from 'react';
-import { useSelector, useDispatch, connect } from 'react-redux';
+import React from 'react';
 import MapChart from '../components/MapChart';
-import { getContent } from '../selectors/contentSelector';
-import { getYears } from '../selectors/scoreSelector';
-import { setContent } from '../actions/contentActions';
-import { createYears } from '../actions/scoreActions';
 import ReactTooltip from "react-tooltip";
 import Header from '../components/Header';
 
-import * as spiData from '../assets/2011-2020-Social-Progress-Index.csv'
-import { spi2020 } from '../services/SocialProgress';
+// import { getContent } from '../selectors/contentSelector';
+// import * as spiData from '../assets/2011-2020-Social-Progress-Index.csv'
+// import { spi2020, makeYearsArray } from '../services/SocialProgress';
+
+import { useHandleYearChange, useYears, useContent, useDataByYear } from '../hooks/hooks';
 
 function MapContainer() {
-  let content = useSelector(getContent);
-  let years = useSelector(getYears);
-  let dispatch = useDispatch();
 
-  let contentCallback = useCallback(
-    () => dispatch(setContent(content)), [content]
+  let [years] = useYears();
+  let [content, setContent] = useContent();
+  let [yearValue, handleYearChange] = useHandleYearChange();
+  let [spiByYear]  = useDataByYear(yearValue);
+
+  let handleSubmit = (e) => {
+    e.preventDefault();
+    console.log(spiByYear);
+    console.log((yearValue));
+  };
+
+  let selectYears = (
+    <select onChange={handleYearChange} defaultValue={yearValue} onSubmit={handleSubmit} >
+      {years.map(item => (
+        <option
+          key={item}
+          value={item}
+          onSelect={handleYearChange}
+        >
+          {item}
+        </option>
+      ))}
+    </select>
   );
 
-  // async function fetchData() {
-  //   // You can await here
-  //   const response = await spi2020;
-  //   console.log(response);
-  //   dispatch(createYears(response));
-  // };
-
-  // [content, setContent] = useState('');
-
   return (
-    <div id="MapContainer" > 
-    <Header years={years} />
-    <MapChart setTooltipContent={contentCallback} id="MapChart" />
-    <ReactTooltip>{content}</ReactTooltip>
-  </div>
+    <div id="MapContainer" >
+      <Header 
+        selectYears={selectYears} 
+        yearValue={yearValue} 
+        onSubmit={handleSubmit}/>
+      <MapChart 
+        setTooltipContent={setContent} 
+        data={spiByYear} 
+        year={yearValue}
+        id="MapChart" />
+      <ReactTooltip>{content}</ReactTooltip>
+    </div>
 
-)};
+  )
+};
 
-
-const mapStateToProps = (state) => ({
-  years: state.scores.years,
-  content: getContent(state)
-});
-
-export default connect(
-  mapStateToProps,
-  null
-)(MapContainer);
+export default MapContainer;
