@@ -1,4 +1,5 @@
-import React, { memo } from "react";
+/* eslint-disable quotes */
+import React, { memo, useState } from "react";
 import {
   ZoomableGroup,
   ComposableMap,
@@ -9,58 +10,49 @@ import { getScore } from '../services/SocialProgress';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
+import { scoreToColor } from '../hooks/hooks';
+
 const geoUrl =
   "https://raw.githubusercontent.com/zcreativelabs/react-simple-maps/master/topojson-maps/world-110m.json";
 
 const rounded = num => {
-  if (num > 1000000000) {
+  if(num > 1000000000) {
     return Math.round(num / 100000000) / 10 + "Bn";
-  } else if (num > 1000000) {
+  } else if(num > 1000000) {
     return Math.round(num / 100000) / 10 + "M";
   } else {
     return Math.round(num / 100) / 10 + "K";
   }
 };
 
-function scoreToColor(score) {
-  var r, g, b = 0;
-  if (score < 50) {
-    r = 255;
-    g = Math.round(5.1 * score);
-  }
-  else {
-    g = 255;
-    r = Math.round(510 - 5.10 * score);
-  }
-  var h = r * 0x10000 + g * 0x100 + b * 0x1;
-  return '#' + ('000000' + h.toString(16)).slice(-6);
-};
-
-
-let colorMaker = () => {
-  let score = Math.random() * 100;
-  let color = scoreToColor(score);
-  let coloredStyle = {
-    default: {
-      fill: `${color}`,
-      outline: "none"
-    },
-    hover: {
-      fill: "#F53",
-      outline: "none"
-    },
-    pressed: {
-      fill: "#E42",
-      outline: "none"
-    }
-  };
-  return coloredStyle;
-};
-
-let color = "#E42"
-// ({ NAME, ISO_A3, data }) => getScore(NAME, ISO_A3, data).then(SCORE => scoreToColor(SCORE));
 
 const MapChart = ({ setTooltipContent, data, year }) => {
+  let [colors, setColors] = useState('');
+  
+  let colorMaker = (score) => {
+    // let score = Math.random() * 100;
+    let color = scoreToColor(score);
+    // let coloredStyle = {
+    //   default: {
+    //     fill: `${color}`,
+    //     outline: "none"
+    //   },
+    //   hover: {
+    //     fill: "#F53",
+    //     outline: "none"
+    //   },
+    //   pressed: {
+    //     fill: "#E42",
+    //     outline: "none"
+    //   }
+    // };
+    setColors(color);
+  };
+  
+
+
+
+  
   return (
     <>
       <ComposableMap data-tip="" projectionConfig={{ scale: 200 }}>
@@ -74,15 +66,27 @@ const MapChart = ({ setTooltipContent, data, year }) => {
                   onMouseEnter={() => {
                     const { NAME, POP_EST, ISO_A3 } = geo.properties;
                     getScore(NAME, ISO_A3, data).then((SCORE) => {
+                      colorMaker(SCORE);
                       setTooltipContent(`${NAME} — ${rounded(POP_EST)}, Year: ${year}, Social Progress Index - ${SCORE}`);
-                    })
+                    });
                   }}
                   onMouseLeave={() => {
                     setTooltipContent("");
                   }}
-                  style={
-                    colorMaker()
-                  }
+                  style={{
+                    default: {
+                      fill: "#D6D6DA",
+                      outline: "none"
+                    },
+                    hover: {
+                      fill: `${colors}`,
+                      outline: "none"
+                    },
+                    pressed: {
+                      fill: "#E42",
+                      outline: "none"
+                    }
+                  }}
                 />
               ))
             }
@@ -94,7 +98,9 @@ const MapChart = ({ setTooltipContent, data, year }) => {
 };
 
 MapChart.propTypes = {
-  setTooltipContent: PropTypes.func.isRequired
+  setTooltipContent: PropTypes.func.isRequired,
+  data: PropTypes.array.isRequired,
+  year: PropTypes.string.isRequired
 };
 
 //connect or memo, or both? 
