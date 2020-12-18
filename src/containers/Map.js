@@ -1,8 +1,8 @@
 import React from 'react';
 import MapChart from '../components/MapChart';
-import ReactTooltip from "react-tooltip";
+import ReactTooltip from 'react-tooltip';
 import Header from '../components/Header';
-import WorldMap from '../components/WorldMap';
+// import WorldMap from '../components/WorldMap';
 
 // import { getContent } from '../selectors/contentSelector';
 // import * as spiData from '../assets/2011-2020-Social-Progress-Index.csv'
@@ -12,7 +12,7 @@ import {
   useHandleYearChange, 
   useYears, useContent, 
   useDataByYear, 
-  useScore 
+  // useScore 
 } from '../hooks/hooks';
 
 function MapContainer() {
@@ -21,7 +21,7 @@ function MapContainer() {
   let [content, setContent] = useContent();
   let [yearValue, handleYearChange] = useHandleYearChange();
   let [spiByYear]  = useDataByYear(yearValue);
-  let [score, setScore] = useScore();
+  // let [score, setScore] = useScore();
 
   let handleSubmit = (e) => {
     e.preventDefault();
