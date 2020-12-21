@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { makeYearsArray, getSpiDataByYear } from '../services/SocialProgress';
-
+import * as d3 from 'd3';
 
 export const useContent = () => {
   let [content, setContent] = useState('');
@@ -30,7 +30,6 @@ export const useHandleYearChange = () => {
   };
   useEffect(() => {
     setYearValue(yearValue);
-    console.log('chosen year = ' + yearValue);
   }, [yearValue]);
   return [yearValue, handleYearChange];
 };
@@ -45,18 +44,21 @@ export const useDataByYear = (yearValue) => {
 };
 
 export function scoreToColor(score) {
-  var r, g, b = 0;
-  if(score < 50) {
-    r = 255;
-    g = Math.round(5.1 * score);
-  }
-  else {
-    g = 255;
-    r = Math.round(510 - 5.10 * score);
-  }
-  var h = r * 0x10000 + g * 0x100 + b * 0x1;
-  return '#' + ('000000' + h.toString(16)).slice(-6);
+  let scoreColor = d3.scaleLinear()
+    .domain([0, 0, 100])
+    .range([
+      'c4c2c4',
+      '#a8ddb5',
+      '#7bccc4',
+      '#ccebc5',
+      '#4eb3d3',
+      '#2b8cbe',
+      '#08589e',
+    ]);
+
+  return scoreColor(score);
 }
+
 
 // export const colorMaker = () => {
 //   const { NAME, ISO_A3 } = geo.properties;

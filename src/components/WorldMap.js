@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { select, json, geoOrthographic, geoPath } from 'd3';
 import { feature } from 'topojson-client';
 import useResizeObserver from '../services/ResizeSelector';
@@ -8,29 +8,24 @@ function WorldMap({ data, property }) {
   const svgRef = useRef();
   const wrapperRef = useRef();
   const dimensions = useResizeObserver(wrapperRef);
-  const [selectedCountry, setSelectedCountry] = useState(null);
 
   const svg = select(svgRef.current);
   const projection = geoOrthographic();
   const pathGenerator = geoPath().projection(projection);
-  // const { width, height } =
-  //   dimensions || wrapperRef.current.getBoundingClientRect();
 
   useEffect(() => {
     svg
-      .selectAll(".country")
+      .selectAll('.country')
       .data(data.features)
-      .join("path")
-      .attr("class", "country")
-      .attr("d", feature => pathGenerator(feature));
+      .join('path')
+      .attr('class', 'country')
+      .attr('d', feature => pathGenerator(feature));
 
   }, [data, dimensions, property]);
 
-  json("https://unpkg.com/world-atlas@1/world/110m.json")
+  json('https://unpkg.com/world-atlas@1/world/110m.json')
     .then(data => {
       const countries = feature(data, data.objects.countries);
-      console.log(countries);
-
       const paths = svg.selectAll('path')
         .data(countries.features);
       paths.enter().append('path')
@@ -40,10 +35,10 @@ function WorldMap({ data, property }) {
 
 
   return (
-    <div ref={wrapperRef} style={{ marginBottom: "2rem" }}>
+    <div ref={wrapperRef} style={{ marginBottom: '2rem' }}>
       <svg ref={svgRef}></svg>
     </div>
-  )
+  );
 }
 
 WorldMap.propTypes = {

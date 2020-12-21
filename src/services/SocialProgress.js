@@ -16,7 +16,6 @@ export function byYear(chosenYear) {
   let result = [];
   d3.csv(allYears, function(data) {
     data.forEach((element) => {
-      console.log(element);
       if(element['SPI year'] === chosenYear) {
         result.push(element);
       }
