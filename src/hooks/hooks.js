@@ -26,6 +26,7 @@ export const useYears = () => {
 export const useHandleYearChange = () => {
   let [yearValue, setYearValue] = useState('2020');
   let handleYearChange = (e) => {
+    console.log(e);
     setYearValue(e.target.value);
   };
   useEffect(() => {
@@ -42,6 +43,7 @@ export const useDataByYear = (yearValue) => {
   }, [yearValue]);
   return [spiByYear, setSpiByYear];
 };
+
 
 export function scoreToColor(score) {
   let scoreColor = d3.scaleLinear()

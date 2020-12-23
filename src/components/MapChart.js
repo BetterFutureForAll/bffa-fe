@@ -80,6 +80,9 @@ const MapChart = ({ setTooltipContent, data, year }) => {
               geographies.map(geo => {
                 const target = data.find(t => t['SPI country code'] === geo.properties.ISO_A3);
                 const rank = target ? target['SPI Rank'] : 'Unranked';
+                const basicNeeds = target ? target['Basic Human Needs'] : '';
+                const foundations = target ? target['Foundations of Wellbeing'] : '';
+                const opportunity = target ? target['Opportunity'] : '';
                 return (
                   <Geography
                     key={geo.rsmKey}
@@ -93,6 +96,9 @@ const MapChart = ({ setTooltipContent, data, year }) => {
                           `${NAME}, <br/>
                           Population, ${rounded(POP_EST)}, <br/>
                           Social Progress Index: ${SCORE}, <br/>
+                          Basic Human Needs: ${basicNeeds}, <br/>
+                          Foundations of Wellbeing: ${foundations}, <br/>
+                          Opportunity: ${opportunity}, <br/>
                           Global Rank: ${rank} in ${year} `);
                       });
                     }}
