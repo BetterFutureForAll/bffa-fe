@@ -26,7 +26,6 @@ export const useYears = () => {
 export const useHandleYearChange = () => {
   let [yearValue, setYearValue] = useState('2020');
   let handleYearChange = (e) => {
-    console.log(e);
     setYearValue(e.target.value);
   };
   useEffect(() => {
@@ -49,17 +48,36 @@ export function scoreToColor(score) {
   let scoreColor = d3.scaleLinear()
     .domain([0, 0, 100])
     .range([
-      'c4c2c4',
-      '#a8ddb5',
-      '#7bccc4',
-      '#ccebc5',
-      '#4eb3d3',
-      '#2b8cbe',
+      '#c4c2c4',
+      '#ffe479',
+      // '#ccebc5',
+      // '#a8ddb5',
+      // '#7bccc4',
+      // '#4eb3d3',
+      // '#2b8cbe',
       '#08589e',
     ]);
 
   return scoreColor(score);
 }
+
+export const loopAnimator = (years) => {
+  console.log('Button Clicked');
+  var i = 1;                  
+  function yearLoop() {        
+    setTimeout(function() {   
+      //  increment the counter
+      i++;
+      if(i < years.length) {           
+        yearLoop();
+      }                     
+      //  ..  setTimeout()
+    }, 1500);
+  }
+  return yearLoop(); 
+};
+
+
 
 
 // export const colorMaker = () => {
