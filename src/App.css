@@ -1,5 +1,6 @@
 .App {
   text-align: center;
+  position: relative;
 }
 
 .App-logo {
@@ -15,7 +16,9 @@
 
 .App-header {
   display: flex;
-  position: sticky;
+  position: fixed;
+  top: 0;
+  width: 100%;
   justify-content: center;
   background-color:lightblue;
 }
