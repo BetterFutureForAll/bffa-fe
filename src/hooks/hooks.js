@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { makeYearsArray, getSpiDataByYear } from '../services/SocialProgress';
 import * as d3 from 'd3';
 
@@ -15,7 +15,7 @@ export const useScore = () => {
 export const useYears = () => {
   let [years, setYears] = useState([]);
   useEffect(() => {
-    if(years.length < 1 || !years) {
+    if (years.length < 1 || !years) {
       makeYearsArray()
         .then(parsedYears => setYears(parsedYears));
     }
@@ -43,60 +43,68 @@ export const useDataByYear = (yearValue) => {
   return [spiByYear, setSpiByYear];
 };
 
+export const useLoopAnimator = (yearsArr) => {
+  let [animatedYears, setAnimatedYears] = useState('2020');
+  
+  let loopWrapper = useCallback(() => {
+    function yearLoop() {
+      var i = 1;
+      setTimeout(function () {
+        //  increment the counter
+        i++;
+        if (i < yearsArr.length) {
+          yearLoop();
+        }
+        //  ..  setTimeout()
+      }, 1500);
+    }
+    yearLoop();
+  }, [yearsArr]);
+  
+  useEffect(() => {
+    let handleAnimationChange = () => {
+      loopWrapper(yearsArr);
+      setAnimatedYears(loopWrapper);
+    };
+    handleAnimationChange(animatedYears);
+  }, [animatedYears, loopWrapper, yearsArr]);
+  return [animatedYears];
+};
 
 export function scoreToColor(score) {
+  // console.log('data = ' + data['Social Progress Index']);
+  // console.log('Score = ' + score);
   let scoreColor = d3.scaleLinear()
-    .domain([0, 0, 100])
+    .domain([0, 20, 40, 60, 80, 90, 100])
     .range([
       '#c4c2c4',
-      '#ffe479',
-      // '#ccebc5',
-      // '#a8ddb5',
-      // '#7bccc4',
-      // '#4eb3d3',
-      // '#2b8cbe',
-      '#08589e',
+      '#f64c5c',
+      '#c574fb',
+      '#7484fb',
+      '#00e4fb',
+      '#00eb9b',
+      '#20c30f'
     ]);
-
   return scoreColor(score);
 }
 
-export const loopAnimator = (years) => {
-  console.log('Button Clicked');
-  var i = 1;                  
-  function yearLoop() {        
-    setTimeout(function() {   
-      //  increment the counter
-      i++;
-      if(i < years.length) {           
-        yearLoop();
-      }                     
-      //  ..  setTimeout()
-    }, 1500);
-  }
-  return yearLoop(); 
-};
 
+//Green: #90eb00
+//Blue:#00e4fb
+//Red: #f64c5c
 
+// '#c4c2c4',
+// '#ffe479',
+// // '#ccebc5',
+// '#a8ddb5',
+// '#7bccc4',
+// '#4eb3d3',
+// // '#2b8cbe',
+// '#08589e',
 
-
-// export const colorMaker = () => {
-//   const { NAME, ISO_A3 } = geo.properties;
-//   let color = getScore(NAME, ISO_A3, data).then((SCORE) =>
-//   scoreToColor(SCORE));
-//   let coloredStyle = {
-//     default: {
-//       fill: `${color}`,
-//       outline: "none"
-//     },
-//     hover: {
-//       fill: "#F53",
-//       outline: "none"
-//     },
-//     pressed: {
-//       fill: "#E42",
-//       outline: "none"
-//     }
-//   };
-//   return coloredStyle;
-// };
+// #f64c5c,
+// #c574fb,
+// #7484fb,
+// #00e4fb,
+// #00eb9b,
+// #90eb00

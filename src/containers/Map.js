@@ -1,13 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import MapChart from '../components/MapChart';
 import ReactTooltip from 'react-tooltip';
 import Header from '../components/Header';
-
 import { 
   useHandleYearChange, 
   useYears, useContent, 
   useDataByYear,
-  loopAnimator
+  useLoopAnimator
   // handleAnimateClick
 } from '../hooks/hooks';
 
@@ -18,28 +17,23 @@ function MapContainer() {
   let [yearValue, handleYearChange] = useHandleYearChange();
   let [spiByYear]  = useDataByYear(yearValue);
   let [animated, setAnimated] = useState(false);
+  let [animatedYears, handleAnimationChange] = useLoopAnimator(years); 
 
   let handleSubmit = (e) => {
     e.preventDefault();
   };
-  let handleAnimateClick = (e) => {
-    e.preventDefault();
+
+  let handleAnimateClick = () => {
+    // e.preventDefault();
     setAnimated(!animated);
-    console.log(animated);
-    console.log(years);
-    console.log(animatedYears());
+    // handleAnimationChange();
+    console.log('Button Clicked');
   };
 
-  /* //ternary here?   animated ? animatedYears : userYears */
-
-  let animatedYears = () => {
-    loopAnimator(years);
-  };
-  
-
+  //ternary here?   animated ? animatedYears : userYears 
   let selectYears = (
     <>
-      <select onChange={handleYearChange} defaultValue={yearValue} onSubmit={handleSubmit} >
+      <select onChange={handleYearChange} defaultValue={animated ? animatedYears : yearValue} onSubmit={handleSubmit} >
         {years.map(item => (
           <option
             key={item}
@@ -50,7 +44,7 @@ function MapContainer() {
           </option>
         ))}
       </select>
-      <button onClick={handleAnimateClick} value={yearValue}>Animate Years</button>
+      {/* <button onClick={handleAnimateClick} value={yearValue}>Animate Years</button> */}
     </>
   );
         
@@ -68,9 +62,16 @@ function MapContainer() {
       <MapChart 
         setTooltipContent={setContent} 
         data={spiByYear} 
-        year={yearValue}
+        year={animated ? animatedYears : yearValue}
         id="MapChart" />
-      <ReactTooltip html={true}>{content}</ReactTooltip>
+      <ReactTooltip 
+        className={"Tooltip"} 
+        backgroundColor={"lightblue"}
+        textColor={"black"}
+        border={true}
+        html={true}>
+          {content}
+        </ReactTooltip>
     </div>
 
   );
