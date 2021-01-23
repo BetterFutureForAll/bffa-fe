@@ -1,5 +1,11 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { makeYearsArray, getSpiDataByYear } from '../services/SocialProgress';
+import { 
+        makeYearsArray,
+        getSpiDataByYear, 
+        makeCountriesArray, 
+        getSpiDataByCountry 
+      } 
+from '../services/SocialProgress';
 import * as d3 from 'd3';
 
 export const useContent = () => {
@@ -34,6 +40,27 @@ export const useHandleYearChange = () => {
   return [yearValue, handleYearChange];
 };
 
+export const useCountries = () => {
+  let [countries, setCountries] = useState([]);
+  useEffect(() => {
+    if (countries.length < 1 || !countries) {
+      makeCountriesArray()
+        .then(parsedCountries => setCountries(parsedCountries));
+    }
+  }, [countries]);
+  return [countries, setCountries];
+};
+export const useHandleCountryChange = () => {
+  let [countryValue, setCountryValue] = useState('');
+  let handleCountryChange = (e) => {
+    setCountryValue(e.target.value);
+  };
+  useEffect(() => {
+    setCountryValue(countryValue);
+  }, [countryValue]);
+  return [countryValue, handleCountryChange];
+};
+
 export const useDataByYear = (yearValue) => {
   let [spiByYear, setSpiByYear] = useState([]);
   useEffect(() => {
@@ -41,6 +68,15 @@ export const useDataByYear = (yearValue) => {
       .then(d => setSpiByYear(d));
   }, [yearValue]);
   return [spiByYear, setSpiByYear];
+};
+
+export const useDataByCountry = (countryValue) => {
+  let [spiByCountry, setSpiByCountry] = useState([]);
+  useEffect(() => {
+    getSpiDataByCountry(countryValue)
+      .then(d => setSpiByCountry(d));
+  }, [countryValue]);
+  return [spiByCountry, setSpiByCountry];
 };
 
 export const useLoopAnimator = (yearsArr) => {

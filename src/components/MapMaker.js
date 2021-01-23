@@ -1,19 +1,22 @@
+import React, { useEffect } from 'react';
 import * as d3 from 'd3';
 import * as topojson from "topojson-client";
 
 
-export default function visualization() {
+
+const MapMaker = (data) => {
 
   var margin = { top: 50, left: 50, right: 50, bottom: 50 },
     height = 400 - margin.top - margin.bottom,
     width = 800 - margin.right - margin.left;
 
   var svg = d3.select("#map")
-    .append("svg")
-    .attr("height", height + margin.top + margin.bottom)
-    .attr("width", width + margin.left + margin.right)
-    .append("g")
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+  .append("svg")
+  .attr("height", height + margin.top + margin.bottom)
+  .attr("width", width + margin.left + margin.right)
+  .append("g")
+  .attr("transform", "translate(" + margin.left + "," + margin.top + ")");;
+
 
   // import topoJSON and CSV here
   // Possibly use a remote hosted topoJSON file
@@ -21,10 +24,7 @@ export default function visualization() {
   
   console.log(world.objects.countries);
 
-  d3.json(world).then((d)=>{
-    console.log(d);
-    ready()
-  })
+
 
 
   // Projection is created here, round globe to flat monitor.
@@ -38,7 +38,6 @@ export default function visualization() {
   function ready(error, data) {
     console.log(data)
     var countries = topojson.feature(data, data.objects.countries).features
-
     svg.selectAll(".country")
       .data(countries)
       .enter().append("path")
@@ -48,5 +47,16 @@ export default function visualization() {
       .attr("d", path)
 
   }
+  useEffect(() => {
+    d3.json(world).then((d)=>{
+      console.log(d);
+      ready()
+    })
+  });
 
+  return (
+    <svg id="map"></svg>
+  );
 };
+
+export default MapMaker;

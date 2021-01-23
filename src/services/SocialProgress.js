@@ -37,6 +37,19 @@ export async function makeYearsArray() {
   });
   return years;
 }
+export async function makeCountriesArray() {
+  let countries = [];
+  await spi2020.then(function(data) {
+    data.forEach((element) => {
+      if(element['Country']) {
+        if(!countries.includes(element['Country'])) {
+          countries.push(element['Country']);
+        }
+      }
+    });
+  });
+  return countries;
+}
 
 export async function getSpiDataByYear(year) {
   return spi2020.then(function(data) {
@@ -47,6 +60,15 @@ export async function getSpiDataByYear(year) {
   });
 }
 
+export async function getSpiDataByCountry(data, countryValue) {
+  // console.log(data);
+  // return data(function(d) {
+    let result = data.filter(function(d) {
+      return d[countryValue] === countryValue;
+    });
+    return result; 
+};
+
 export async function getScore(NAME, ISO_A3, data) {
   var score = 'Score not Found';
   data.filter((element) => {
@@ -56,5 +78,9 @@ export async function getScore(NAME, ISO_A3, data) {
     return score;
   });
   return score;
+}
+
+export async function getCountry(data) {
+  return data.find(t => t['Country'])
 }
 

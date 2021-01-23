@@ -6,9 +6,9 @@ import {
   useHandleYearChange, 
   useYears, useContent, 
   useDataByYear,
-  useLoopAnimator
-  // handleAnimateClick
 } from '../hooks/hooks';
+import FlowerMaker from '../components/FlowerMaker';
+import MapMaker from '../components/MapMaker';
 
 function MapContainer() {
 
@@ -16,24 +16,10 @@ function MapContainer() {
   let [content, setContent] = useContent();
   let [yearValue, handleYearChange] = useHandleYearChange();
   let [spiByYear]  = useDataByYear(yearValue);
-  let [animated, setAnimated] = useState(false);
-  let [animatedYears, handleAnimationChange] = useLoopAnimator(years); 
 
-  let handleSubmit = (e) => {
-    e.preventDefault();
-  };
-
-  let handleAnimateClick = () => {
-    // e.preventDefault();
-    setAnimated(!animated);
-    // handleAnimationChange();
-    console.log('Button Clicked');
-  };
-
-  //ternary here?   animated ? animatedYears : userYears 
   let selectYears = (
     <>
-      <select onChange={handleYearChange} defaultValue={animated ? animatedYears : yearValue} onSubmit={handleSubmit} >
+      <select onChange={handleYearChange} defaultValue={yearValue} >
         {years.map(item => (
           <option
             key={item}
@@ -44,34 +30,32 @@ function MapContainer() {
           </option>
         ))}
       </select>
-      {/* <button onClick={handleAnimateClick} value={yearValue}>Animate Years</button> */}
     </>
   );
         
-  // animated ? animatedYears : selectYears
-
   return (
     <div id="MapContainer" >
       <div className="App-header">
         <Header 
           selectYears={selectYears} 
           yearValue={yearValue} 
-          onSubmit={handleSubmit} 
         />
       </div>
-      <MapChart 
+      <FlowerMaker spiByYear={spiByYear}></FlowerMaker>
+      {/* <MapMaker></MapMaker> */}
+      {/* <MapChart 
         setTooltipContent={setContent} 
         data={spiByYear} 
-        year={animated ? animatedYears : yearValue}
+        year={yearValue}
         id="MapChart" />
-      <ReactTooltip 
+        <ReactTooltip 
         className={"Tooltip"} 
-        backgroundColor={"lightblue"}
+        backgroundColor={"lightgrey"}
         textColor={"black"}
         border={true}
         html={true}>
-          {content}
-        </ReactTooltip>
+        {content}
+      </ReactTooltip> */}
     </div>
 
   );
