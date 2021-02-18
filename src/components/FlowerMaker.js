@@ -29,143 +29,46 @@ const FlowerMaker = ({ spiByYear }) => {
 
 // ********************************Different Example here *************************
 
-var data = d3.csv(spiByYear, function(d) {
-  d.map(function(x){
-      x.spiScore = x['Social Progress Index'],
-      x.basicNeeds = x['Basic Human Needs'],
-      x.opportunity = x['Opportunity']
-      let minY = (x) = d3.min(x, function(d) { return d.x});
-      let maxY = (x) = d3.max(x, function(d) { return d.x});
-      return [x, minY, maxY];
-    });
-})
 
-let chart = (width, height) => {
+// Data imported here, needs to be cleaned up (strings to numbers etc)
+let data = d3.csv(spiByYear).then(d => 
+  //get the values of the data points we want here.
+      values(d)
+  );
 
-  const svg = d3.select("my-svg".svg(width, height))
-      .attr("viewBox", `${-width / 2} ${-height / 2} ${width} ${height}`)
-      .style("width", "100%")
-      .style("height", "auto")
-      .style("font", "10px sans-serif");
+let SVG = d3.select("my-svg");
+let path = 
+"M550.25,378.1c0,0-14.33-33.61-62.27-44.08c-45.95-10.03-56.21-35.82-57.26-38.83v-0.3c0,0-0.02,0.06-0.05,0.15"
+"				c-0.03-0.09-0.05-0.15-0.05-0.15v0.3c-1.05,3.01-11.31,28.79-57.26,38.83c-47.94,10.47-62.27,44.08-62.27,44.08"
+"				s-20.51,32.52,26.92,84.45c9.92,10.86,92.63,106.57,92.63,106.57s82.54-97.85,93.63-108.29"
+"				C573.42,414.54,550.25,378.1,550.25,378.1z M505.82,460.24c-9.12,8.59-77.03,89.09-77.03,89.09s-68.04-78.74-76.2-87.67"
+"				c-39.02-42.72-22.14-69.47-22.14-69.47s11.79-27.65,51.22-36.27c37.8-8.26,46.24-29.47,47.11-31.94v-0.24"
+"				c0,0,0.02,0.05,0.04,0.12c0.02-0.07,0.04-0.12,0.04-0.12v0.24c0.87,2.48,9.31,23.69,47.11,31.94"
+"				c39.44,8.61,51.22,36.27,51.22,36.27S546.26,422.16,505.82,460.24z";
 
-  svg.append("g")
-    .selectAll("g")
-    .data(d3.stack().keys(data.columns.slice(1))(data))
-    .join("g")
-      .attr("fill", d => z(d.key))
-    .selectAll("path")
-    .data(d => d)
-    .join("path")
-      .attr("d", arc);
+const numPetalScale = d3.scaleQuantize().domain(/* Data Point  */).range([/*n umber of petals */]);
 
-  svg.append("g")
-      .call(xAxis);
+// orient a flower object, and iterate the data to create the size.
+const flowersData = _.map(data, d => {
+  const numPetals = numPetalScale(+d./*data point */);
+  console.log(numPetals);
+  const petSize = sizeScale(+d./* scores */); 
+  return {
+    petSize, 
+    petals: _.times(numPetals, i => {return {angle: 360 * i / numPetals, petalPath}}),
+    numPetals,
+  }
+});  
 
-  svg.append("g")
-      .call(yAxis);
 
-  svg.append("g")
-      .call(legend);
-
-  return svg.node();
-};
-
-// async function data() { 
-//   d3.csvParse(await hardData.text(), (d, _, columns) => {
-//   let total = 0;
-//   for (let i = 1; i < columns.length; ++i) total += d[columns[i]] = +d[columns[i]];
-//   d.total = total;
-//   return d;
-//   })
-// };
-
-// async function data() { d3.csvParse(await (hardData)) };
-
-let x = d3.scaleBand()
-.domain(data.map(d => d.State))
-.range([0, 2 * Math.PI])
-.align(0)
-
-let arc = d3.arc()
-.innerRadius(d => y(d[0]))
-.outerRadius(d => y(d[1]))
-.startAngle(d => x(d.data.State))
-.endAngle(d => x(d.data.State) + x.bandwidth())
-.padAngle(0.01)
-.padRadius(innerRadius)
-
-let y = d3.scaleRadial()
-      .domain([0, d3.max(data, d => d.total)])
-      .range([innerRadius, outerRadius])
-let z = d3.scaleOrdinal()
-    .domain(data.columns.slice(1))
-    .range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"])
-
-let xAxis = g => g
-    .attr("text-anchor", "middle")
-    .call(g => g.selectAll("g")
-      .data(data)
-      .join("g")
-        .attr("transform", d => `
-          rotate(${((x(d.State) + x.bandwidth() / 2) * 180 / Math.PI - 90)})
-          translate(${innerRadius},0)
-        `)
-        .call(g => g.append("line")
-            .attr("x2", -5)
-            .attr("stroke", "#000"))
-        .call(g => g.append("text")
-            .attr("transform", d => (x(d.State) + x.bandwidth() / 2 + Math.PI / 2) % (2 * Math.PI) < Math.PI
-                ? "rotate(90)translate(0,16)"
-                : "rotate(-90)translate(0,-9)")
-            .text(d => d.State)))
-
-  let yAxis = g => g
-  .attr("text-anchor", "middle")
-  .call(g => g.append("text")
-      .attr("y", d => -y(y.ticks(5).pop()))
-      .attr("dy", "-1em")
-      .text("Population"))
-  .call(g => g.selectAll("g")
-    .data(y.ticks(5).slice(1))
-    .join("g")
-      .attr("fill", "none")
-      .call(g => g.append("circle")
-          .attr("stroke", "#000")
-          .attr("stroke-opacity", 0.5)
-          .attr("r", y))
-      .call(g => g.append("text")
-          .attr("y", d => -y(d))
-          .attr("dy", "0.35em")
-          .attr("stroke", "#fff")
-          .attr("stroke-width", 5)
-          .text(y.tickFormat(5, "s"))
-       .clone(true)
-          .attr("fill", "#000")
-          .attr("stroke", "none")))
-
-  let legend = g => g.append("g")
-  .selectAll("g")
-  .data(data.columns.slice(1).reverse())
-  .join("g")
-    .attr("transform", (d, i) => `translate(-40,${(i - (data.columns.length - 1) / 2) * 20})`)
-    .call(g => g.append("rect")
-        .attr("width", 18)
-        .attr("height", 18)
-        .attr("fill", z))
-    .call(g => g.append("text")
-        .attr("x", 24)
-        .attr("y", 9)
-        .attr("dy", "0.35em")
-        .text(d => d))
 useEffect(()=> {
   console.log(data);
-  chart();
 }, [spiByYear]);
 
   return (
       <div id="FlowerMaker">
         <h2>{selectCountries}</h2>
-        <svg id="my-svg"></svg>
+        <svg id="my-svg" d={petalPath}></svg>
       </div>
     );
 }
