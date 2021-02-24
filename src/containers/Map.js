@@ -42,8 +42,7 @@ function MapContainer() {
         />
       </div>
       <FlowerMaker spiByYear={spiByYear}></FlowerMaker>
-      {/* <MapMaker></MapMaker> */}
-      <MapChart 
+      {/* <MapChart 
         setTooltipContent={setContent} 
         data={spiByYear} 
         year={yearValue}
@@ -55,7 +54,7 @@ function MapContainer() {
         border={true}
         html={true}>
         {content}
-      </ReactTooltip>
+      </ReactTooltip> */}
     </div>
 
   );
