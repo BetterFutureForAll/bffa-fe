@@ -8,17 +8,17 @@ const DrawFlowers = ({ spiByYear }) => {
   let data = _.values(spiByYear);
   let SVG = d3.select('#my-svg');
 
-  let height = '500px';
-  let width = '500px';
-  let petalSize = 100;
+  let height = '1000px';
+  let width = '1000px';
+  let petalSize = 50;
   let petalPath = 'M 0,0 C -10,-10 -10,-40 0,-50 C 10,-40 10,-10 0,0';
 
   // SPI Score determines Number of Petals, Basic Needs is Size of each Petal.
   const basicMinMax = d3.extent(data, d => +d["Basic Human Needs"]);
   const spiMinMax = d3.extent(data, d => +d["Social Progress Index"]);
-  const sizeScale = d3.scaleLinear().domain(basicMinMax).range([0, 100]);
+  const sizeScale = d3.scaleLinear().domain(basicMinMax).range([0, 10]);
 
-  const numPetalScale = d3.scaleQuantize().domain(spiMinMax).range([1, 3, 4, 6, 9, 12]);
+  const numPetalScale = d3.scaleQuantize().domain(spiMinMax).range([3, 4, 6, 9, 12]);
 
   // orient a flower object, and iterate the data to create the size.
 
@@ -45,7 +45,9 @@ const DrawFlowers = ({ spiByYear }) => {
       .data(flowersData)
       .enter()
       .append('g')
-      .attr('transform', (d, i) => `translate(${(i % 5) * petalSize},${Math.floor(i / 5) * petalSize})scale(${d.petSize})`);
+      .attr('transform', (d, i) => `translate(${(i % 5) * petalSize},${Math.floor(i / 5) * petalSize})scale(${(2 / d.petSize)})`)      
+      // .append('text')
+      // .text((d) => d.name)
       
     flowers.selectAll('path')
       .data(d => d.petals)
@@ -54,6 +56,7 @@ const DrawFlowers = ({ spiByYear }) => {
       .attr('d', d => d.petalPath)
       .attr('transform', d => `rotate(${d.angle})`);
 
+
     return SVG;
   };
 
@@ -61,8 +64,8 @@ const DrawFlowers = ({ spiByYear }) => {
     drawFlowers();
     console.log(data);
     console.log(flowersData);
-  }, [flowersData]);
+  }, [spiByYear, flowersData]);
 
-  return <svg id="my-svg" height={height} width={width} ><path transform="translate(2.5,5.0)" d={petalPath}/></svg>;
+  return <svg id="my-svg" height={height} width={width} ><path transform="translate(25,50)" d={petalPath}/></svg>;
 };
 export default DrawFlowers;
