@@ -20,7 +20,7 @@ const FlowerMaker = ({ spiByYear }) => {
   return (
       <div id="FlowerMaker">
         <h2>{selectCountries}</h2>
-        <DrawFlowers spiByYear={spiByYear}></DrawFlowers>
+        <DrawFlowers spiByYear={spiByYear} countryValue={countryValue} ></DrawFlowers>
       </div>
     );
 }
