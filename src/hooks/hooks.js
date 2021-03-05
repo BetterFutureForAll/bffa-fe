@@ -111,16 +111,23 @@ export function scoreToColor(score) {
   // console.log('data = ' + data['Social Progress Index']);
   // console.log('Score = ' + score);
   let scoreColor = d3.scaleLinear()
-    .domain([0, 20, 40, 60, 80, 90, 100])
+    .domain([0, 50, 100])
     .range([
-      '#c4c2c4',
-      '#f64c5c',
-      '#c574fb',
-      '#7484fb',
-      '#00e4fb',
-      '#00eb9b',
-      '#20c30f'
+      '#00FF00',
+      '#0000FF',
+      '#9000FF',
+      // '#FF0000'
+
     ]);
+    // .range([
+    //   '#c4c2c4',
+    //   '#f64c5c',
+    //   '#c574fb',
+    //   '#7484fb',
+    //   '#00e4fb',
+    //   '#00eb9b',
+    //   '#20c30f'
+    // ]);
   return scoreColor(score);
 }
 
