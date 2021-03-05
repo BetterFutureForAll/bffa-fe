@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import * as d3 from 'd3';
+import { scoreToColor } from '../hooks/hooks';
 var _ = require('lodash');
 
 const DrawFlowers = ({ spiByYear, countryValue }) => {
@@ -10,12 +11,9 @@ const DrawFlowers = ({ spiByYear, countryValue }) => {
 
   let height = '1000px';
   let width = '1000px';
-  let petalSize = 50;
+  let petalSize = 75;
 
-  // let petalPath = `M0,0 C-5,15 -50,1 -45,40 -C40,70 -10,80 -0,100 C10,80 40,70 45,40 C50,1 5,15 0,0`;
-
-  // let petalPath = 'M0,0 C50,40 50,70 20,100 L0,85 L-20,100 C-50,70 -50,40 0,0';
-  let petalPath = 'M0,0 40 20 A 20 20 0 0 1 20 40';
+  let petalPath = 'M 0 0 c 0 75 37 40 45 45 C 40 37 75 0 0 0';
 
   // SPI Score determines Number of Petals, Basic Needs is Size of each Petal.
   const spiMinMax = d3.extent(data, d => +d["Social Progress Index"]);
@@ -48,11 +46,12 @@ const DrawFlowers = ({ spiByYear, countryValue }) => {
     // petals change to reflect 3 categories (basic needs etc)
     return {
       petals: [
-        { angle: -20, petalPath, petSize: basicSize }, 
-        { angle: 100, petalPath, petSize: foundationSize }, 
-        { angle: 220, petalPath, petSize: oppSize}
+        { angle: -20, petalPath, petSize: basicSize, colorRef: basicNeeds }, 
+        { angle: 100, petalPath, petSize: foundationSize, colorRef: foundations }, 
+        { angle: 220, petalPath, petSize: oppSize, colorRef: opportunity}
       ],
-      spi: spiSize,
+      spiScale: spiSize,
+      spi,
       name: d["Country"],
       status: d["Status"]
     }
@@ -76,6 +75,10 @@ const DrawFlowers = ({ spiByYear, countryValue }) => {
     }
   };
 
+  let circleColor = (d) => {
+    return scoreToColor(d.spi);
+  }
+
   async function drawFlowers() {
     function name(d) {
       return d.name;
@@ -85,28 +88,60 @@ const DrawFlowers = ({ spiByYear, countryValue }) => {
       .data(flowersData, name)
       .enter()
       .append('g')
-      // .select(function(d) { return d.name === countryValue })
-      // .filter(function(d) { return d.status==="Ranked" })
       .attr('transform', (d, i) => `translate(${(i % 10) * petalSize * 2 + petalSize},${Math.floor(i / 10) * petalSize * 2 + petalSize})`)
 
-    flowers
-      .append('text')
-      .attr('class', 'name')
-      .attr('transform', (d,i) => `translate(0, ${petalSize})`)
-      .text(d => { return d.name});
+      //outer circle
+      flowers
+        .append('circle')
+        .attr('id', 'outer')
+        .attr('cx', 0 )
+        .attr('cy', 0 )
+        .attr('r', petalSize)
+        .style('fill', '#c4c2c4');   
 
-    flowers.selectAll('path')
-      .data(d => d.petals)
-      .enter()
-      .append('path')
-      .attr('d', d => d.petalPath)
-      .attr('transform', d => `rotate(${d.angle}) scale(${d.petSize})`);
-    
-    flowers
-      .append('circle');
-    
-    // circles.selectAll('circle')
-    // .data(d => d.spi)
+        
+        //inner circle color determined by SPI score.
+        flowers
+        .append('circle')
+        .attr('cx', 0 )
+        .attr('cy', 0 )
+        .attr('r', d=> petalSize * d.spiScale)
+        .style('fill', d=>{ return scoreToColor(d.spi)})
+        
+        flowers.selectAll('path')
+        .data(d => d.petals)
+        .enter()
+        .append('path')
+        .attr('d', d => d.petalPath)
+        .attr('transform', d => `rotate(${d.angle}) scale(${d.petSize})`)
+        .style('stroke', 'black')
+        .style('fill', d=>{ return scoreToColor(d.colorRef)})        
+        
+        // Add a rectangle to display name/numerics
+        flowers
+        .append('rect')
+        .attr("width", petalSize * 2)
+        .attr("height", petalSize * .25)
+        .attr('transform', `translate(-${(petalSize)},-${petalSize})`)
+        .style('fill', 'white')
+
+        //name
+        flowers
+          .append('text')
+          .attr('class', 'name')
+          .attr('transform', (d,i) => `translate(-${(petalSize)},-${petalSize * .75})`)
+          .text(d => { return d.name });
+        
+        //add score to inner circle
+        flowers
+        .append('text')
+        .attr('class', 'score') 
+        .attr('transform', `translate(0,-${petalSize}) scale(${petalSize / 100})`)
+        // .attr('transform', (d,i) => `scale(${petalSize / 100})`) 
+        .text(d => { return d.spi });
+        
+    // flowers.selectAll('circle')
+    // .data(d => d.spiScale)
     // .attr("r", function(d) { return d })
 
 
