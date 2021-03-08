@@ -1,17 +1,14 @@
 /* eslint-disable quotes */
-import React, { memo, useEffect, useState } from "react";
+import React, { memo } from "react";
 import {
   ZoomableGroup,
   ComposableMap,
   Geographies,
   Geography
 } from "react-simple-maps";
-import { getScore } from '../services/SocialProgress';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import * as d3 from 'd3';
 import { scoreToColor } from '../hooks/hooks';
-import FlowerMaker from './FlowerMaker';
 
 const geoUrl =
   "https://raw.githubusercontent.com/zcreativelabs/react-simple-maps/master/topojson-maps/world-110m.json";
@@ -55,10 +52,7 @@ const MapChart = ({ setTooltipContent, data, year }) => {
                     key={geo.rsmKey}
                     geography={geo}
                     onMouseEnter={() => {
-                      const { NAME, POP_EST, ISO_A3 } = geo.properties;
-                      console.log(target);
-                      let Flower = <FlowerMaker data={data}></FlowerMaker>;
-
+                      const { NAME, POP_EST } = geo.properties;
                       let card = 
                       `<h2>${NAME}</h2><b>
                       Population: ${rounded(POP_EST)}, <br/>
