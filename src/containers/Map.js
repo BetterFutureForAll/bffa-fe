@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import MapChart from '../components/MapChart';
 import ReactTooltip from 'react-tooltip';
 import Header from '../components/Header';
@@ -6,21 +6,30 @@ import {
   useHandleYearChange, 
   useYears, useContent, 
   useDataByYear, useCountries, 
-  useHandleCountryChange,
-  useD3
+  useHandleCountryChange, useFlowers, 
+  useSingleFlower, useDataByCountry, useD3
 } from '../hooks/hooks';
 import { useFlowersData } from '../hooks/flowerHook';
-import FlowerMaker from '../components/FlowerMaker';
+import DrawFlowers from '../components/DrawFlowers';
+import { spi2020 } from '../services/SocialProgress';
+import { svg } from 'd3';
 
 function MapContainer() {
+  const svgRef = useRef(null);
+  let petalSize = 50;
+
+  let [content, setContent] = useContent();
 
   let [years] = useYears();
-  let [content, setContent] = useContent();
   let [yearValue, handleYearChange] = useHandleYearChange();
   let [spiByYear]  = useDataByYear(yearValue);
-  let [flowersData] = useFlowersData(spiByYear);
+
   let [countries] = useCountries();
   let [countryValue, handleCountryChange] = useHandleCountryChange();
+  let [spiByCountry] = useDataByCountry(spiByYear, countryValue);
+
+  // let [flowersData] = useFlowersData(spiByCountry);
+  // let [flowers, setFlowers] = useFlowers(flowersData, svgRef, petalSize)
 
   let selectYears = (
     <>
@@ -47,9 +56,9 @@ function MapContainer() {
       ))}
     </select>
     );
-
         
   return (
+    <>
     <div id="MapContainer" >
       <div className="App-header">
         <Header 
@@ -63,6 +72,9 @@ function MapContainer() {
         setTooltipContent={setContent} 
         data={spiByYear} 
         year={yearValue}
+        handleCountryChange={handleCountryChange}
+        countryValue={countryValue}
+        svgRef={svgRef}
         id="MapChart" />
         <ReactTooltip 
         className={"Tooltip"} 
@@ -70,17 +82,11 @@ function MapContainer() {
         textColor={"black"}
         border={true}
         html={true}>
-        {content}
+      {content}
       </ReactTooltip>
-      <FlowerMaker 
-        flowerData={flowersData} 
-        countries={countries}
-        countryValue={countryValue}
-        handleCountryChange={handleCountryChange}
-        useD3={useD3}
-      />
-    </div>
+  </div>
 
+</>
   );
 }
 

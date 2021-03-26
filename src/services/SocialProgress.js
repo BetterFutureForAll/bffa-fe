@@ -61,12 +61,9 @@ export async function getSpiDataByYear(year) {
 }
 
 export async function getSpiDataByCountry(data, countryValue) {
-  // console.log(data);
-  // return data(function(d) {
-    let result = data.filter(function(d) {
-      return d[countryValue] === countryValue;
-    });
-    return result; 
+  let countries = d3.group(data, d => d['Country']);
+  // console.log('Country Changed', countries.get(countryValue));
+  return countries.get(countryValue);
 };
 
 export async function getScore(NAME, ISO_A3, data) {
@@ -80,7 +77,5 @@ export async function getScore(NAME, ISO_A3, data) {
   return score;
 }
 
-export async function getCountry(data) {
-  return data.find(t => t['Country'])
-}
+
 

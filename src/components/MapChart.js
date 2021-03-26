@@ -1,5 +1,8 @@
 /* eslint-disable quotes */
 import React, { memo } from "react";
+import ReactDOM from 'react-dom';
+import { ReactDOMServer } from 'react-dom/server';
+
 import {
   ZoomableGroup,
   ComposableMap,
@@ -9,6 +12,7 @@ import {
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { scoreToColor } from '../hooks/hooks';
+import DrawFlowers from "./DrawFlowers";
 
 const geoUrl =
   "https://raw.githubusercontent.com/zcreativelabs/react-simple-maps/master/topojson-maps/world-110m.json";
@@ -24,9 +28,13 @@ const rounded = num => {
 };
 
 
-const MapChart = ({ setTooltipContent, data, year }) => {
+
+
+const MapChart = ({ setTooltipContent, data, year, svgRef, countryValue }) => {
 
   let notFound = `SPI Score Unavailable for ${year}`;
+
+
 
   return (
     <>
@@ -45,14 +53,27 @@ const MapChart = ({ setTooltipContent, data, year }) => {
                 const foundations = target ? target['Foundations of Wellbeing'] : notFound;
                 const opportunity = target ? target['Opportunity'] : notFound;
                 const SCORE = target ? target['Social Progress Index'] : notFound;
+                const countryTarget = target ? target['Country'] : undefined;
+              
                 // colorMaker(data, SCORE);
 
+
+                // const flowerTarget = flowers.find(t => t.name === geo.properties.NAME_LONG)
+
                 return (
+
                   <Geography
                     key={geo.rsmKey}
                     geography={geo}
                     onMouseEnter={() => {
+                      // console.log(flowerContent);
                       const { NAME, POP_EST } = geo.properties;
+                      console.log('target', countryTarget);
+                      let flowerCard = <DrawFlowers 
+                        svgRef={svgRef} 
+                        yearValue={year}
+                        countryValue={countryTarget}
+                        />;                 
                       let card = 
                       `<h2>${NAME}</h2><b>
                       Population: ${rounded(POP_EST)}, <br/>
@@ -60,8 +81,9 @@ const MapChart = ({ setTooltipContent, data, year }) => {
                       <p style="color:${scoreToColor(basicNeeds)}">Basic Human Needs: ${basicNeeds}, </p>
                       <p style="color:${scoreToColor(foundations)}">Foundations of Wellbeing: ${foundations}, </p>
                       <p style="color:${scoreToColor(opportunity)}">Opportunity: ${opportunity}, </p>
+                      <div> </div>
                       Global Rank: ${rank} in ${year} </b>`;
-
+                      console.log(flowerCard);
                       setTooltipContent(card);
                     }}
                     onMouseLeave={() => {
@@ -88,6 +110,15 @@ const MapChart = ({ setTooltipContent, data, year }) => {
           </Geographies>
         </ZoomableGroup>
       </ComposableMap>
+
+  <DrawFlowers 
+  spiByYear={data}
+  svgRef={svgRef} 
+  yearValue={year}
+  countryValue={countryValue}
+  />
+
+  
     </>
   );
 };
