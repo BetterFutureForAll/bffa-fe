@@ -1,9 +1,7 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect } from 'react';
 import * as d3 from 'd3';
 import { feature, mesh } from "topojson-client";
-import DrawFlowers from './DrawFlowers';
-import { scoreToColor } from '../hooks/hooks';
-import { getScore } from '../services/SocialProgress';
+
 
 const MapMaker = ({ clicked, setClicked, yearValue }) => {
 

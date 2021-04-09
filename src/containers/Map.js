@@ -10,7 +10,6 @@ import {
   useSingleFlower, useDataByCountry, useD3, useClicked
 } from '../hooks/hooks';
 import DrawFlowers from '../components/DrawFlowers';
-import ReactDOMServer from 'react-dom/server';
 import MapMaker from '../components/MapMaker';
 
 
@@ -37,9 +36,6 @@ function MapContainer() {
   let toolTipWrapper = (
     <DrawFlowers yearValue={yearValue} countryValue={countryValue}/>
     );
-
-  // let [flowersData] = useFlowersData(spiByCountry);
-  // let [flowers, setFlowers] = useFlowers(flowersData, svgRef, petalSize)
 
   let selectYears = (
     <>
