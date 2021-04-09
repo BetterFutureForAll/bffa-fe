@@ -13,6 +13,11 @@ export const useContent = () => {
   return [content, setContent];
 };
 
+export const useClicked = () => {
+  let [clicked, setClicked] = useState('World');
+  return [clicked, setClicked];
+}
+
 export const useScore = () => {
   let [score, setScore] = useState({ name: '', score: '' });
   return [score, setScore];

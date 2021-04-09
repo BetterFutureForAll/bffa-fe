@@ -7,12 +7,13 @@ import {
   useYears, useContent, 
   useDataByYear, useCountries, 
   useHandleCountryChange, useFlowers, 
-  useSingleFlower, useDataByCountry, useD3
+  useSingleFlower, useDataByCountry, useD3, useClicked
 } from '../hooks/hooks';
-import { useFlowersData } from '../hooks/flowerHook';
 import DrawFlowers from '../components/DrawFlowers';
-import { spi2020 } from '../services/SocialProgress';
-import { svg } from 'd3';
+import ReactDOMServer from 'react-dom/server';
+import MapMaker from '../components/MapMaker';
+
+
 
 function MapContainer() {
   const svgRef = useRef(null);
@@ -20,6 +21,7 @@ function MapContainer() {
 
   let [content, setContent] = useContent();
 
+  let [clicked, setClicked] = useClicked();
   let [years] = useYears();
   let [yearValue, handleYearChange] = useHandleYearChange();
   let [spiByYear]  = useDataByYear(yearValue);
@@ -27,6 +29,14 @@ function MapContainer() {
   let [countries] = useCountries();
   let [countryValue, handleCountryChange] = useHandleCountryChange();
   let [spiByCountry] = useDataByCountry(spiByYear, countryValue);
+
+  useEffect(()=>{
+    ReactTooltip.rebuild();
+  }, [countryValue, yearValue]);
+
+  let toolTipWrapper = (
+    <DrawFlowers yearValue={yearValue} countryValue={countryValue}/>
+    );
 
   // let [flowersData] = useFlowersData(spiByCountry);
   // let [flowers, setFlowers] = useFlowers(flowersData, svgRef, petalSize)
@@ -68,7 +78,7 @@ function MapContainer() {
           countryValue={countryValue}
         />
       </div>
-      <MapChart 
+      {/* <MapChart 
         setTooltipContent={setContent} 
         data={spiByYear} 
         year={yearValue}
@@ -81,9 +91,13 @@ function MapContainer() {
         backgroundColor={"lightgrey"}
         textColor={"black"}
         border={true}
-        html={true}>
-      {content}
-      </ReactTooltip>
+        html={true}
+        >
+          {content}
+      </ReactTooltip> */}
+      <MapMaker setClicked={setClicked} yearValue={yearValue} ></MapMaker>
+
+      <DrawFlowers yearValue={yearValue} countryValue={clicked} svgRef={svgRef} />
   </div>
 
 </>

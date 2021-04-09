@@ -66,13 +66,16 @@ export async function getSpiDataByCountry(data, countryValue) {
   return countries.get(countryValue);
 };
 
-export async function getScore(NAME, ISO_A3, data) {
+export async function getScore(ISO_A3, data) {
   var score = 'Score not Found';
+  if(!data || data === undefined) {
+    return 0;
+  }
   data.filter((element) => {
-    if(element['SPI country code'] === ISO_A3 || element.Country === NAME) {
+    if(element['SPI country code'] === ISO_A3) {
       return score = element['Social Progress Index'];
     }
-    return score;
+    else return 0;
   });
   return score;
 }

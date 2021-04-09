@@ -2,6 +2,7 @@
 import React, { memo } from "react";
 import ReactDOM from 'react-dom';
 import { ReactDOMServer } from 'react-dom/server';
+import * as d3 from 'd3';
 
 import {
   ZoomableGroup,
@@ -26,7 +27,7 @@ const rounded = num => {
     return Math.round(num / 100) / 10 + "K";
   }
 };
-
+let test = `<svg id="container" height="250" width="250"><svg viewBox="0 0 250 250" height="250" width="250" transform="translate(0,0)"><circle id="outer" cx="125" cy="125" r="125" style="fill: rgb(196, 194, 196);"></circle><circle cx="125" cy="125" r="80.3" style="fill: rgb(0, 229, 231);"></circle><path id="petalPath" d="M 0 0 c 0 75 37 40 45 45 C 40 37 75 0 0 0" transform="translate(125, 125) rotate(-20) scale(0.7465)" href="#petalPath" text-anchor="middle" style="stroke: black; fill: rgb(0, 233, 181);">74.65</path><path id="petalPath" d="M 0 0 c 0 75 37 40 45 45 C 40 37 75 0 0 0" transform="translate(125, 125) rotate(100) scale(0.6082)" href="#petalPath" text-anchor="middle" style="stroke: black; fill: rgb(0, 228, 247);">60.82</path><path id="petalPath" d="M 0 0 c 0 75 37 40 45 45 C 40 37 75 0 0 0" transform="translate(125, 125) rotate(220) scale(0.5725)" href="#petalPath" text-anchor="middle" style="stroke: black; fill: rgb(16, 215, 251);">57.25</path><text class="name" text-anchor="middle" transform="translate(125,250)">World</text><text class="score" text-anchor="middle" transform="translate(125,80.3)">SPI 64.24</text></svg></svg>`;
 
 
 
@@ -69,11 +70,12 @@ const MapChart = ({ setTooltipContent, data, year, svgRef, countryValue }) => {
                       // console.log(flowerContent);
                       const { NAME, POP_EST } = geo.properties;
                       console.log('target', countryTarget);
-                      let flowerCard = <DrawFlowers 
+                      let flowerCard = (<DrawFlowers 
                         svgRef={svgRef} 
                         yearValue={year}
                         countryValue={countryTarget}
-                        />;                 
+                        />);
+                      // let test2 = ReactDOMServer.renderToString(flowerCard);                 
                       let card = 
                       `<h2>${NAME}</h2><b>
                       Population: ${rounded(POP_EST)}, <br/>
@@ -81,9 +83,10 @@ const MapChart = ({ setTooltipContent, data, year, svgRef, countryValue }) => {
                       <p style="color:${scoreToColor(basicNeeds)}">Basic Human Needs: ${basicNeeds}, </p>
                       <p style="color:${scoreToColor(foundations)}">Foundations of Wellbeing: ${foundations}, </p>
                       <p style="color:${scoreToColor(opportunity)}">Opportunity: ${opportunity}, </p>
-                      <div> </div>
+                      <div> ${test} </div>
                       Global Rank: ${rank} in ${year} </b>`;
-                      console.log(flowerCard);
+                      // console.log(flowerCard);
+                      console.log(d3.pointer(flowerCard));
                       setTooltipContent(card);
                     }}
                     onMouseLeave={() => {
