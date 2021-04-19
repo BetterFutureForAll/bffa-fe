@@ -7,7 +7,7 @@ import {
   useYears, useContent, 
   useDataByYear, useCountries, 
   useHandleCountryChange, useFlowers, 
-  useSingleFlower, useDataByCountry, useD3, useClicked
+  useSingleFlower, useDataByCountry, useD3, useClicked, useMouse
 } from '../hooks/hooks';
 import DrawFlowers from '../components/DrawFlowers';
 import MapMaker from '../components/MapMaker';
@@ -18,9 +18,15 @@ function MapContainer() {
   const svgRef = useRef(null);
   let petalSize = 50;
 
+  let margin = { top: 50, left: 50, right: 50, bottom: 50 };
+
+  let width = 1000;
+  let height = 500;
+
   let [content, setContent] = useContent();
 
   let [clicked, setClicked] = useClicked();
+  let [mouse, setMouse] = useMouse();
   let [years] = useYears();
   let [yearValue, handleYearChange] = useHandleYearChange();
   let [spiByYear]  = useDataByYear(yearValue);
@@ -91,9 +97,21 @@ function MapContainer() {
         >
           {content}
       </ReactTooltip> */}
-      <MapMaker setClicked={setClicked} yearValue={yearValue} ></MapMaker>
+      <MapMaker setClicked={setClicked} 
+        yearValue={yearValue} 
+        setMouse={setMouse} 
+        height={height}
+        width={width}  
+        />
+      {/* <DrawFlowers 
+        yearValue={yearValue} 
+        countryValue={clicked} 
+        svgRef={svgRef} 
+        mouse={mouse} 
+        width={width}
+        height={height}
+        /> */}
 
-      <DrawFlowers yearValue={yearValue} countryValue={clicked} svgRef={svgRef} />
   </div>
 
 </>

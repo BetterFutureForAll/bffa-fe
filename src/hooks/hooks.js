@@ -18,6 +18,11 @@ export const useClicked = () => {
   return [clicked, setClicked];
 }
 
+export const useMouse = () => {
+  let [mouse, setMouse] = useState('World');
+  return [mouse, setMouse];
+}
+
 export const useScore = () => {
   let [score, setScore] = useState({ name: '', score: '' });
   return [score, setScore];
