@@ -23,7 +23,6 @@ function MapContainer() {
   let width = 1000;
   let height = 500;
 
-  let [content, setContent] = useContent();
 
   let [clicked, setClicked] = useClicked();
   let [mouse, setMouse] = useMouse();
@@ -38,10 +37,6 @@ function MapContainer() {
   useEffect(()=>{
     ReactTooltip.rebuild();
   }, [countryValue, yearValue]);
-
-  let toolTipWrapper = (
-    <DrawFlowers yearValue={yearValue} countryValue={countryValue}/>
-    );
 
   let selectYears = (
     <>
@@ -72,7 +67,13 @@ function MapContainer() {
   return (
     <>
     <div id="MapContainer" >
-      <div className="App-header">
+      <MapMaker setClicked={setClicked} 
+        yearValue={yearValue} 
+        setMouse={setMouse} 
+        height={height}
+        width={width}  
+        />
+      <div className="ControlBar">
         <Header 
           selectYears={selectYears} 
           yearValue={yearValue} 
@@ -80,37 +81,6 @@ function MapContainer() {
           countryValue={countryValue}
         />
       </div>
-      {/* <MapChart 
-        setTooltipContent={setContent} 
-        data={spiByYear} 
-        year={yearValue}
-        handleCountryChange={handleCountryChange}
-        countryValue={countryValue}
-        svgRef={svgRef}
-        id="MapChart" />
-        <ReactTooltip 
-        className={"Tooltip"} 
-        backgroundColor={"lightgrey"}
-        textColor={"black"}
-        border={true}
-        html={true}
-        >
-          {content}
-      </ReactTooltip> */}
-      <MapMaker setClicked={setClicked} 
-        yearValue={yearValue} 
-        setMouse={setMouse} 
-        height={height}
-        width={width}  
-        />
-      {/* <DrawFlowers 
-        yearValue={yearValue} 
-        countryValue={clicked} 
-        svgRef={svgRef} 
-        mouse={mouse} 
-        width={width}
-        height={height}
-        /> */}
 
   </div>
 

@@ -22,10 +22,10 @@
   }
 }
 
-.App-header {
+.ControlBar {
   display: flex;
   position: fixed;
-  top: 0;
+  bottom: 0;
   width: 100%;
   justify-content: center;
   background-color:lightblue;

@@ -42,6 +42,11 @@ const MapMaker = ({ clicked, setClicked, yearValue, setMouse, width, height }) =
     // Map Binds to SPI data here, may need to move to UseEffect
     countriesDataSet.forEach(function (f) {
 
+      // catch unassigned ISO's (French colonies and other territories)
+      if (f.properties.ISO_A3 === "-99") {
+        f.properties.ISO_A3 = f.properties.GU_A3;
+      }
+
       let d = spiCountryGroup.get(f.properties.ISO_A3) || null;
 
       const spiScale = d3.scaleLinear().domain([0, 100]).range([0, 1]);
@@ -52,47 +57,51 @@ const MapMaker = ({ clicked, setClicked, yearValue, setMouse, width, height }) =
       let basicNeeds = d ? +d[0]["Basic Human Needs"] : null;
       const basicSize = spiScale(basicNeeds);
 
+      let basicSubCat = d ? [d[0]["Nutrition and Basic Medical Care"], d[0]['Water and Sanitation'], d[0]['Shelter'], d[0]['Personal Safety'],] : [null, null, null, null];
+
       let foundations = d ? +d[0]["Foundations of Wellbeing"] : 0;
       const foundationSize = spiScale(foundations);
+
+      let foundationsSubCat = d ? [d[0]["Access to Basic Knowledge"], d[0]['Access to Information and Communications'], d[0]['Health and Wellness'], d[0]['Environmental Quality'],] : [null, null, null, null];
 
       let opportunity = d ? +d[0]["Opportunity"] : 0;
       const oppSize = spiScale(opportunity);
 
       f.properties.spi = d ? d[0] : { "Social Progress Index": null };
-      f.properties.color = spi? scoreColor(spi) : null;
+      f.properties.color = spi ? scoreColor(spi) : null;
       // petals change to reflect 3 categories (basic needs etc)
       f.properties.flower = {
         petals: [
-          { angle: -20, petalPath, center: path.centroid(f), petSize: basicSize, colorRef: basicNeeds, text: 'Basic Human Needs' },
-          { angle: 100, petalPath, center: path.centroid(f), petSize: foundationSize, colorRef: foundations, text: 'Foundations of Wellbeing' },
-          { angle: 220, petalPath, center: path.centroid(f), petSize: oppSize, colorRef: opportunity, text: 'Opportunity' }
+          { angle: -20, petalPath, center: path.centroid(f), petSize: basicSize, colorRef: basicNeeds, text: 'Basic Human Needs', subCat: basicSubCat },
+          { angle: 100, petalPath, center: path.centroid(f), petSize: foundationSize, colorRef: foundations, text: 'Foundations of Wellbeing', subCat: basicSubCat },
+          { angle: 220, petalPath, center: path.centroid(f), petSize: oppSize, colorRef: opportunity, text: 'Opportunity', subCat: basicSubCat }
         ],
         spiScale: spiSize,
         center: path.centroid(f),
         radius: (path.bounds(f)[0][1] - path.bounds(f)[0][1]),
-        path: path.bounds(f)
+        subCat: basicSubCat
       };
     })
 
     console.log('spi', spiCountryGroup);
     console.log('dataSet', countriesDataSet);
 
-    // ***********  Top Level Selector (ViewBox) *************
-    //extract into a useEffect fn for React reusability 
+    // *** Top Level Selector (ViewBox) ***
     let svg = d3.select("#map")
       .append("svg")
       .attr("viewBox", [0, 0, width, height])
-      .on("click", reset)
-      .call(zoom)
+    // .on("click", reset)
+    // .call(zoom)
 
     let g = svg.join("g")
 
+    // *** Country groupings ***
     let countries = g.selectAll(".country")
       .data(countriesDataSet)
       .join("path")
       .attr("d", path)
       .attr("class", "country")
-      .attr("id", d=> d.properties.ISO_A3)
+      .attr("id", d => d.properties.ISO_A3)
       .attr("cursor", "pointer")
       .attr("fill", d => { return d.properties.color || "#c4c2c4" })
       .on("click", clicked)
@@ -100,23 +109,32 @@ const MapMaker = ({ clicked, setClicked, yearValue, setMouse, width, height }) =
       .append("title")
       .text(d => { return d.properties.NAME_LONG });
 
+    // *** borders / whitespace mesh ***
+    let whiteSpace = g.append("path")
+      .attr("fill", "none")
+      .attr("stroke", "white")
+      .attr("stroke-linejoin", "round")
+      .attr("d", path(mesh(data[0], data[0].objects.countries, (a, b) => a !== b)))
+    whiteSpace.exit().remove();
+
+    // *** Tool Tip *** 
     let toolTip = g.selectAll(".tooltip")
       .data(countriesDataSet, d => { return d })
       .join("g")
-      .attr("id", d=> d.properties.ISO_A3)
+      .attr("id", d => d.properties.ISO_A3)
       .attr("class", "tooltip")
-      .on("click", clicked)
+    // .on("click", clicked)
 
     toolTip
       .append("circle")
       .attr("cx", d => d.properties.flower.center[0])
       .attr("cy", d => d.properties.flower.center[1])
-      .attr("r", d => { 
-        
-        return d.properties.flower.spiScale ? 50 : null})
+      .attr("r", d => {
+        return d.properties.flower.spiScale ? 50 : null
+      })
       .style('fill', 'black')
       .style("opacity", "0.5")
-      toolTip.exit().remove();
+    toolTip.exit().remove();
 
     toolTip
       .append("circle")
@@ -126,35 +144,39 @@ const MapMaker = ({ clicked, setClicked, yearValue, setMouse, width, height }) =
       .attr("r", d => { return d.properties.flower.spiScale * 50 })
       .style('fill', d => d.properties.color)
       .style("opacity", "0.5")
-      toolTip.exit().remove();
-    
+    toolTip.exit().remove();
+
+    toolTip
+      .append('text')
+      .attr('class', 'name')
+      .attr('text-anchor', 'middle')
+      .attr('transform', d => `translate(${d.properties.flower.center[0]},${d.properties.flower.center[1] - 50})`)
+      .text(d => d.properties.NAME_LONG)
+    toolTip.exit().remove();
+
+    // *** individual flower petals ***
     toolTip
       .selectAll('path')
       .data(d => d.properties.flower.petals)
       .join('path')
-      .attr('id', 'petalPath')
+      .attr('class', 'petalPath')
       .attr('d', d => d.petalPath)
+      .on("click", clicked)
       .attr('transform', d => `translate(${d.center[0]}, ${d.center[1]}) rotate(${d.angle}) scale(${d.petSize})`)
       .style('stroke', 'black')
       .style('fill', d => { return scoreColor(d.colorRef) })
       .join('text')
       .append('title')
-      // .text(d => d.text)
-      .on("click", function(d) {
-        console.log('Expand Function', d);
+      .text(d => {
+        console.log(d);
+        // if(!d.subCat){ return }
+      return `${d.text} : ${d.colorRef} \n Nutrition and Basic Medical Care : ${d.subCat[0]} \n Water and Sanitation : ${d.subCat[1]} \n Shelter : ${d.subCat[2]} \n Personal Safety ${d.subCat[3]}`
       })
 
     toolTip
       .attr("visibility", "hidden")
 
-    // *** borders / whitespace mesh ***
-
-    let whiteSpace = g.append("path")
-      .attr("fill", "none")
-      .attr("stroke", "white")
-      .attr("stroke-linejoin", "round")
-      .attr("d", path(mesh(data[0], data[0].objects.countries, (a, b) => a !== b)))
-    whiteSpace.exit().remove();
+    // *** Event Listeners ***
 
     function reset() {
       // countries.transition().style("fill", null);
@@ -170,28 +192,17 @@ const MapMaker = ({ clicked, setClicked, yearValue, setMouse, width, height }) =
     function onHover(event, d) {
       d3.selectAll(".tooltip").attr("visibility", "hidden");
       event.stopPropagation();
-      console.log(event, d);
-      // console.log(d3.selectAll(`#${d.properties.NAME}.tooltip`));
+      // console.log(event, d);
       setClicked(d.properties.ISO_A3);
       setMouse([event.screenX, event.screenY])
-      console.log('mouseOver', d.properties.ISO_A3);
       d3.selectAll(`#${d.properties.ISO_A3}.tooltip`).attr("visibility", "visible");
     }
 
     function clicked(event, d) {
       let [[x0, y0], [x1, y1]] = path.bounds(d);
       event.stopPropagation();
+      console.log('petal clicked', event, d.properties);
       reset();
-      // setClicked(d.properties.ISO_A3);
-      countries.transition().style("fill", null);
-      svg.transition().duration(750).call(
-        zoom.transform,
-        // d3.zoomIdentity
-        //   .translate(width / 2, height / 2)
-        //   .scale(Math.min(8, 0.9 / Math.max((x1 - x0) / width, (y1 - y0) / height)))
-        //   .translate(-(x0 + x1) / 2, -(y0 + y1) / 2),
-        // d3.pointer(event, svg.node())
-      );
     }
 
     function zoomed(event) {
