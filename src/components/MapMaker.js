@@ -67,19 +67,22 @@ const MapMaker = ({ clicked, setClicked, yearValue, setMouse, width, height }) =
       let opportunity = d ? +d[0]["Opportunity"] : 0;
       const oppSize = spiScale(opportunity);
 
+      let opportunitySubCat = d ? [d[0]["Personal Rights"], d[0]["Personal Freedom and Choice"], d[0]["Inclusiveness"], d[0]["Access to Advanced Education"],] : [null, null, null, null];
+
+
       f.properties.spi = d ? d[0] : { "Social Progress Index": null };
       f.properties.color = spi ? scoreColor(spi) : null;
       // petals change to reflect 3 categories (basic needs etc)
       f.properties.flower = {
         petals: [
           { angle: -20, petalPath, center: path.centroid(f), petSize: basicSize, colorRef: basicNeeds, text: 'Basic Human Needs', subCat: basicSubCat },
-          { angle: 100, petalPath, center: path.centroid(f), petSize: foundationSize, colorRef: foundations, text: 'Foundations of Wellbeing', subCat: basicSubCat },
-          { angle: 220, petalPath, center: path.centroid(f), petSize: oppSize, colorRef: opportunity, text: 'Opportunity', subCat: basicSubCat }
+          { angle: 100, petalPath, center: path.centroid(f), petSize: foundationSize, colorRef: foundations, text: 'Foundations of Wellbeing', subCat: foundationsSubCat },
+          { angle: 220, petalPath, center: path.centroid(f), petSize: oppSize, colorRef: opportunity, text: 'Opportunity', subCat: opportunitySubCat }
         ],
         spiScale: spiSize,
+        spi,
         center: path.centroid(f),
         radius: (path.bounds(f)[0][1] - path.bounds(f)[0][1]),
-        subCat: basicSubCat
       };
     })
 
@@ -106,8 +109,10 @@ const MapMaker = ({ clicked, setClicked, yearValue, setMouse, width, height }) =
       .attr("fill", d => { return d.properties.color || "#c4c2c4" })
       .on("click", clicked)
       .on("mouseover", onHover)
+      // .on("mouseout", reset)
       .append("title")
       .text(d => { return d.properties.NAME_LONG });
+      countries.exit().remove();
 
     // *** borders / whitespace mesh ***
     let whiteSpace = g.append("path")
@@ -144,6 +149,8 @@ const MapMaker = ({ clicked, setClicked, yearValue, setMouse, width, height }) =
       .attr("r", d => { return d.properties.flower.spiScale * 50 })
       .style('fill', d => d.properties.color)
       .style("opacity", "0.5")
+      .append("title")
+      .text(d=> { return `SPI : ${d.properties.flower.spi}`})
     toolTip.exit().remove();
 
     toolTip
@@ -169,8 +176,15 @@ const MapMaker = ({ clicked, setClicked, yearValue, setMouse, width, height }) =
       .append('title')
       .text(d => {
         console.log(d);
-        // if(!d.subCat){ return }
-      return `${d.text} : ${d.colorRef} \n Nutrition and Basic Medical Care : ${d.subCat[0]} \n Water and Sanitation : ${d.subCat[1]} \n Shelter : ${d.subCat[2]} \n Personal Safety ${d.subCat[3]}`
+        if(d.text === "Basic Human Needs"){ 
+        return `${d.text} : ${d.colorRef} \n Nutrition and Basic Medical Care : ${d.subCat[0]} \n Water and Sanitation : ${d.subCat[1]} \n Shelter : ${d.subCat[2]} \n Personal Safety ${d.subCat[3]}`
+        }
+        if(d.text === "Foundations of Wellbeing") {
+          return `${d.text} : ${d.colorRef} \n Access to Basic Knowledge : ${d.subCat[0]} \n Access to Information and Communications : ${d.subCat[1]} \n Health and Wellness : ${d.subCat[2]} \n Environmental Quality : ${d.subCat[3]}`
+        }
+        if(d.text === "Opportunity") {
+          return `${d.text} : ${d.colorRef} \n Personal Rights : ${d.subCat[0]} \n Personal Freedom and Choice : ${d.subCat[1]} \n Inclusiveness : ${d.subCat[2]} \n Access to Advanced Education : ${d.subCat[3]}`
+        }
       })
 
     toolTip
