@@ -8,9 +8,14 @@
   position: relative;
 }
 
+.petalPath {
+  text-align: justify;
+}
+
 .flower {
   position: absolute;
 }
+
 .App-logo {
   height: 40vmin;
   pointer-events: none;
@@ -23,7 +28,6 @@
 }
 
 .ControlBar {
-  display: flex;
   position: fixed;
   bottom: 0;
   width: 100%;

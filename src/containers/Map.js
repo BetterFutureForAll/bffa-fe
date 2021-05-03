@@ -67,7 +67,9 @@ function MapContainer() {
   return (
     <>
     <div id="MapContainer" >
-      <MapMaker setClicked={setClicked} 
+      <MapMaker 
+        svgRef={svgRef}
+        setClicked={setClicked} 
         yearValue={yearValue} 
         setMouse={setMouse} 
         height={height}
