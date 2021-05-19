@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { 
         makeYearsArray,
         getSpiDataByYear, 
@@ -119,99 +119,99 @@ export const useLoopAnimator = (yearsArr) => {
   return [animatedYears];
 };
 
-export const useD3 = (renderFn, dependencies) => {
-  const ref = useRef();
-  useEffect(() => {
-    console.log('ref', ref.current);
-    console.log('dependencies', dependencies[0].data);
-    if(dependencies[0].data === null) {
-      return;
-    }
-    console.log('renderFn', renderFn(d3.select(ref.current)));
-    renderFn(d3.select(ref.current));
-    return () => {};
-  }, dependencies);
-return ref;
-};
+// export const useD3 = (renderFn, dependencies) => {
+//   const ref = useRef();
+//   useEffect(() => {
+//     console.log('ref', ref.current);
+//     console.log('dependencies', dependencies[0].data);
+//     if(dependencies[0].data === null) {
+//       return;
+//     }
+//     console.log('renderFn', renderFn(d3.select(ref.current)));
+//     renderFn(d3.select(ref.current));
+//     return () => {};
+//   }, dependencies);
+// return ref;
+// };
 
-export const useFlowers = (data, svgRef, petalSize) => {
-  const [flowers, setFlowers] = useState({});
-  // let svgRef = useRef(null);
+// export const useFlowers = (data, svgRef, petalSize) => {
+//   const [flowers, setFlowers] = useState({});
+//   // let svgRef = useRef(null);
 
-  useEffect(() => {
+//   useEffect(() => {
 
-    let drawFlower = () => {
-      const update = d3.select(svgRef.current)
-        .selectAll('g')
-        .data(data)
-        .enter()
-        .append('g')
-        .attr('id', d=>{ return d.name })
-        .attr('transform', (d, i) => `translate(${petalSize + (i % 10) * 100},${Math.floor(i / 10) * 100 + petalSize})`);
+//     let drawFlower = () => {
+//       const update = d3.select(svgRef.current)
+//         .selectAll('g')
+//         .data(data)
+//         .enter()
+//         .append('g')
+//         .attr('id', d=>{ return d.name })
+//         .attr('transform', (d, i) => `translate(${petalSize + (i % 10) * 100},${Math.floor(i / 10) * 100 + petalSize})`);
 
-      //outer circle
-      update
-        .append('circle')
-        .attr('id', 'outer')
-        .attr('cx', 0)
-        .attr('cy', 0)
-        .attr('r', petalSize)
-        .style('fill', '#c4c2c4');
+//       //outer circle
+//       update
+//         .append('circle')
+//         .attr('id', 'outer')
+//         .attr('cx', 0)
+//         .attr('cy', 0)
+//         .attr('r', petalSize)
+//         .style('fill', '#c4c2c4');
   
-      //inner circle
-      update
-        .append('circle')
-        .attr('cx', 0)
-        .attr('cy', 0)
-        .attr('r', d => petalSize * d.spiScale)
-        .style('fill', d => { return scoreToColor(d.spi) })
+//       //inner circle
+//       update
+//         .append('circle')
+//         .attr('cx', 0)
+//         .attr('cy', 0)
+//         .attr('r', d => petalSize * d.spiScale)
+//         .style('fill', d => { return scoreToColor(d.spi) })
   
-      //individual petals
-      update
-        .selectAll('path')
-        .data(d => d.petals)
-        .enter()
-        .append('path')
-        .attr('d', d => d.petalPath)
-        .attr('transform', d => `rotate(${d.angle}) scale(${d.petSize})`)
-        .style('stroke', 'black')
-        .style('fill', d => { return scoreToColor(d.colorRef) })
+//       //individual petals
+//       update
+//         .selectAll('path')
+//         .data(d => d.petals)
+//         .enter()
+//         .append('path')
+//         .attr('d', d => d.petalPath)
+//         .attr('transform', d => `rotate(${d.angle}) scale(${d.petSize})`)
+//         .style('stroke', 'black')
+//         .style('fill', d => { return scoreToColor(d.colorRef) })
   
-      // Add a rectangle to display name/numerics
-      update
-        .append('rect')
-        .attr("width", petalSize * 2)
-        .attr("height", petalSize * .25)
-        .attr('transform', `translate(-${(petalSize)},-${petalSize})`)
-        .style('fill', 'white')
+//       // Add a rectangle to display name/numerics
+//       update
+//         .append('rect')
+//         .attr("width", petalSize * 2)
+//         .attr("height", petalSize * .25)
+//         .attr('transform', `translate(-${(petalSize)},-${petalSize})`)
+//         .style('fill', 'white')
   
-      //name
-      update
-        .append('text')
-        .attr('class', 'name')
-        .attr('transform', (d, i) => `translate(-${(petalSize)},-${petalSize * .75})`)
-        .text(d => { return d.name });
+//       //name
+//       update
+//         .append('text')
+//         .attr('class', 'name')
+//         .attr('transform', (d, i) => `translate(-${(petalSize)},-${petalSize * .75})`)
+//         .text(d => { return d.name });
   
-      //add score to inner circle
-      update
-        .append('text')
-        .attr('class', 'score')
-        .attr('transform', `translate(0,-${petalSize}) scale(${petalSize / 100})`)
-        // .attr('transform', (d,i) => `scale(${petalSize / 100})`) 
-        .text(d => { return d.spi });
+//       //add score to inner circle
+//       update
+//         .append('text')
+//         .attr('class', 'score')
+//         .attr('transform', `translate(0,-${petalSize}) scale(${petalSize / 100})`)
+//         // .attr('transform', (d,i) => `scale(${petalSize / 100})`) 
+//         .text(d => { return d.spi });
   
-        return svgRef.current;
-    };
+//         return svgRef.current;
+//     };
 
-        drawFlower();
-        console.log('useFlowers data', data);
-        console.log('svgRef', svgRef.current);
-        setFlowers(svgRef.current)
-        // console.log('flowers', flowers);
-    }, [data, svgRef]);
+//         drawFlower();
+//         console.log('useFlowers data', data);
+//         console.log('svgRef', svgRef.current);
+//         setFlowers(svgRef.current)
+//         // console.log('flowers', flowers);
+//     }, [data, svgRef]);
 
-    return [flowers, setFlowers];
-};
+//     return [flowers, setFlowers];
+// };
 
 
 export function scoreToColor(score) {

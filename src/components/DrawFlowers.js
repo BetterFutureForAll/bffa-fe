@@ -1,7 +1,6 @@
-import React, { useEffect, useRef } from 'react';
-import { scoreToColor, useD3 } from '../hooks/hooks';
+import React, { useEffect } from 'react';
+import { scoreToColor } from '../hooks/hooks';
 import * as d3 from 'd3';
-import ReactDOMServer from 'react-dom/server';
 
 
 function DrawFlowers({ spiByYear, yearValue, countryValue, svgRef }) {
@@ -27,8 +26,8 @@ function DrawFlowers({ spiByYear, yearValue, countryValue, svgRef }) {
   };
 
   function ready(dataPoints) {
-    let years = d3
-      .group(dataPoints, d => d['SPI year'])
+  //   let years = d3
+  //     .group(dataPoints, d => d['SPI year'])
 
     let countries = d3
       .group(dataPoints, d => d['SPI year'], d => d['SPI country code'])
@@ -65,10 +64,6 @@ function DrawFlowers({ spiByYear, yearValue, countryValue, svgRef }) {
         status: d["Status"],
       };
     });
-
-    let hierarchy = d3.hierarchy(countries)
-
-    // console.log('years', years);
 
     let container = d3.select(svgRef.current);
 

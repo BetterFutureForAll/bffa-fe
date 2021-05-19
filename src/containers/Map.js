@@ -1,27 +1,27 @@
 import React, { useRef, useEffect } from 'react';
-import MapChart from '../components/MapChart';
+// import MapChart from '../components/MapChart';
 import ReactTooltip from 'react-tooltip';
 import Header from '../components/Header';
 import { 
   useHandleYearChange, 
   useYears, useContent, 
   useDataByYear, useCountries, 
-  useHandleCountryChange, useFlowers, 
-  useSingleFlower, useDataByCountry, useD3, useClicked, useMouse
+  useHandleCountryChange, 
+  useDataByCountry, useClicked, useMouse
 } from '../hooks/hooks';
-import DrawFlowers from '../components/DrawFlowers';
+// import DrawFlowers from '../components/DrawFlowers';
 import MapMaker from '../components/MapMaker';
 
 
 
 function MapContainer() {
   const svgRef = useRef(null);
-  let petalSize = 50;
+  // let petalSize = 50;
 
-  let margin = { top: 50, left: 50, right: 50, bottom: 50 };
+  // let margin = { top: 50, left: 50, right: 50, bottom: 50 };
 
   let width = 1000;
-  let height = 500;
+  let height = 700;
 
 
   let [clicked, setClicked] = useClicked();
