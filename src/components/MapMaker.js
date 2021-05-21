@@ -18,13 +18,12 @@ const MapMaker = ({ svgRef, setClicked, yearValue, setMouse, width, height }) =>
 
   // import topoJSON and CSV here
   let localGeoData = process.env.PUBLIC_URL + '/topoMap.json';
+
   let hardData = require('../assets/2011-2020-Social-Progress-Index.csv');
 
   let petalPath = 'M 0 0 c 100 100 80 0 100 0 C 80 0 100 -100 0 0';
 
   let subPetalPath = "M 0 0 L 85 15 A 1 1 0 0 0 85 -15 L 0 0";
-  
-
 
   let spiScale = d3.scaleLinear().domain([0, 100]).range([0, 100]);
 
@@ -132,19 +131,24 @@ const MapMaker = ({ svgRef, setClicked, yearValue, setMouse, width, height }) =>
     // Needs to center on Mouse Position
     const zoom = d3.zoom()
     .on('zoom', (event) => {
-      console.log("Zoomed On",event);
-      svg.attr('transform', event.transform);
+      d3.selectAll(".country").attr('transform', event.transform)
+      d3.selectAll(".border").attr('transform', event.transform)
+
+      // Tooltip needs to translate to stay in its original position relative to the map. 
+      d3.selectAll(".tooltip").attr('transform', event.transform)
+      // svg.attr("transform", "translate(" + event.transform.x + "," + event.transform.y + ") scale(" + event.transform.k + ")");
+
     })
-    .scaleExtent([1, 40]);
+    .translateExtent([[0, 0], [width, height]])
+    .scaleExtent([1, 10]);
 
     // *** Top Level Selector (ViewBox) ***
     let svg = d3.select(svgRef.current)
+    .attr("id", "viewbox")
+    .attr("viewBox", [0, 0, width, height])
     .call(zoom);
 
     let g = svg.join("g")
-      .append("svg")
-      .attr("viewBox", [0, 0, `${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`])
-      .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
     svg.exit().remove();
 
     // *** Country groupings ***
@@ -212,6 +216,7 @@ const MapMaker = ({ svgRef, setClicked, yearValue, setMouse, width, height }) =>
       .attr("r", d => d.properties.flower.spiScale)
       .style('fill', d => d.properties.color)
       .style('stroke', 'black')
+      .attr("cursor", "pointer")
       .on("mouseover", hidePetal)
       //  ****** change to Text attr next to country name ********************
       .append("title")
@@ -231,6 +236,7 @@ const MapMaker = ({ svgRef, setClicked, yearValue, setMouse, width, height }) =>
       .style('stroke', 'black')
       .style('fill', d => d.colorRef)
       .style("opacity", "0.40")
+      .attr("cursor", "pointer")
       .on("mouseenter", expandPetal)
       .on("mouseleave", hidePetal)
       .join('text')
@@ -248,6 +254,7 @@ const MapMaker = ({ svgRef, setClicked, yearValue, setMouse, width, height }) =>
       .attr('transform', d => `translate(${d.center[0]}, ${d.center[1]}) rotate(${d.angle}) scale(${d.petSize * .01})`)
       .style('stroke', 'black')
       .style('fill', d => d.colorRef)
+      .attr("cursor", "pointer")
       .on("mouseenter", expandPetal)
       .join('text')
       .append('title')
@@ -305,6 +312,7 @@ const MapMaker = ({ svgRef, setClicked, yearValue, setMouse, width, height }) =>
       .attr('transform', d => `translate(${d.center[0]}, ${d.center[1]}) rotate(${d.angle}) scale(${d.petSize * .01})`)
       .style('stroke', 'black')
       .style('fill', d => d.colorRef)
+      .attr("cursor", "pointer")
       .append("title")
       .append("text")
       .text(d => d.text)
