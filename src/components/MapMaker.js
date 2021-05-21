@@ -7,9 +7,6 @@ import {
   foundationsColorScale, 
   opportunityColorScale 
 } from '../services/SocialProgress';
-import { kebabCase } from 'lodash';
-
-var _ = require('lodash');
 
 
 const MapMaker = ({ svgRef, setClicked, yearValue, setMouse, width, height }) => {
@@ -44,7 +41,7 @@ const MapMaker = ({ svgRef, setClicked, yearValue, setMouse, width, height }) =>
       
       // catch unassigned ISO's (French colonies and other territories)
       if (f.properties.ISO_A3_EH === "-99") {
-        console.log(f.properties);
+        // console.log(f.properties);
         // France vs French Guiana still mixed, do we treat it like Hawaii? 
         f.properties.ISO_A3_EH = f.properties.GU_A3;
       }
@@ -125,9 +122,6 @@ const MapMaker = ({ svgRef, setClicked, yearValue, setMouse, width, height }) =>
         bounds: path.bounds(f),
       };
     })
-
-    console.log(countriesDataSet);
-
 
     // Needs to center on Mouse Position
     const zoom = d3.zoom()
@@ -409,7 +403,7 @@ const MapMaker = ({ svgRef, setClicked, yearValue, setMouse, width, height }) =>
       ready(values);
     });
 
-
+// eslint-disable-next-line react-hooks/exhaustive-deps
   }, [yearValue, localGeoData, hardData, svgRef]);
 
   return (

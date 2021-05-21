@@ -4,10 +4,8 @@ import ReactTooltip from 'react-tooltip';
 import Header from '../components/Header';
 import { 
   useHandleYearChange, 
-  useYears, useContent, 
-  useDataByYear, useCountries, 
-  useHandleCountryChange, 
-  useDataByCountry, useClicked, useMouse
+  useYears, useCountries, 
+  useHandleCountryChange, useClicked, useMouse
 } from '../hooks/hooks';
 // import DrawFlowers from '../components/DrawFlowers';
 import MapMaker from '../components/MapMaker';
@@ -25,14 +23,12 @@ function MapContainer() {
 
 
   let [clicked, setClicked] = useClicked();
-  let [mouse, setMouse] = useMouse();
+  let [setMouse] = useMouse();
   let [years] = useYears();
   let [yearValue, handleYearChange] = useHandleYearChange();
-  let [spiByYear]  = useDataByYear(yearValue);
 
   let [countries] = useCountries();
   let [countryValue, handleCountryChange] = useHandleCountryChange();
-  let [spiByCountry] = useDataByCountry(spiByYear, countryValue);
 
   useEffect(()=>{
     ReactTooltip.rebuild();
@@ -69,7 +65,8 @@ function MapContainer() {
     <div id="MapContainer" >
       <MapMaker 
         svgRef={svgRef}
-        setClicked={setClicked} 
+        setClicked={setClicked}
+        clicked={clicked} 
         yearValue={yearValue} 
         setMouse={setMouse} 
         height={height}
