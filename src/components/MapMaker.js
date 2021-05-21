@@ -7,6 +7,7 @@ import {
   foundationsColorScale, 
   opportunityColorScale 
 } from '../services/SocialProgress';
+import { kebabCase } from 'lodash';
 
 var _ = require('lodash');
 
@@ -131,8 +132,15 @@ const MapMaker = ({ svgRef, setClicked, yearValue, setMouse, width, height }) =>
     // Needs to center on Mouse Position
     const zoom = d3.zoom()
     .on('zoom', (event) => {
+  
       d3.selectAll(".country").attr('transform', event.transform)
       d3.selectAll(".border").attr('transform', event.transform)
+
+    // adjust border thickness to scale
+
+      // d3.selectAll(".border").attr('transform', event.transform)
+      // .style("stroke-width", 1.5 / k + "px");
+
 
       // Tooltip needs to translate to stay in its original position relative to the map. 
       d3.selectAll(".tooltip").attr('transform', event.transform)
