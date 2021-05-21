@@ -1,5 +1,19 @@
 .App {
   text-align: center;
+  position: relative;
+
+}
+
+.MapContainer {
+  position: relative;
+}
+
+.petalPath {
+  text-align: justify;
+}
+
+.flower {
+  position: absolute;
 }
 
 .App-logo {
@@ -13,19 +27,19 @@
   }
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+.ControlBar {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  background-color:lightblue;
+
 }
 
+
+
 .App-link {
-  color: #61dafb;
+  color: #bfd5db;
 }
 
 @keyframes App-logo-spin {
@@ -35,4 +49,12 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+.Tool-Tip {
+  display: hidden;
+}
+
+.Tool-Tip:hover {
+  display: block;
 }

@@ -1,56 +1,93 @@
-import React from 'react';
-import MapChart from '../components/MapChart';
-import ReactTooltip from "react-tooltip";
+import React, { useRef, useEffect } from 'react';
+// import MapChart from '../components/MapChart';
+import ReactTooltip from 'react-tooltip';
 import Header from '../components/Header';
+import { 
+  useHandleYearChange, 
+  useYears, useContent, 
+  useDataByYear, useCountries, 
+  useHandleCountryChange, 
+  useDataByCountry, useClicked, useMouse
+} from '../hooks/hooks';
+// import DrawFlowers from '../components/DrawFlowers';
+import MapMaker from '../components/MapMaker';
 
-// import { getContent } from '../selectors/contentSelector';
-// import * as spiData from '../assets/2011-2020-Social-Progress-Index.csv'
-// import { spi2020, makeYearsArray } from '../services/SocialProgress';
 
-import { useHandleYearChange, useYears, useContent, useDataByYear } from '../hooks/hooks';
 
 function MapContainer() {
+  const svgRef = useRef(null);
+  // let petalSize = 50;
 
+  // let margin = { top: 50, left: 50, right: 50, bottom: 50 };
+
+  let width = 1000;
+  let height = 700;
+
+
+  let [clicked, setClicked] = useClicked();
+  let [mouse, setMouse] = useMouse();
   let [years] = useYears();
-  let [content, setContent] = useContent();
   let [yearValue, handleYearChange] = useHandleYearChange();
   let [spiByYear]  = useDataByYear(yearValue);
 
-  let handleSubmit = (e) => {
-    e.preventDefault();
-    console.log(spiByYear);
-    console.log((yearValue));
-  };
+  let [countries] = useCountries();
+  let [countryValue, handleCountryChange] = useHandleCountryChange();
+  let [spiByCountry] = useDataByCountry(spiByYear, countryValue);
+
+  useEffect(()=>{
+    ReactTooltip.rebuild();
+  }, [countryValue, yearValue]);
 
   let selectYears = (
-    <select onChange={handleYearChange} defaultValue={yearValue} onSubmit={handleSubmit} >
-      {years.map(item => (
-        <option
-          key={item}
-          value={item}
-          onSelect={handleYearChange}
-        >
+    <>
+      <select onChange={handleYearChange} defaultValue={yearValue} >
+        {years.map(item => (
+          <option
+            key={item}
+            value={item}
+            onSelect={handleYearChange}
+          >
+            {item}
+          </option>
+        ))}
+      </select>
+    </>
+  );
+
+  let selectCountries = (
+    <select onChange={handleCountryChange} defaultValue={countryValue}>
+      {countries.map(item => (
+        <option key={item} value={item}>
           {item}
         </option>
       ))}
     </select>
-  );
-
+    );
+        
   return (
+    <>
     <div id="MapContainer" >
-      <Header 
-        selectYears={selectYears} 
+      <MapMaker 
+        svgRef={svgRef}
+        setClicked={setClicked} 
         yearValue={yearValue} 
-        onSubmit={handleSubmit}/>
-      <MapChart 
-        setTooltipContent={setContent} 
-        data={spiByYear} 
-        year={yearValue}
-        id="MapChart" />
-      <ReactTooltip>{content}</ReactTooltip>
-    </div>
+        setMouse={setMouse} 
+        height={height}
+        width={width}  
+        />
+      <div className="ControlBar">
+        <Header 
+          selectYears={selectYears} 
+          yearValue={yearValue} 
+          selectCountries={selectCountries}
+          countryValue={countryValue}
+        />
+      </div>
 
-  )
-};
+  </div>
+
+</>
+  );
+}
 
 export default MapContainer;

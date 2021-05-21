@@ -1,13 +1,19 @@
+/* eslint-disable quotes */
 import React, { memo } from "react";
+import ReactDOM from 'react-dom';
+import { ReactDOMServer } from 'react-dom/server';
+import * as d3 from 'd3';
+
 import {
   ZoomableGroup,
   ComposableMap,
   Geographies,
   Geography
 } from "react-simple-maps";
-import { getScore } from '../services/SocialProgress';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { scoreToColor } from '../hooks/hooks';
+import DrawFlowers from "./DrawFlowers";
 
 const geoUrl =
   "https://raw.githubusercontent.com/zcreativelabs/react-simple-maps/master/topojson-maps/world-110m.json";
@@ -21,68 +27,109 @@ const rounded = num => {
     return Math.round(num / 100) / 10 + "K";
   }
 };
+let test = `<svg id="container" height="250" width="250"><svg viewBox="0 0 250 250" height="250" width="250" transform="translate(0,0)"><circle id="outer" cx="125" cy="125" r="125" style="fill: rgb(196, 194, 196);"></circle><circle cx="125" cy="125" r="80.3" style="fill: rgb(0, 229, 231);"></circle><path id="petalPath" d="M 0 0 c 0 75 37 40 45 45 C 40 37 75 0 0 0" transform="translate(125, 125) rotate(-20) scale(0.7465)" href="#petalPath" text-anchor="middle" style="stroke: black; fill: rgb(0, 233, 181);">74.65</path><path id="petalPath" d="M 0 0 c 0 75 37 40 45 45 C 40 37 75 0 0 0" transform="translate(125, 125) rotate(100) scale(0.6082)" href="#petalPath" text-anchor="middle" style="stroke: black; fill: rgb(0, 228, 247);">60.82</path><path id="petalPath" d="M 0 0 c 0 75 37 40 45 45 C 40 37 75 0 0 0" transform="translate(125, 125) rotate(220) scale(0.5725)" href="#petalPath" text-anchor="middle" style="stroke: black; fill: rgb(16, 215, 251);">57.25</path><text class="name" text-anchor="middle" transform="translate(125,250)">World</text><text class="score" text-anchor="middle" transform="translate(125,80.3)">SPI 64.24</text></svg></svg>`;
 
-// function scoreToColor(score) {
-// 	var r, g, b = 0;
-// 	if(score < 50) {
-// 		r = 255;
-// 		g = Math.round(5.1 * score);
-// 	}
-// 	else {
-// 		g = 255;
-// 		r = Math.round(510 - 5.10 * score);
-// 	}
-// 	var h = r * 0x10000 + g * 0x100 + b * 0x1;
-// 	return '#' + ('000000' + h.toString(16)).slice(-6);
-// };
 
-const MapChart = ({ setTooltipContent, data, year }) => {
+
+const MapChart = ({ setTooltipContent, data, year, svgRef, countryValue }) => {
+
+  let notFound = `SPI Score Unavailable for ${year}`;
+
+
+
   return (
     <>
       <ComposableMap data-tip="" projectionConfig={{ scale: 200 }}>
         <ZoomableGroup>
-          <Geographies geography={geoUrl}>
+          <Geographies geography={geoUrl} >
             {({ geographies }) =>
-              geographies.map(geo => (
-                <Geography
-                  key={geo.rsmKey}
-                  geography={geo}
-                  onMouseEnter={() => {
-                    const { NAME, POP_EST, ISO_A3 } = geo.properties;
-                    getScore(NAME, ISO_A3, data).then((SCORE) => {
-                      setTooltipContent(`${NAME} — ${rounded(POP_EST)}, Year: ${year}, Social Progress Index - ${SCORE}`);
-                      // let color = scoreToColor(SCORE)
-                    })
-                  }}
-                  onMouseLeave={() => {
-                    setTooltipContent("");
-                  }}
-                  style={{
-                    default: {
-                      fill: "#D6D6DA",
-                      outline: "none"
-                    },
-                    hover: {
-                      fill: "#F53",
-                      outline: "none"
-                    },
-                    pressed: {
-                      fill: "#E42",
-                      outline: "none"
-                    }
-                  }}
-                />
-              ))
+              geographies.map(geo => {
+                // this whole target function can be extracted to DRY it out.
+
+                //ERROR check target, Breaks on some countries like Venezuela.
+                // const notFound = 'Score Not Found'
+                const target = data.find(t => t['SPI country code'] === geo.properties.ISO_A3 || t['Country'] === geo.properties.NAME_LONG );
+                const rank = target ? target['SPI Rank'] : 'Unranked';
+                const basicNeeds = target ? target['Basic Human Needs'] : notFound;
+                const foundations = target ? target['Foundations of Wellbeing'] : notFound;
+                const opportunity = target ? target['Opportunity'] : notFound;
+                const SCORE = target ? target['Social Progress Index'] : notFound;
+                const countryTarget = target ? target['Country'] : undefined;
+              
+                // colorMaker(data, SCORE);
+
+
+                // const flowerTarget = flowers.find(t => t.name === geo.properties.NAME_LONG)
+
+                return (
+
+                  <Geography
+                    key={geo.rsmKey}
+                    geography={geo}
+                    onMouseEnter={() => {
+                      // console.log(flowerContent);
+                      const { NAME, POP_EST } = geo.properties;
+                      console.log('target', countryTarget);
+                      let flowerCard = (<DrawFlowers 
+                        svgRef={svgRef} 
+                        yearValue={year}
+                        countryValue={countryTarget}
+                        />);
+                      // let test2 = ReactDOMServer.renderToString(flowerCard);                 
+                      let card = 
+                      `<h2>${NAME}</h2><b>
+                      Population: ${rounded(POP_EST)}, <br/>
+                      <p style="color:${scoreToColor(SCORE)}">Social Progress Index: ${SCORE}, </p>
+                      <p style="color:${scoreToColor(basicNeeds)}">Basic Human Needs: ${basicNeeds}, </p>
+                      <p style="color:${scoreToColor(foundations)}">Foundations of Wellbeing: ${foundations}, </p>
+                      <p style="color:${scoreToColor(opportunity)}">Opportunity: ${opportunity}, </p>
+                      <div> ${test} </div>
+                      Global Rank: ${rank} in ${year} </b>`;
+                      // console.log(flowerCard);
+                      console.log(d3.pointer(flowerCard));
+                      setTooltipContent(card);
+                    }}
+                    onMouseLeave={() => {
+                      setTooltipContent("");
+                    }}
+                    style={{
+                      default: {
+                        fill: `${target ? scoreToColor(target['Social Progress Index']) : "#EEE"}`,
+                        outline: "black"
+                      },
+                      hover: {
+                        fill: `${target ? scoreToColor(target['Social Progress Index']) : "#EEE"}`,
+                        outline: "black"
+                      },
+                      pressed: {
+                        fill: "#E42",
+                        outline: "black"
+                      }
+                    }}
+                  />
+                );
+              })
             }
           </Geographies>
         </ZoomableGroup>
       </ComposableMap>
+
+  <DrawFlowers 
+  spiByYear={data}
+  svgRef={svgRef} 
+  yearValue={year}
+  countryValue={countryValue}
+  />
+
+  
     </>
   );
 };
 
 MapChart.propTypes = {
-  setTooltipContent: PropTypes.func.isRequired
+  setTooltipContent: PropTypes.func.isRequired,
+  data: PropTypes.array.isRequired,
+  year: PropTypes.string.isRequired
 };
 
 //connect or memo, or both? 
