@@ -8,11 +8,9 @@ import {
   opportunityColorScale 
 } from '../services/SocialProgress';
 
-
-const MapMaker = ({ svgRef, setClicked, yearValue, setMouse, width, height }) => {
+const MapMaker = ({ svgRef, setClicked, yearValue,  width, height, loading, setLoading }) => {
 
   var margin = { top: 50, left: 10, right: 10, bottom: 25, }
-
 
   // import topoJSON and CSV here
   let localGeoData = process.env.PUBLIC_URL + '/topoMap.json';
@@ -126,9 +124,15 @@ const MapMaker = ({ svgRef, setClicked, yearValue, setMouse, width, height }) =>
     // Needs to center on Mouse Position
     const zoom = d3.zoom()
     .on('zoom', (event) => {
-  
+      const {transform} = event;
+
+
       d3.selectAll(".country").attr('transform', event.transform)
+      .attr("stroke-width", 1 / transform.k);
+
       d3.selectAll(".border").attr('transform', event.transform)
+      .attr("stroke-width", 1 / transform.k);
+
 
     // adjust border thickness to scale
 

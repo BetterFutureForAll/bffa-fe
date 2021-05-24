@@ -1,5 +1,4 @@
-import React, { useRef, useEffect } from 'react';
-import ReactTooltip from 'react-tooltip';
+import React, { useRef, useState } from 'react';
 import Header from '../components/Header';
 import { 
   useHandleYearChange, 
@@ -11,7 +10,10 @@ import MapMaker from '../components/MapMaker';
 
 
 function MapContainer() {
+
   const svgRef = useRef(null);
+
+  let [loading, setLoading] = useState(true);
 
   let width = 1000;
   let height = 700;
@@ -23,10 +25,6 @@ function MapContainer() {
 
   let [countries] = useCountries();
   let [countryValue, handleCountryChange] = useHandleCountryChange();
-
-  useEffect(()=>{
-    ReactTooltip.rebuild();
-  }, [countryValue, yearValue]);
 
   let selectYears = (
     <>
@@ -64,7 +62,9 @@ function MapContainer() {
         yearValue={yearValue} 
         setMouse={setMouse} 
         height={height}
-        width={width}  
+        width={width}
+        loading={loading}
+        setLoading={setLoading}
         />
       <div className="ControlBar">
         <Header 
