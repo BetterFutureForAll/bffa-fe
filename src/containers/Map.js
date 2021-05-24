@@ -1,5 +1,4 @@
 import React, { useRef, useEffect } from 'react';
-// import MapChart from '../components/MapChart';
 import ReactTooltip from 'react-tooltip';
 import Header from '../components/Header';
 import { 
@@ -7,20 +6,15 @@ import {
   useYears, useCountries, 
   useHandleCountryChange, useClicked, useMouse
 } from '../hooks/hooks';
-// import DrawFlowers from '../components/DrawFlowers';
 import MapMaker from '../components/MapMaker';
 
 
 
 function MapContainer() {
   const svgRef = useRef(null);
-  // let petalSize = 50;
-
-  // let margin = { top: 50, left: 50, right: 50, bottom: 50 };
 
   let width = 1000;
   let height = 700;
-
 
   let [clicked, setClicked] = useClicked();
   let [setMouse] = useMouse();

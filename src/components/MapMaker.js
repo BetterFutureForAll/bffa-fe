@@ -132,7 +132,7 @@ const MapMaker = ({ svgRef, setClicked, yearValue, setMouse, width, height }) =>
 
     // adjust border thickness to scale
 
-      // d3.selectAll(".border").attr('transform', event.transform)
+      // d3.selectAll("path").attr('transform', event.transform)
       // .style("stroke-width", 1.5 / k + "px");
 
 
@@ -383,13 +383,10 @@ const MapMaker = ({ svgRef, setClicked, yearValue, setMouse, width, height }) =>
       reset();
     }
 
-
-
   };
 
   useEffect(() => {
-
-    //render the geoData into a map
+    // D3 parses CSV into JSON
     let mapData = d3.json(localGeoData);
     let spiData = d3.csv(hardData).then((spi) => {
       let years = d3.group(spi, d => d['SPI year'])
