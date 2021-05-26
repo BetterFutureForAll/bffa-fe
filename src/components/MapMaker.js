@@ -145,7 +145,6 @@ const MapMaker = ({ svgRef, setClicked, yearValue,  width, height, loading, setL
     let svg = d3.select(svgRef.current)
     .attr("id", "viewbox")
     .attr("viewBox", [0, 0, width, height])
-    .style("fill", "blue")
     .call(zoom)
     .on("mouseleave", reset);
 
