@@ -19,7 +19,6 @@ function MapContainer() {
   // Query user and set based off browser.
   
   let width = useWindowSize();
-  console.log(width);
   let height = width * .7;
 
   let [clicked, setClicked] = useClicked();
