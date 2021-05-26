@@ -133,13 +133,6 @@ const MapMaker = ({ svgRef, setClicked, yearValue,  width, height, loading, setL
       d3.selectAll(".border").attr('transform', event.transform)
       .attr("stroke-width", 1 / transform.k);
 
-
-    // adjust border thickness to scale
-
-      // d3.selectAll("path").attr('transform', event.transform)
-      // .style("stroke-width", 1.5 / k + "px");
-
-
       // Tooltip needs to translate to stay in its original position relative to the map. 
       d3.selectAll(".tooltip").attr('transform', event.transform)
       // svg.attr("transform", "translate(" + event.transform.x + "," + event.transform.y + ") scale(" + event.transform.k + ")");
@@ -152,7 +145,9 @@ const MapMaker = ({ svgRef, setClicked, yearValue,  width, height, loading, setL
     let svg = d3.select(svgRef.current)
     .attr("id", "viewbox")
     .attr("viewBox", [0, 0, width, height])
-    .call(zoom);
+    .style("fill", "blue")
+    .call(zoom)
+    .on("mouseleave", reset);
 
     let g = svg.join("g")
     svg.exit().remove();
@@ -174,7 +169,7 @@ const MapMaker = ({ svgRef, setClicked, yearValue,  width, height, loading, setL
       .on("mouseleave", d => {
 
         // Cancel Previous debounce calls
-
+        
         d3.select(d.path[0]).style("opacity", "1");
       })
       .append("title")
@@ -301,8 +296,8 @@ const MapMaker = ({ svgRef, setClicked, yearValue,  width, height, loading, setL
       .attr("id", d => d.id)
       .attr('d', d => d.subPetalPath)
       .attr('transform', d => `translate(${d.center[0]}, ${d.center[1]}) rotate(${d.angle}) scale(${spiScale(100) * .01})`)
-      .style('stroke', '#c4c2c4')
-      .style('fill', "none")
+      // .style('stroke', '#c4c2c4')
+      .style('fill', d => d.colorRef)
       .style("opacity", "0.25")
       .on("mouseleave", hidePetal)
 
@@ -382,9 +377,8 @@ const MapMaker = ({ svgRef, setClicked, yearValue,  width, height, loading, setL
 
     function clicked(event, d) {
       // let [[x0, y0], [x1, y1]] = path.bounds(d);
-      event.stopPropagation();
-      console.log('petal clicked', event, d.properties);
-      reset();
+      // event.stopPropagation();
+      // reset();
     }
 
   };
