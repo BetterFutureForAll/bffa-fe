@@ -10,7 +10,9 @@ import {
 
 const MapMaker = ({ svgRef, setClicked, yearValue,  width, height, loading, setLoading }) => {
 
-  var margin = { top: 50, left: 10, right: 10, bottom: 25, }
+  var margin = { top: 10, left: 10, right: 10, bottom: 25, }
+
+  let loadingSpinner = require('../assets/loading.gif');
 
   // import topoJSON and CSV here
   let localGeoData = process.env.PUBLIC_URL + '/topoMap.json';
@@ -26,7 +28,7 @@ const MapMaker = ({ svgRef, setClicked, yearValue,  width, height, loading, setL
   function ready(data) {
 
     let projection = d3.geoEqualEarth()
-      .scale(200)
+      .scale(225)
       .translate([(width + margin.left + margin.right) / 2, (height + margin.top + margin.bottom) / 2]);
 
     let path = d3.geoPath().projection(projection);
@@ -124,21 +126,14 @@ const MapMaker = ({ svgRef, setClicked, yearValue,  width, height, loading, setL
     // Needs to center on Mouse Position
     const zoom = d3.zoom()
     .on('zoom', (event) => {
-      const {transform} = event;
 
+      const {transform} = event;
 
       d3.selectAll(".country").attr('transform', event.transform)
       .attr("stroke-width", 1 / transform.k);
 
       d3.selectAll(".border").attr('transform', event.transform)
       .attr("stroke-width", 1 / transform.k);
-
-
-    // adjust border thickness to scale
-
-      // d3.selectAll("path").attr('transform', event.transform)
-      // .style("stroke-width", 1.5 / k + "px");
-
 
       // Tooltip needs to translate to stay in its original position relative to the map. 
       d3.selectAll(".tooltip").attr('transform', event.transform)
@@ -152,7 +147,8 @@ const MapMaker = ({ svgRef, setClicked, yearValue,  width, height, loading, setL
     let svg = d3.select(svgRef.current)
     .attr("id", "viewbox")
     .attr("viewBox", [0, 0, width, height])
-    .call(zoom);
+    .call(zoom)
+    .on("mouseleave", reset);
 
     let g = svg.join("g")
     svg.exit().remove();
@@ -167,14 +163,15 @@ const MapMaker = ({ svgRef, setClicked, yearValue,  width, height, loading, setL
       .attr("cursor", "pointer")
       .attr("fill", d => { return d.properties.color || "#c4c2c4" })
       .on("click", clicked, zoom)
-      .on("mouseenter", debounce(onHover))
+      .on("mouseenter", debounce(toggleVisibility))
       .on("mouseover", d=> {
         d3.select(d.path[0]).style("opacity", ".8");
       })
       .on("mouseleave", d => {
 
         // Cancel Previous debounce calls
-
+        debounce(clearTimeout)
+        
         d3.select(d.path[0]).style("opacity", "1");
       })
       .append("title")
@@ -301,8 +298,8 @@ const MapMaker = ({ svgRef, setClicked, yearValue,  width, height, loading, setL
       .attr("id", d => d.id)
       .attr('d', d => d.subPetalPath)
       .attr('transform', d => `translate(${d.center[0]}, ${d.center[1]}) rotate(${d.angle}) scale(${spiScale(100) * .01})`)
-      .style('stroke', '#c4c2c4')
-      .style('fill', "none")
+      // .style('stroke', '#c4c2c4')
+      .style('fill', d => d.colorRef)
       .style("opacity", "0.25")
       .on("mouseleave", hidePetal)
 
@@ -350,8 +347,9 @@ const MapMaker = ({ svgRef, setClicked, yearValue,  width, height, loading, setL
     }
 
 
-    function toggleVisibility(d) {
+    function toggleVisibility(event, d) {
       d3.selectAll(".tooltip").attr("visibility", "hidden");
+      if(!d) { return };
       d3.selectAll(`#${d.properties.ISO_A3_EH}.tooltip`).attr("visibility", "visible");
     }
 
@@ -363,10 +361,6 @@ const MapMaker = ({ svgRef, setClicked, yearValue,  width, height, loading, setL
           func.apply(this, args);
         }, timeout);
       };
-    };
-
-    function onHover(event, d) {
-      toggleVisibility(d);
     };
 
     function expandPetal(event, d) {
@@ -382,14 +376,14 @@ const MapMaker = ({ svgRef, setClicked, yearValue,  width, height, loading, setL
 
     function clicked(event, d) {
       // let [[x0, y0], [x1, y1]] = path.bounds(d);
-      event.stopPropagation();
-      console.log('petal clicked', event, d.properties);
-      reset();
+      // event.stopPropagation();
+      // reset();
     }
 
   };
 
   useEffect(() => {
+    setLoading(true);
     // D3 parses CSV into JSON
     let mapData = d3.json(localGeoData);
     let spiData = d3.csv(hardData).then((spi) => {
@@ -401,12 +395,15 @@ const MapMaker = ({ svgRef, setClicked, yearValue,  width, height, loading, setL
     Promise.all([mapData, spiData]).then(function (values) {
       console.log(values);
       d3.selectAll(svgRef.current).exit().remove();
+      setLoading(false);
       ready(values);
     });
 
 // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [yearValue, localGeoData, hardData, svgRef]);
 
+  while(loading) return ( <img src={loadingSpinner} alt={'loading spinner'}/> )
+  
   return (
     <svg ref={svgRef} height={height} width={width} id="map"></svg>
   );
