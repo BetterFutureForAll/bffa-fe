@@ -1,9 +1,10 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import Header from '../components/Header';
 import { 
   useHandleYearChange, 
   useYears, useCountries, 
-  useHandleCountryChange, useClicked, useMouse
+  useHandleCountryChange, useClicked, useMouse,
+  useWindowSize
 } from '../hooks/hooks';
 import MapMaker from '../components/MapMaker';
 
@@ -15,8 +16,11 @@ function MapContainer() {
 
   let [loading, setLoading] = useState(true);
 
-  let width = 1000;
-  let height = 700;
+  // Query user and set based off browser.
+  
+  let width = useWindowSize();
+  console.log(width);
+  let height = width * .7;
 
   let [clicked, setClicked] = useClicked();
   let [setMouse] = useMouse();
@@ -51,6 +55,12 @@ function MapContainer() {
       ))}
     </select>
     );
+  useEffect(()=>{
+    // return adjusted window size
+    // add window reSize listener
+  },[]);
+
+
         
   return (
     <>
