@@ -146,7 +146,6 @@ export function useWindowSize() {
     function setSize() {
       setWindowSize(window.innerWidth);
     }
-    console.log("windowSize Change");
     if (isWindowClient) {
       //register the window resize listener
       window.addEventListener("resize", setSize);
