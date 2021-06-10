@@ -157,7 +157,7 @@ const MapMaker = ({ svgRef, setClicked, yearValue,  width, height, loading, setL
         svg.selectAll('.petalPath, .subPetalPath')
           .attr("transform", d => `translate(${d.center[0]}, ${d.center[1]}) rotate(${d.angle}) scale(${(d.petSize * .01) *  1 / transform.k } )`);
         svg.selectAll('.name')
-          .attr("transform", `scale(${1 / transform.k})`);
+          .attr('transform', d => `translate(${d.properties.flower.center[0]},${d.properties.flower.center[1] + ((1/transform.k) * 110)}) scale( ${1 / transform.k})`)
 
         })
       .translateExtent([[0, 0], [width, height]])
