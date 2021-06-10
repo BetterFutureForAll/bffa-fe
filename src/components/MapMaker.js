@@ -128,8 +128,6 @@ const MapMaker = ({ svgRef, setClicked, yearValue,  width, height, loading, setL
     const zoom = d3.zoom()
       .on('zoom', (event, d) => {
         const {transform} = event;
-        
-        console.log(event);
 
         svg.selectAll(".country").attr('transform', transform)
         .attr('transform', `translate(${transform.x},${transform.y}) scale(${transform.k})`)
