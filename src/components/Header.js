@@ -81,10 +81,10 @@ const Header = ({ selectYears, yearValue, selectCountries, handleSubmit }) => {
               angle = 30;
             }
             if (d === "Opportunity") {
-              angle = 150;
+              angle = 270;
             }
             if (d === "Foundations of Wellbeing") {
-              angle = 270;
+              angle = 150;
             }
             return `translate(${25 + (i * 75)}, ${25}) rotate(${angle}) scale(.20)`
           })

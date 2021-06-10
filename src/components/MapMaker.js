@@ -124,33 +124,51 @@ const MapMaker = ({ svgRef, setClicked, yearValue,  width, height, loading, setL
     })
 
     // Needs to center on Mouse Position
+
     const zoom = d3.zoom()
-    .on('zoom', (event) => {
+      .on('zoom', (event, d) => {
+        const {transform} = event;
 
-      const {transform} = event;
+        svg.selectAll(".country").attr('transform', transform)
+        .attr('transform', `translate(${transform.x},${transform.y}) scale(${transform.k})`)
+        .attr("stroke-width", 1 / transform.k);
+        
+        svg.selectAll(".border").attr('transform', transform)
+        .attr('transform', `translate(${transform.x},${transform.y}) scale(${transform.k})`)
+        .attr("stroke-width", 1 / transform.k)
 
-      d3.selectAll(".country").attr('transform', event.transform)
-      .attr("stroke-width", 1 / transform.k);
+        svg.selectAll('.tooltip').attr('transform', transform)
+        .attr('transform', `translate(${transform.x},${transform.y}) scale(${transform.k})`)
+        .attr("stroke-width", 1 / transform.k)
 
-      d3.selectAll(".border").attr('transform', event.transform)
-      .attr("stroke-width", 1 / transform.k);
+        // svg.selectAll('.tooltip').attr('transform', transform)
+        // .attr('transform', `scale(${ 1 / transform.k})`)
 
-      // Tooltip needs to translate to stay in its original position relative to the map. 
-      d3.selectAll(".tooltip").attr('transform', event.transform)
-      // svg.attr("transform", "translate(" + event.transform.x + "," + event.transform.y + ") scale(" + event.transform.k + ")");
+      })
+      .translateExtent([[0, 0], [width, height]])
+      .scaleExtent([1, 10]);
 
-    })
-    .translateExtent([[0, 0], [width, height]])
-    .scaleExtent([1, 10]);
+     const tooltipZoom = d3.zoom() 
+      .on('zoom', (event, d)=> {
+          const {transform} = event;
+          svg.selectAll('.tooltip').attr('transform', transform)
+          .attr('transform', `translate(${transform.x},${transform.y}) scale(${transform.k})`)
+          .attr("stroke-width", 1 / transform.k)
+      })
+      .translateExtent([[0, 0], [width, height]])
+      .scaleExtent([1, 1]);
+
 
     // *** Top Level Selector (ViewBox) ***
     let svg = d3.select(svgRef.current)
     .attr("id", "viewbox")
     .attr("viewBox", [0, 0, width, height])
-    .call(zoom)
-    .on("mouseleave", reset);
+    .attr('preserveAspectRatio', 'xMinYMid')
+    .on("mouseleave", reset, hidePetal)
+    .on('zoom', zoom);
 
     let g = svg.join("g")
+    
     svg.exit().remove();
 
     // *** Country groupings ***
@@ -162,16 +180,15 @@ const MapMaker = ({ svgRef, setClicked, yearValue,  width, height, loading, setL
       .attr("id", d => d.properties.ISO_A3_EH)
       .attr("cursor", "pointer")
       .attr("fill", d => { return d.properties.color || "#c4c2c4" })
-      .on("click", clicked, zoom)
-      .on("mouseenter", debounce(toggleVisibility))
+      // .on("click", debounce(toggleVisibility))
+      .on("mouseenter", debounce(toggleVisibility, 1750))
       .on("mouseover", d=> {
         d3.select(d.path[0]).style("opacity", ".8");
       })
       .on("mouseleave", d => {
-
         // Cancel Previous debounce calls
-        debounce(clearTimeout)
-        
+        // debounce(null, 0);
+        // reset();
         d3.select(d.path[0]).style("opacity", "1");
       })
       .append("title")
@@ -190,12 +207,14 @@ const MapMaker = ({ svgRef, setClicked, yearValue,  width, height, loading, setL
 
     // *** Tool Tip *** 
     let toolTip = g.selectAll(".tooltip")
-      .data(countriesDataSet, d => { return d })
+      .data(countriesDataSet)
       .join("g")
-      .append("svg")
-      .attr("id", d => d.properties.ISO_A3_EH)
+      // .append("svg")
       .attr("class", "tooltip")
+      .attr("id", d => d.properties.ISO_A3_EH)
       .on("mouseleave", reset, hidePetal)
+      // .call(zoom.transform, t)
+      .on("zoom", tooltipZoom)
 
     toolTip
       .append("circle")
@@ -330,12 +349,14 @@ const MapMaker = ({ svgRef, setClicked, yearValue,  width, height, loading, setL
       .text(d => d.properties.NAME_EN)
     toolTip.exit().remove();
 
+    svg.call(zoom);
+
     // ********************** Visibility ****************************      
 
     reset();
 
     toolTip
-      .attr("visibility", "hidden")
+      .attr("visibility", "hidden");
 
     // *** Event Listeners ***
     function reset() {
@@ -353,15 +374,27 @@ const MapMaker = ({ svgRef, setClicked, yearValue,  width, height, loading, setL
       d3.selectAll(`#${d.properties.ISO_A3_EH}.tooltip`).attr("visibility", "visible");
     }
 
-    function debounce(func, timeout = 1750) {
-      let timer;
-      return (...args) => {
+    function debounce(fn, delay) {
+      var timer = null;
+      // let abort = false;
+      if(fn === null) {
         clearTimeout(timer);
-        timer = setTimeout(() => {
-          func.apply(this, args);
-        }, timeout);
+        return;
+      }
+      return function(event, abort) {
+          var context = this,
+          // maybe keep reference to event.previous;
+              args = arguments,
+              evt = event;
+              //we get the D3 event here
+          clearTimeout(timer);
+          timer = setTimeout(function() {
+              event = evt;
+              //and use the reference here
+              fn.apply(context, args);
+          }, delay);
       };
-    };
+  }
 
     function expandPetal(event, d) {
       d3.selectAll(`#${d.id}.subPetalPath`).attr("visibility", "visible");
@@ -371,13 +404,6 @@ const MapMaker = ({ svgRef, setClicked, yearValue,  width, height, loading, setL
     function hidePetal() {
       toolTip.selectAll(".subPetalPath").attr("visibility", "hidden")
       toolTip.selectAll(".subPetalBackgroundPath").attr("visibility", "hidden")
-    }
-
-
-    function clicked(event, d) {
-      // let [[x0, y0], [x1, y1]] = path.bounds(d);
-      // event.stopPropagation();
-      // reset();
     }
 
   };
@@ -390,7 +416,6 @@ const MapMaker = ({ svgRef, setClicked, yearValue,  width, height, loading, setL
       let years = d3.group(spi, d => d['SPI year'])
       return years.get(yearValue);
     });
-    console.log("UseEffect Fired");
 
     Promise.all([mapData, spiData]).then(function (values) {
       console.log(values);
