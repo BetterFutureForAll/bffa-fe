@@ -140,11 +140,26 @@ const MapMaker = ({ svgRef, setClicked, yearValue,  width, height, loading, setL
         svg.selectAll('.tooltip').attr('transform', transform)
         .attr('transform', `translate(${transform.x},${transform.y}) scale(${transform.k})`)
         .attr("stroke-width", 1 / transform.k)
+        // .attr('')
 
-        // svg.selectAll('.tooltip').attr('transform', transform)
-        // .attr('transform', `scale(${ 1 / transform.k})`)
+        console.log(event);
 
-      })
+      //manually recreating tooltip with new cX, cY;
+
+        svg.selectAll('.outer')
+          .attr("r", d => d.properties.flower.spiScale ? spiScale(100) *  1 / transform.k : null);
+        svg.selectAll('.inner')
+          .attr("r", d => d.properties.flower.spiScale * 1 / transform.k);
+
+        svg.selectAll('.petalBackgroundPath, .subPetalBackgroundPath')
+          .attr("transform", d => `translate(${d.center[0]}, ${d.center[1]}) rotate(${d.angle}) scale(${(spiScale(100) * .01) *  1 / transform.k})`);
+
+        svg.selectAll('.petalPath, .subPetalPath')
+          .attr("transform", d => `translate(${d.center[0]}, ${d.center[1]}) rotate(${d.angle}) scale(${(d.petSize * .01) *  1 / transform.k } )`);
+        svg.selectAll('.name')
+          .attr('transform', d => `translate(${d.properties.flower.center[0]},${d.properties.flower.center[1] + ((1/transform.k) * 110)}) scale( ${1 / transform.k})`)
+
+        })
       .translateExtent([[0, 0], [width, height]])
       .scaleExtent([1, 10]);
 
