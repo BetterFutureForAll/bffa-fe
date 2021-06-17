@@ -8,8 +8,6 @@ import {
 } from '../hooks/hooks';
 import MapMaker from '../components/MapMaker';
 
-
-
 function MapContainer() {
 
   const svgRef = useRef(null);
@@ -18,8 +16,8 @@ function MapContainer() {
 
   // Query user and set based off browser.
   
-  let width = useWindowSize();
-  let height = width * .7;
+  let [width, height] = useWindowSize();
+  // let height = width * .7;
 
   let [clicked, setClicked] = useClicked();
   let [setMouse] = useMouse();
@@ -77,6 +75,8 @@ function MapContainer() {
         />
       <div className="ControlBar">
         <Header 
+          height={height}
+          width={width}
           selectYears={selectYears} 
           yearValue={yearValue} 
           selectCountries={selectCountries}
