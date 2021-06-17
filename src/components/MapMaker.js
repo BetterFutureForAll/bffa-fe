@@ -359,12 +359,12 @@ const MapMaker = ({ svgRef, setClicked, yearValue,  width, height, loading, setL
       d3.selectAll(`#${d.properties.ISO_A3_EH}.inner`)
         .attr("r", 0)
         .transition(3750)
-        .attr("r", d => d.properties.flower.spiScale)
+        .attr("r", d => d.properties.flower.spiScale * (1/initialScale))
 
       d3.selectAll(`#${d.properties.ISO_A3_EH}.petalPath`)
         .attr('transform', d => `translate(${d.center[0]}, ${d.center[1]}) rotate(${d.angle}) scale(${0})`)
         .transition(3750)
-        .attr('transform', d => `translate(${d.center[0]}, ${d.center[1]}) rotate(${d.angle}) scale(${d.petSize * .01})`)
+        .attr('transform', d => `translate(${d.center[0]}, ${d.center[1]}) rotate(${d.angle}) scale(${d.petSize * .01 * (1/initialScale)})`)
 
 
     }
