@@ -190,6 +190,7 @@ const MapMaker = ({ svgRef, setClicked, yearValue,  width, height, loading, setL
       .attr("fill", d => { return d.properties.color || "#c4c2c4" })
       // .on("click", debounce(toggleVisibility))
       .on("mouseenter", debounce(toggleVisibility, 1750))
+      .on("click", debounce(toggleVisibility, 0))
       .on("mouseover", d=> {
         d3.select(d.path[0]).style("opacity", ".8");
       })
