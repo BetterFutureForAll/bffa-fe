@@ -8,52 +8,72 @@ import {
   opportunityColorScale
 } from '../services/SocialProgress';
 
-const Header = ({ selectYears, yearValue, selectCountries, handleSubmit }) => {
+const Header = ({ width, height, selectYears, yearValue, selectCountries, handleSubmit }) => {
 
   let legendRef = useRef(null);
   let legendPetals = useRef(null);
-
+  let controlBarHeight = height / 10;
+  let quarterWidth = (width / 4);
+  let squareSize = (quarterWidth) / 12 ;
+  
   useEffect(() => {
-
+    
     let petalPath = 'M 0 0 c 100 100 80 0 100 0 C 80 0 100 -100 0 0';
 
     let legendData = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
 
-    let categoryCircles = ["Basic Needs", "Opportunity", "Foundations of Wellbeing"];
-    function ready() {
 
+    // var xscale = d3.scaleLinear()
+    // .domain([0, 100])
+    // .range([0, quarterWidth - squareSize]);
+    // var x_axis = d3.axisBottom(xscale);
+
+
+
+    let categoryCircles = ["Basic Needs", "Opportunity", "Foundations of Wellbeing"];
+
+    function ready() {
+      console.log(width, height);
       var svg = d3.select(legendRef.current)
-        .append("g")
+        .join("g")
       svg
-        .selectAll("svg")
+        .selectAll("rect")
         .data(legendData)
         .enter()
-        .append("svg")
         .append("rect")
         .attr("x", (d, i) => {
-          return 0 + (i * 25)
+          return 0 + (i * squareSize)
         })
         .attr("y", 0)
-        .attr("height", 25)
-        .attr("width", 25)
+        .attr("height", squareSize)
+        .attr("width", squareSize)
         .style("fill", d => colorScale(d))
+        .join('text')
+        .append('title')
+        .text(d=> d)
 
-      svg
-        .selectAll("g")
-        .data(legendData)
-        .enter()
-        .append("g")
-        .append("text")
-        .attr('text-anchor', 'middle')
-        .style("fill", "black")
-        .attr("x", (d, i) => {
-          return 12.5 + (i * 25)
-        })
-        .attr("y", +12.5)
-        .attr("dy", ".25em")
-        .text(d => d);
+      // svg.append("g")
+      //   .call(x_axis)
+
+      // svg
+      //   .selectAll("g")
+      //   .data(legendData)
+      //   .enter()
+      //   .append("g")
+      //   .append("text")
+      //   .attr('text-anchor', 'middle')
+      //   .style("fill", "black")
+      //   .attr("x", (d, i) => {
+      //     return 12.5 + (i * 25)
+      //   })
+      //   .attr("y", +12.5)
+      //   .attr("dy", ".25em")
+      //   .text(d => d);
 
       var svgPetals = d3.select(legendPetals.current)
+        .attr("preserveAspectRatio", "xMinYMin meet")
+        .attr("id", "viewbox")
+        .attr("viewBox", [0, 0, quarterWidth, controlBarHeight])
         .append("g")
 
       svgPetals
@@ -62,10 +82,10 @@ const Header = ({ selectYears, yearValue, selectCountries, handleSubmit }) => {
         .enter()
         .append("circle")
         .attr("cx", (d, i) => {
-          return 25 + (i * 75)
+          return 25 + (i * 75) 
         })
         .attr("cy", 25)
-        .attr("r", 20)
+        .attr("r", 25)
         .style('fill', basicColorScale(0))
 
       svgPetals
@@ -117,31 +137,30 @@ const Header = ({ selectYears, yearValue, selectCountries, handleSubmit }) => {
         })
         .attr("y", 45)
         .text(d => d)
-
     }
-
-
     ready();
-    console.log("Legend Created");
-  }, [])
+  }, [width, height, controlBarHeight, quarterWidth, squareSize])
 
 
 
   return (
     <>
-      <svg ref={legendRef} id={"legend"} height={50} width={300}></svg>
-      <svg ref={legendPetals} id={"legendPetals"} height={50} width={300}></svg>
+      <svg ref={legendRef} id={"legend"} class={'legend'} height={squareSize} width={quarterWidth}></svg>
+
+      <svg ref={legendPetals} id={"legendPetals"} class={'legend'} height={controlBarHeight} width={quarterWidth}></svg>
 
       <form onSubmit={handleSubmit}>
-        <label id="years" value={yearValue} >Select a year </label>
+        <label id="years" value={yearValue} >Year </label>
         {selectYears}
-        {selectCountries}
+        {/* {selectCountries} */}
       </form>
     </>
   );
 };
 
 Header.propTypes = {
+  width: PropTypes.number,
+  height: PropTypes.number,
   selectYears: PropTypes.object,
   yearValue: PropTypes.string,
   handleSubmit: PropTypes.func
