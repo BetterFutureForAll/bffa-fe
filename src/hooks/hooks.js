@@ -138,13 +138,13 @@ export function useWindowSize() {
   const isWindowClient = typeof window === "object";
 
   const [windowSize, setWindowSize] = useState(
-    isWindowClient ? window.innerWidth : undefined
+    isWindowClient ? [window.innerWidth, window.innerHeight]: undefined
   );
 
   useEffect(() => {
     //a handler which will be called on change of the screen resize
     function setSize() {
-      setWindowSize(window.innerWidth);
+      setWindowSize([window.innerWidth, window.innerHeight]);
     }
     if (isWindowClient) {
       //register the window resize listener
@@ -158,24 +158,3 @@ export function useWindowSize() {
   return windowSize;
 };
 
-
-
-//Green: #90eb00
-//Blue:#00e4fb
-//Red: #f64c5c
-
-// '#c4c2c4',
-// '#ffe479',
-// // '#ccebc5',
-// '#a8ddb5',
-// '#7bccc4',
-// '#4eb3d3',
-// // '#2b8cbe',
-// '#08589e',
-
-// #f64c5c,
-// #c574fb,
-// #7484fb,
-// #00e4fb,
-// #00eb9b,
-// #90eb00
