@@ -7,7 +7,6 @@ import {
   foundationsColorScale, 
   opportunityColorScale 
 } from '../services/SocialProgress';
-import { transform } from 'lodash';
 
 const MapMaker = ({ svgRef, setClicked, yearValue,  width, height, loading, setLoading }) => {
 
@@ -126,14 +125,16 @@ const MapMaker = ({ svgRef, setClicked, yearValue,  width, height, loading, setL
     })
 
     // Needs to center on Mouse Position
+
+    // initialScale tracks Zoom scale throughout transforms.
     var initialScale = 1;
 
     const zoom = d3.zoom()
       .on('zoom', (event, d) => {
         const {transform} = event;
-        // d3.zoomIdentity;
-        initialScale = transform.k;
 
+        // Save the Current Zoom level so we can scale tooltips. 
+        initialScale = transform.k;
 
         svg.selectAll(".country").attr('transform', transform)
         .attr('transform', `translate(${transform.x},${transform.y}) scale(${transform.k})`)
@@ -146,9 +147,6 @@ const MapMaker = ({ svgRef, setClicked, yearValue,  width, height, loading, setL
         svg.selectAll('.tooltip').attr('transform', transform)
         .attr('transform', `translate(${transform.x},${transform.y}) scale(${transform.k})`)
         .attr("stroke-width", 1 / transform.k)
-        // .attr('')
-
-        // console.log(event);
 
       //manually recreating tooltip with new cX, cY;
 
@@ -168,17 +166,6 @@ const MapMaker = ({ svgRef, setClicked, yearValue,  width, height, loading, setL
         })
       .translateExtent([[0, 0], [width, height]])
       .scaleExtent([1, 10]);
-
-    //  const tooltipZoom = d3.zoom() 
-    //   .on('zoom', (event, d)=> {
-    //       const {transform} = event;
-    //       svg.selectAll('.tooltip').attr('transform', transform)
-    //       .attr('transform', `translate(${transform.x},${transform.y}) scale(${transform.k})`)
-    //       .attr("stroke-width", 1 / transform.k)
-    //   })
-    //   .translateExtent([[0, 0], [width, height]])
-    //   .scaleExtent([1, 1]);
-
 
     // *** Top Level Selector (ViewBox) ***
     let svg = d3.select(svgRef.current)
