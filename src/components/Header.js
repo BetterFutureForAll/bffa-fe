@@ -145,9 +145,9 @@ const Header = ({ width, height, selectYears, yearValue, selectCountries, handle
 
   return (
     <>
-      <svg ref={legendRef} id={"legend"} class={'legend'} height={squareSize} width={quarterWidth}></svg>
+      <svg ref={legendRef} id={"legend"} className={'legend'} height={squareSize} width={quarterWidth}></svg>
 
-      <svg ref={legendPetals} id={"legendPetals"} class={'legend'} height={controlBarHeight} width={quarterWidth}></svg>
+      <svg ref={legendPetals} id={"legendPetals"} className={'legend'} height={controlBarHeight} width={quarterWidth}></svg>
 
       <form onSubmit={handleSubmit}>
         <label id="years" value={yearValue} >Year </label>
