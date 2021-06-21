@@ -65,14 +65,14 @@ const Header = ({ width, height, selectYears, yearValue, selectCountries, handle
         })
         .attr("cy", controlBarHeight / 2)
         .attr("r", controlBarHeight / 2)
-        .style('fill', basicColorScale(0))
+        .style('fill', basicColorScale(0));
 
       svgPetals
-      .selectAll('.name')
-      .data(categoryCircles)
-      .join('text')
-      .attr('class', 'name')
-      .attr('text-anchor', 'middle')
+        .selectAll('.name')
+        .data(categoryCircles)
+        .join('text')
+        .attr('class', 'name')
+        .attr('text-anchor', 'middle')
         .attr('alignment-baseline', 'ideographic')
         .style("font-size", "50%")
         .attr("x", (d, i) => {
