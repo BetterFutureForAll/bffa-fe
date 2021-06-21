@@ -124,8 +124,6 @@ const MapMaker = ({ svgRef, setClicked, yearValue,  width, height, loading, setL
       };
     })
 
-    // Needs to center on Mouse Position
-
     // initialScale tracks Zoom scale throughout transforms.
     var initialScale = 1;
 
@@ -189,7 +187,7 @@ const MapMaker = ({ svgRef, setClicked, yearValue,  width, height, loading, setL
       .attr("cursor", "pointer")
       .attr("fill", d => { return d.properties.color || "#c4c2c4" })
       // .on("click", debounce(toggleVisibility))
-      .on("mouseenter", debounce(toggleVisibility, 1750))
+      .on("mouseenter", debounce(toggleVisibility, 250))
       .on("click", debounce(toggleVisibility, 0))
       .on("mouseover", d=> {
         d3.select(d.path[0]).style("opacity", ".8");
@@ -218,12 +216,9 @@ const MapMaker = ({ svgRef, setClicked, yearValue,  width, height, loading, setL
     let toolTip = g.selectAll(".tooltip")
       .data(countriesDataSet)
       .join("g")
-      // .append("svg")
       .attr("class", "tooltip")
       .attr("id", d => d.properties.ISO_A3_EH)
       .on("mouseleave", reset, hidePetal)
-      // .call(zoom.transform, t)
-      // .on("zoom", tooltipZoom)
 
     toolTip
       .append("circle")
@@ -234,9 +229,7 @@ const MapMaker = ({ svgRef, setClicked, yearValue,  width, height, loading, setL
       .attr("r", d => d.properties.flower.spiScale ? spiScale(100) : null)
       .style('fill', '#c4c2c4')
       .style("opacity", "0.5")
-      // .on("mouseover", hidePetal)
       .style('stroke', 'black')
-    // toolTip.exit().remove();
 
     toolTip
       .append("circle")
@@ -249,10 +242,8 @@ const MapMaker = ({ svgRef, setClicked, yearValue,  width, height, loading, setL
       .style('stroke', 'black')
       .attr("cursor", "pointer")
       .on("mouseover", hidePetal)
-      //  ****** change to Text attr next to country name ********************
       .append("title")
       .text(d => { return `Social Progress Index \n ${d.properties.flower.spi}` })
-    // toolTip.exit().remove();
 
 
     // *** Individual Flower Petals ***
@@ -268,12 +259,10 @@ const MapMaker = ({ svgRef, setClicked, yearValue,  width, height, loading, setL
       .style('fill', d => d.colorRef)
       .style("opacity", "0.40")
       .attr("cursor", "pointer")
-      .on("mouseenter", expandPetal)
       .on("mouseleave", hidePetal)
       .join('text')
       .append('title')
       .text(d => { return `${d.text} : ${d.petSize}` })
-    // toolTip.exit().remove();
 
     toolTip
       .selectAll('.petalPath')
@@ -286,7 +275,6 @@ const MapMaker = ({ svgRef, setClicked, yearValue,  width, height, loading, setL
       .style('stroke', 'black')
       .style('fill', d => d.colorRef)
       .attr("cursor", "pointer")
-      .on("mouseenter", expandPetal)
       .join('text')
       .append('title')
       .text(d => {
@@ -300,10 +288,8 @@ const MapMaker = ({ svgRef, setClicked, yearValue,  width, height, loading, setL
           return `${d.text} : ${d.petSize}`
         }
       })
-    // toolTip.exit().remove();
 
     // *** Sub Petals ***
-
     toolTip
       .selectAll('.subPetalPath')
       .data(d => d.properties.flower.subPetals)
@@ -318,15 +304,14 @@ const MapMaker = ({ svgRef, setClicked, yearValue,  width, height, loading, setL
       .append("title")
       .append("text")
       .text(d => d.text)
-    // toolTip.exit().remove();
 
     // Formal Name
-    toolTip
-      .append('text')
-      .attr('class', 'name')
-      .attr('text-anchor', 'middle')
-      .attr('transform', d => `translate(${d.properties.flower.center[0]},${d.properties.flower.center[1] + 110})`)
-      .text(d => d.properties.NAME_EN)
+    // toolTip
+    //   .append('text')
+    //   .attr('class', 'name')
+    //   .attr('text-anchor', 'middle')
+    //   .attr('transform', d => `translate(${d.properties.flower.center[0]},${d.properties.flower.center[1] + 110})`)
+    //   .text(d => d.properties.NAME_EN)
     // toolTip.exit().remove();
 
     svg.call(zoom);
@@ -335,44 +320,77 @@ const MapMaker = ({ svgRef, setClicked, yearValue,  width, height, loading, setL
 
     reset();
 
-    // toolTip
-    //   .attr("visibility", "hidden");
-
     // *** Event Listeners ***
     function reset() {
-      // console.log('RESET');
       d3.selectAll(".tooltip").attr("visibility", "hidden");
+      d3.selectAll(".name").remove();
       hidePetal();
       setClicked(undefined);
     }
 
-
     function toggleVisibility(event, d) {
+
       d3.selectAll(".tooltip").attr("visibility", "hidden");
       if(!d) { return };
 
       d3.selectAll(`#${d.properties.ISO_A3_EH}.inner`)
       .attr("r", 0)
 
+      d3.selectAll(`#${d.properties.ISO_A3_EH}.outer`)
+      .attr("r", 0)
+
       d3.selectAll(`#${d.properties.ISO_A3_EH}.tooltip`)
         .attr("visibility", "visible");
 
+        d3.selectAll(`#${d.properties.ISO_A3_EH}.outer`)
+        .attr("r", 0)
+        .transition().duration([750])
+        .attr("r", d => d.properties.flower.spiScale ? spiScale(100) * (1/initialScale) : null)
+        .on('end', ()=>{
+          d3.selectAll(`#${d.properties.ISO_A3_EH}.tooltip`)
+          .append('text')
+          .attr('class', 'name')
+          .attr('text-anchor', 'middle')
+          .attr('transform', d => `translate(${d.properties.flower.center[0]},${d.properties.flower.center[1] + 110})`)
+          .text(d => d.properties.NAME_EN)
+        })
+
       d3.selectAll(`#${d.properties.ISO_A3_EH}.inner`)
         .attr("r", 0)
-        .transition(3750)
+        .transition().duration([1750])
         .attr("r", d => d.properties.flower.spiScale * (1/initialScale))
 
       d3.selectAll(`#${d.properties.ISO_A3_EH}.petalPath`)
         .attr('transform', d => `translate(${d.center[0]}, ${d.center[1]}) rotate(${d.angle}) scale(${0})`)
-        .transition(3750)
+        .transition().duration([1750])
         .attr('transform', d => `translate(${d.center[0]}, ${d.center[1]}) rotate(${d.angle}) scale(${d.petSize * .01 * (1/initialScale)})`)
+        .on('end', ()=>{
+          console.log(d3.selectAll(`#${d.properties.ISO_A3_EH}.petalPath`));
+          d3.selectAll(`#${d.properties.ISO_A3_EH}.petalPath`)
+          .on("mouseenter", expandPetal);
+        })
 
+      d3.selectAll(`#${d.properties.ISO_A3_EH}.petalBackgroundPath`)
+        .attr('transform', d => `translate(${d.center[0]}, ${d.center[1]}) rotate(${d.angle}) scale(${0})`)
+        .transition().duration([1750])
+        .attr('transform', d => `translate(${d.center[0]}, ${d.center[1]}) rotate(${d.angle}) scale(${spiScale(100) * .01 * (1/initialScale)})`)
+        .on('end', ()=>{
+          d3.selectAll(`#${d.properties.ISO_A3_EH}.petalPath`)
+          .on("mouseenter", expandPetal);
+        })
 
+      d3.selectAll(`#${d.properties.ISO_A3_EH}.petalPath`)
+        .attr('transform', d => `translate(${d.center[0]}, ${d.center[1]}) rotate(${d.angle}) scale(${0})`)
+        .transition().duration([1750])
+        .attr('transform', d => `translate(${d.center[0]}, ${d.center[1]}) rotate(${d.angle}) scale(${d.petSize * .01 * (1/initialScale)})`)
+        .on('end', ()=>{
+          d3.selectAll(`#${d.properties.ISO_A3_EH}.petalPath`)
+          .on("mouseenter", expandPetal);
+        })
     }
 
     function debounce(fn, delay) {
       var timer = null;
-      // let abort = false;
       if(delay === null) {
         clearTimeout(timer);
         return;
@@ -394,6 +412,7 @@ const MapMaker = ({ svgRef, setClicked, yearValue,  width, height, loading, setL
   }
 
     function expandPetal(event, d) {
+
       d3.selectAll(`#${d.id}.subPetalPath`)
       .attr('transform', `scale(${.001})`)
       d3.selectAll(`#${d.id}.subPetalPath`).attr("visibility", "visible");
@@ -401,12 +420,12 @@ const MapMaker = ({ svgRef, setClicked, yearValue,  width, height, loading, setL
 
       d3.selectAll(`#${d.id}.subPetalPath`)
       .attr('transform', d => `translate(${d.center[0]}, ${d.center[1]}) rotate(${d.angle}) scale(${.001})`)
-      .transition(1750)
+      .transition(3000)
       .attr('transform', d => `translate(${d.center[0]}, ${d.center[1]}) rotate(${d.angle}) scale(${d.petSize * .01 * (1/initialScale)})`)
     }
 
     function hidePetal() {
-      toolTip.selectAll(".subPetalPath").attr("visibility", "hidden")
+      toolTip.selectAll(".subPetalPath").attr("visibility", "hidden").transition().duration(0);
       toolTip.selectAll(".subPetalBackgroundPath").attr("visibility", "hidden")
     }
 
@@ -422,7 +441,6 @@ const MapMaker = ({ svgRef, setClicked, yearValue,  width, height, loading, setL
     });
 
     Promise.all([mapData, spiData]).then(function (values) {
-      console.log(values);
       d3.selectAll(svgRef.current).exit().remove();
       setLoading(false);
       ready(values);
