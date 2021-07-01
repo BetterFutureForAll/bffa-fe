@@ -27,7 +27,7 @@ const Header = ({ width, height, selectYears, yearValue, selectCountries, handle
 
     let legendData = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
 
-    let categoryCircles = ["Basic Needs", "Opportunity", "Foundations of Wellbeing"];
+    let categoryCircles = ["Foundations of Wellbeing", "Opportunity", "Basic Needs"];
 
     function ready() {
 
@@ -67,11 +67,9 @@ const Header = ({ width, height, selectYears, yearValue, selectCountries, handle
         .attr("r", controlBarHeight / 2)
         .style('fill', basicColorScale(0));
 
-      svgPetals
-        .selectAll('.name')
-        .data(categoryCircles)
+      let text = circles
         .join('text')
-        .attr('class', 'name')
+        .attr('class', 'title')
         .attr('text-anchor', 'middle')
         .attr('alignment-baseline', 'ideographic')
         .style("font-size", "50%")
@@ -79,8 +77,8 @@ const Header = ({ width, height, selectYears, yearValue, selectCountries, handle
           return width / 18 + (i * (width / 9)) 
         })
         .attr("y", controlBarHeight)
-        .text(d => d)
-
+        .text(d => { return d; });
+      text.exit().remove();
 
       svgPetals
         .selectAll('.petalLegend')
