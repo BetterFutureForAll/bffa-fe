@@ -149,6 +149,7 @@ const MapMaker = ({ svgRef, setClicked, yearValue,  width, height, loading, setL
 
         svg.selectAll('.outer')
           .attr("r", d => d.properties.flower.spiScale ? spiScale(100) *  1 / transform.k : null);
+        
         svg.selectAll('.inner')
           .attr("r", d => d.properties.flower.spiScale * 1 / transform.k);
 
@@ -157,8 +158,9 @@ const MapMaker = ({ svgRef, setClicked, yearValue,  width, height, loading, setL
 
         svg.selectAll('.petalPath, .subPetalPath')
           .attr("transform", d => `translate(${d.center[0]}, ${d.center[1]}) rotate(${d.angle}) scale(${(d.petSize * .01) *  1 / transform.k } )`);
+        
         svg.selectAll('.name')
-          .attr('transform', d => `translate(${d.properties.flower.center[0]},${d.properties.flower.center[1] + spiScale(110) * (1/initialScale) }) scale(${( 1 / initialScale)})`)
+          .attr('transform', d => `translate(${d.properties.flower.center[0]},${d.properties.flower.center[1] + spiScale(120) * (1/initialScale) }) scale(${( 1 / initialScale)})`)
 
         })
       .translateExtent([[0, 0], [width, height]])
@@ -349,7 +351,7 @@ const MapMaker = ({ svgRef, setClicked, yearValue,  width, height, loading, setL
           .append('text')
           .attr('class', 'name')
           .attr('text-anchor', 'middle')
-          .attr('transform', d => `translate(${d.properties.flower.center[0]},${d.properties.flower.center[1] + spiScale(110) * (1/initialScale)}) scale(${( 1 / initialScale)})`)
+          .attr('transform', d => `translate(${d.properties.flower.center[0]},${d.properties.flower.center[1] + spiScale(120) * (1/initialScale)}) scale(${( 1 / initialScale)})`)
           .text(d => d.properties.NAME_EN)
         })
 
