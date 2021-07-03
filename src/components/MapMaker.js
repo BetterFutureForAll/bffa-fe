@@ -10,7 +10,7 @@ import {
 
 const MapMaker = ({ svgRef, setClicked, yearValue,  width, height, loading, setLoading }) => {
 
-  var margin = { top: 0, left: 0, right: 0, bottom: 0, }
+  // var margin = { top: 0, left: 0, right: 0, bottom: 0, }
 
   let loadingSpinner = require('../assets/loading.gif');
 
@@ -28,8 +28,8 @@ const MapMaker = ({ svgRef, setClicked, yearValue,  width, height, loading, setL
   function ready(data) {
 
     let projection = d3.geoEqualEarth()
-      .scale(225)
-      .translate([(width + margin.left + margin.right) / 2, (height + margin.top + margin.bottom) / 2]);
+    .scale(width / 1.3 / Math.PI)
+    .translate([width / 2, height / 2])
 
     let path = d3.geoPath().projection(projection);
 
@@ -38,11 +38,8 @@ const MapMaker = ({ svgRef, setClicked, yearValue,  width, height, loading, setL
 
     countriesDataSet.forEach(function (f) {
       
-      
-      // catch unassigned ISO's (French colonies and other territories)
+      //Catch for Colonies and Territories without Formal ISO names. 
       if (f.properties.ISO_A3_EH === "-99") {
-        // console.log(f.properties);
-        // France vs French Guiana still mixed, do we treat it like Hawaii? 
         f.properties.ISO_A3_EH = f.properties.GU_A3;
       }
 
@@ -129,7 +126,7 @@ const MapMaker = ({ svgRef, setClicked, yearValue,  width, height, loading, setL
     const zoom = d3.zoom()
       .on('zoom', (event, d) => {
         const {transform} = event;
-
+        console.log(event);
         // Save the Current Zoom level so we can scale tooltips. 
         initialScale = transform.k;
 
