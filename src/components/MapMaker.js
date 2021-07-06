@@ -16,6 +16,7 @@ const MapMaker = ({ svgRef, setClicked, yearValue,  width, height, loading, setL
 
   // import topoJSON and CSV here
   let localGeoData = process.env.PUBLIC_URL + '/topoMap.json';
+  // *** Look into overlaying Raster style maps (Google Maps, Leaflet, etc) *** //
 
   let hardData = require('../assets/2011-2020-Social-Progress-Index.csv');
 
@@ -27,14 +28,16 @@ const MapMaker = ({ svgRef, setClicked, yearValue,  width, height, loading, setL
 
   function ready(data) {
 
+    //Check Height Vs Width, use the width for small screens and height for large.
+
     let projection = d3.geoEqualEarth()
-    .scale(width / 1.3 / Math.PI)
-    .translate([width / 2, height / 2])
+      .scale(width / 1.5 / Math.PI)
+      .translate([width / 2, height / 2])
 
     let path = d3.geoPath().projection(projection);
 
     let spiCountryGroup = d3.group(data[1], s => s["SPI country code"]);
-    let countriesDataSet = feature(data[0], data[0].objects.countries).features
+    let countriesDataSet = feature(data[0], data[0].objects.countries).features;
 
     countriesDataSet.forEach(function (f) {
       
@@ -43,6 +46,7 @@ const MapMaker = ({ svgRef, setClicked, yearValue,  width, height, loading, setL
         f.properties.ISO_A3_EH = f.properties.GU_A3;
       }
 
+    //  if( d.id !== "GRL" && d.id !== "ATA)
       // Clean up PARTIAL data, either place holder / null / Data Unavailable
       let d = spiCountryGroup.get(f.properties.ISO_A3_EH) || null;
 
@@ -126,7 +130,7 @@ const MapMaker = ({ svgRef, setClicked, yearValue,  width, height, loading, setL
     const zoom = d3.zoom()
       .on('zoom', (event, d) => {
         const {transform} = event;
-        console.log(event);
+        // console.log(event);
         // Save the Current Zoom level so we can scale tooltips. 
         initialScale = transform.k;
 
@@ -160,7 +164,7 @@ const MapMaker = ({ svgRef, setClicked, yearValue,  width, height, loading, setL
           .attr('transform', d => `translate(${d.properties.flower.center[0]},${d.properties.flower.center[1] + spiScale(120) * (1/initialScale) }) scale(${( 1 / initialScale)})`)
 
         })
-      .translateExtent([[0, 0], [width, height]])
+      .translateExtent([[0, 0], [width * 1.3, height * 1.3]])
       .scaleExtent([1, 10]);
 
     // *** Top Level Selector (ViewBox) ***
@@ -177,7 +181,8 @@ const MapMaker = ({ svgRef, setClicked, yearValue,  width, height, loading, setL
 
     // *** Country groupings ***
     let countries = g.selectAll(".country")
-      .data(countriesDataSet)
+    // d.properties.ISO_A3_EH !== "GRL" && 
+      .data(countriesDataSet.filter(d => d.properties.ISO_A3_EH !== "ATA"))
       .join("path")
       .attr("d", path)
       .attr("class", "country")
