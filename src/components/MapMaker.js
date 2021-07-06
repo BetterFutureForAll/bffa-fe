@@ -1,14 +1,14 @@
 import React, { useEffect } from 'react';
 import * as d3 from 'd3';
 import { feature, mesh } from "topojson-client";
-import { 
-  colorScale, 
-  basicColorScale, 
-  foundationsColorScale, 
-  opportunityColorScale 
+import {
+  colorScale,
+  basicColorScale,
+  foundationsColorScale,
+  opportunityColorScale
 } from '../services/SocialProgress';
 
-const MapMaker = ({ svgRef, setClicked, yearValue,  width, height, loading, setLoading }) => {
+const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLoading }) => {
 
   // var margin = { top: 0, left: 0, right: 0, bottom: 0, }
 
@@ -16,6 +16,7 @@ const MapMaker = ({ svgRef, setClicked, yearValue,  width, height, loading, setL
 
   // import topoJSON and CSV here
   let localGeoData = process.env.PUBLIC_URL + '/topoMap.json';
+  // *** Look into overlaying Raster style maps (Google Maps, Leaflet, etc) *** //
 
   let hardData = require('../assets/2011-2020-Social-Progress-Index.csv');
 
@@ -27,22 +28,25 @@ const MapMaker = ({ svgRef, setClicked, yearValue,  width, height, loading, setL
 
   function ready(data) {
 
+    //Check Height Vs Width, use the width for small screens and height for large.
+
     let projection = d3.geoEqualEarth()
-    .scale(width / 1.3 / Math.PI)
-    .translate([width / 2, height / 2])
+      .scale(width / 1.5 / Math.PI)
+      .translate([width / 2, height / 2])
 
     let path = d3.geoPath().projection(projection);
 
     let spiCountryGroup = d3.group(data[1], s => s["SPI country code"]);
-    let countriesDataSet = feature(data[0], data[0].objects.countries).features
+    let countriesDataSet = feature(data[0], data[0].objects.countries).features;
 
     countriesDataSet.forEach(function (f) {
-      
+
       //Catch for Colonies and Territories without Formal ISO names. 
       if (f.properties.ISO_A3_EH === "-99") {
         f.properties.ISO_A3_EH = f.properties.GU_A3;
       }
 
+      //  if( d.id !== "GRL" && d.id !== "ATA)
       // Clean up PARTIAL data, either place holder / null / Data Unavailable
       let d = spiCountryGroup.get(f.properties.ISO_A3_EH) || null;
 
@@ -66,23 +70,23 @@ const MapMaker = ({ svgRef, setClicked, yearValue,  width, height, loading, setL
       // let foundationSize = spiScale(foundations);
 
       let foundationsSubCat = d ? [
-        d[0]["Access to Basic Knowledge"], 
-        d[0]['Access to Information and Communications'], 
-        d[0]['Health and Wellness'], 
+        d[0]["Access to Basic Knowledge"],
+        d[0]['Access to Information and Communications'],
+        d[0]['Health and Wellness'],
         d[0]['Environmental Quality']
-        ,] : 
+        ,] :
         [0, 0, 0, 0];
 
       let opportunity = d ? +d[0]["Opportunity"] : 0;
       // let oppSize = spiScale(opportunity);
 
       let opportunitySubCat = d ? [
-        d[0]["Personal Rights"], 
-        d[0]["Personal Freedom and Choice"], 
-        d[0]["Inclusiveness"], 
+        d[0]["Personal Rights"],
+        d[0]["Personal Freedom and Choice"],
+        d[0]["Inclusiveness"],
         d[0]["Access to Advanced Education"],
-      ] : 
-      [0, 0, 0, 0];
+      ] :
+        [0, 0, 0, 0];
 
       // Individual Map Colors
       f.properties.spi = d ? d[0] : { "Social Progress Index": null };
@@ -125,59 +129,60 @@ const MapMaker = ({ svgRef, setClicked, yearValue,  width, height, loading, setL
 
     const zoom = d3.zoom()
       .on('zoom', (event, d) => {
-        const {transform} = event;
-        console.log(event);
+        const { transform } = event;
+        // console.log(event);
         // Save the Current Zoom level so we can scale tooltips. 
         initialScale = transform.k;
 
         svg.selectAll(".country").attr('transform', transform)
-        .attr('transform', `translate(${transform.x},${transform.y}) scale(${transform.k})`)
-        .attr("stroke-width", 1 / transform.k);
-        
+          .attr('transform', `translate(${transform.x},${transform.y}) scale(${transform.k})`)
+          .attr("stroke-width", 1 / transform.k);
+
         svg.selectAll(".border").attr('transform', transform)
-        .attr('transform', `translate(${transform.x},${transform.y}) scale(${transform.k})`)
-        .attr("stroke-width", 1 / transform.k)
+          .attr('transform', `translate(${transform.x},${transform.y}) scale(${transform.k})`)
+          .attr("stroke-width", 1 / transform.k)
 
         svg.selectAll('.tooltip').attr('transform', transform)
-        .attr('transform', `translate(${transform.x},${transform.y}) scale(${transform.k})`)
-        .attr("stroke-width", 1 / transform.k)
+          .attr('transform', `translate(${transform.x},${transform.y}) scale(${transform.k})`)
+          .attr("stroke-width", 1 / transform.k)
 
-      //manually recreating tooltip with new cX, cY;
+        //manually recreating tooltip with new cX, cY;
 
         svg.selectAll('.outer')
-          .attr("r", d => d.properties.flower.spiScale ? spiScale(100) *  1 / transform.k : null);
-        
+          .attr("r", d => d.properties.flower.spiScale ? spiScale(100) * 1 / transform.k : null);
+
         svg.selectAll('.inner')
           .attr("r", d => d.properties.flower.spiScale * 1 / transform.k);
 
         svg.selectAll('.petalBackgroundPath, .subPetalBackgroundPath')
-          .attr("transform", d => `translate(${d.center[0]}, ${d.center[1]}) rotate(${d.angle}) scale(${(spiScale(100) * .01) *  1 / transform.k})`);
+          .attr("transform", d => `translate(${d.center[0]}, ${d.center[1]}) rotate(${d.angle}) scale(${(spiScale(100) * .01) * 1 / transform.k})`);
 
         svg.selectAll('.petalPath, .subPetalPath')
-          .attr("transform", d => `translate(${d.center[0]}, ${d.center[1]}) rotate(${d.angle}) scale(${(d.petSize * .01) *  1 / transform.k } )`);
-        
-        svg.selectAll('.name')
-          .attr('transform', d => `translate(${d.properties.flower.center[0]},${d.properties.flower.center[1] + spiScale(120) * (1/initialScale) }) scale(${( 1 / initialScale)})`)
+          .attr("transform", d => `translate(${d.center[0]}, ${d.center[1]}) rotate(${d.angle}) scale(${(d.petSize * .01) * 1 / transform.k} )`);
 
-        })
-      .translateExtent([[0, 0], [width, height]])
+        svg.selectAll('.name')
+          .attr('transform', d => `translate(${d.properties.flower.center[0]},${d.properties.flower.center[1] + spiScale(120) * (1 / initialScale)}) scale(${(1 / initialScale)})`)
+
+      })
+      .translateExtent([[0, 0], [width * 1.3, height * 1.3]])
       .scaleExtent([1, 10]);
 
     // *** Top Level Selector (ViewBox) ***
     let svg = d3.select(svgRef.current)
-    .attr("id", "viewbox")
-    .attr("viewBox", [0, 0, width, height])
-    .attr('preserveAspectRatio', 'xMinYMid')
-    .on("mouseleave", reset, hidePetal)
-    .on('zoom', zoom);
+      .attr("id", "viewbox")
+      .attr("viewBox", [0, 0, width, height])
+      .attr('preserveAspectRatio', 'xMinYMid')
+      .on("mouseleave", reset, hidePetal)
+      .on('zoom', zoom);
 
     let g = svg.join("g")
-    
+
     svg.exit().remove();
 
     // *** Country groupings ***
     let countries = g.selectAll(".country")
-      .data(countriesDataSet)
+      // d.properties.ISO_A3_EH !== "GRL" && 
+      .data(countriesDataSet.filter(d => d.properties.ISO_A3_EH !== "ATA"))
       .join("path")
       .attr("d", path)
       .attr("class", "country")
@@ -186,7 +191,7 @@ const MapMaker = ({ svgRef, setClicked, yearValue,  width, height, loading, setL
       .attr("fill", d => { return d.properties.color || "#c4c2c4" })
       .on("mouseenter", debounce(toggleVisibility, 250))
       .on("click", debounce(toggleVisibility, 0))
-      .on("mouseover", d=> {
+      .on("mouseover", d => {
         d3.select(d.path[0]).style("opacity", ".8");
       })
       .on("mouseleave", d => {
@@ -328,97 +333,97 @@ const MapMaker = ({ svgRef, setClicked, yearValue,  width, height, loading, setL
     function toggleVisibility(event, d) {
 
       d3.selectAll(".tooltip").attr("visibility", "hidden");
-      if(!d) { return };
+      if (!d) { return };
 
       d3.selectAll(`#${d.properties.ISO_A3_EH}.inner`)
-      .attr("r", 0)
+        .attr("r", 0)
 
       d3.selectAll(`#${d.properties.ISO_A3_EH}.outer`)
-      .attr("r", 0)
+        .attr("r", 0)
 
       d3.selectAll(`#${d.properties.ISO_A3_EH}.tooltip`)
         .attr("visibility", "visible");
 
-        d3.selectAll(`#${d.properties.ISO_A3_EH}.outer`)
+      d3.selectAll(`#${d.properties.ISO_A3_EH}.outer`)
         .attr("r", 0)
         .transition().duration([750])
-        .attr("r", d => d.properties.flower.spiScale ? spiScale(100) * (1/initialScale) : null)
-        .on('end', ()=> {
+        .attr("r", d => d.properties.flower.spiScale ? spiScale(100) * (1 / initialScale) : null)
+        .on('end', () => {
           d3.selectAll(`#${d.properties.ISO_A3_EH}.tooltip`)
-          .append('text')
-          .attr('class', 'name')
-          .attr('text-anchor', 'middle')
-          .attr('transform', d => `translate(${d.properties.flower.center[0]},${d.properties.flower.center[1] + spiScale(120) * (1/initialScale)}) scale(${( 1 / initialScale)})`)
-          .text(d => d.properties.NAME_EN)
+            .append('text')
+            .attr('class', 'name')
+            .attr('text-anchor', 'middle')
+            .attr('transform', d => `translate(${d.properties.flower.center[0]},${d.properties.flower.center[1] + spiScale(120) * (1 / initialScale)}) scale(${(1 / initialScale)})`)
+            .text(d => d.properties.NAME_EN)
         })
 
       d3.selectAll(`#${d.properties.ISO_A3_EH}.inner`)
         .attr("r", 0)
         .transition().duration([1750])
-        .attr("r", d => d.properties.flower.spiScale * (1/initialScale))
+        .attr("r", d => d.properties.flower.spiScale * (1 / initialScale))
 
       d3.selectAll(`#${d.properties.ISO_A3_EH}.petalPath`)
         .attr('transform', d => `translate(${d.center[0]}, ${d.center[1]}) rotate(${d.angle}) scale(${0})`)
         .transition().duration([1750])
-        .attr('transform', d => `translate(${d.center[0]}, ${d.center[1]}) rotate(${d.angle}) scale(${d.petSize * .01 * (1/initialScale)})`)
-        .on('end', ()=>{
+        .attr('transform', d => `translate(${d.center[0]}, ${d.center[1]}) rotate(${d.angle}) scale(${d.petSize * .01 * (1 / initialScale)})`)
+        .on('end', () => {
           console.log(d3.selectAll(`#${d.properties.ISO_A3_EH}.petalPath`));
           d3.selectAll(`#${d.properties.ISO_A3_EH}.petalPath`)
-          .on("mouseenter", expandPetal);
+            .on("mouseenter", expandPetal);
         })
 
       d3.selectAll(`#${d.properties.ISO_A3_EH}.petalBackgroundPath`)
         .attr('transform', d => `translate(${d.center[0]}, ${d.center[1]}) rotate(${d.angle}) scale(${0})`)
         .transition().duration([1750])
-        .attr('transform', d => `translate(${d.center[0]}, ${d.center[1]}) rotate(${d.angle}) scale(${spiScale(100) * .01 * (1/initialScale)})`)
-        .on('end', ()=>{
+        .attr('transform', d => `translate(${d.center[0]}, ${d.center[1]}) rotate(${d.angle}) scale(${spiScale(100) * .01 * (1 / initialScale)})`)
+        .on('end', () => {
           d3.selectAll(`#${d.properties.ISO_A3_EH}.petalPath`)
-          .on("mouseenter", expandPetal);
+            .on("mouseenter", expandPetal);
         })
 
       d3.selectAll(`#${d.properties.ISO_A3_EH}.petalPath`)
         .attr('transform', d => `translate(${d.center[0]}, ${d.center[1]}) rotate(${d.angle}) scale(${0})`)
         .transition().duration([1750])
-        .attr('transform', d => `translate(${d.center[0]}, ${d.center[1]}) rotate(${d.angle}) scale(${d.petSize * .01 * (1/initialScale)})`)
-        .on('end', ()=>{
+        .attr('transform', d => `translate(${d.center[0]}, ${d.center[1]}) rotate(${d.angle}) scale(${d.petSize * .01 * (1 / initialScale)})`)
+        .on('end', () => {
           d3.selectAll(`#${d.properties.ISO_A3_EH}.petalPath`)
-          .on("mouseenter", expandPetal);
+            .on("mouseenter", expandPetal);
         })
     }
 
     function debounce(fn, delay) {
       var timer = null;
-      if(delay === null) {
+      if (delay === null) {
         clearTimeout(timer);
         return;
       }
-      return function(event, abort) {
-          var context = this,
+      return function (event, abort) {
+        var context = this,
           // maybe keep reference to event.previous;
           args = arguments,
           evt = event;
-          //we get the D3 event here
-          clearTimeout(timer);
-          if(abort === true) { return};
-          timer = setTimeout(function() {
-              event = evt;
-              //and use the reference here
-              fn.apply(context, args);
-          }, delay);
+        //we get the D3 event here
+        clearTimeout(timer);
+        if (abort === true) { return };
+        timer = setTimeout(function () {
+          event = evt;
+          //and use the reference here
+          fn.apply(context, args);
+        }, delay);
       };
-  }
+    }
 
     function expandPetal(event, d) {
 
       d3.selectAll(`#${d.id}.subPetalPath`)
-      .attr('transform', `scale(${.001})`)
+        .attr('transform', `scale(${.001})`)
       d3.selectAll(`#${d.id}.subPetalPath`).attr("visibility", "visible");
       d3.selectAll(`#${d.id}.subPetalBackgroundPath`).attr("visibility", "visible");
 
       d3.selectAll(`#${d.id}.subPetalPath`)
-      .attr('transform', d => `translate(${d.center[0]}, ${d.center[1]}) rotate(${d.angle}) scale(${.001})`)
-      .transition(3000)
-      .attr('transform', d => `translate(${d.center[0]}, ${d.center[1]}) rotate(${d.angle}) scale(${d.petSize * .01 * (1/initialScale)})`)
+        .attr('transform', d => `translate(${d.center[0]}, ${d.center[1]}) rotate(${d.angle}) scale(${.001})`)
+        .transition(3000)
+        .attr('transform', d => `translate(${d.center[0]}, ${d.center[1]}) rotate(${d.angle}) scale(${d.petSize * .01 * (1 / initialScale)})`)
     }
 
     function hidePetal() {
@@ -443,11 +448,11 @@ const MapMaker = ({ svgRef, setClicked, yearValue,  width, height, loading, setL
       ready(values);
     });
 
-// eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [yearValue, localGeoData, hardData, svgRef]);
 
-  while(loading) return ( <img src={loadingSpinner} alt={'loading spinner'}/> )
-  
+  while (loading) return (<img src={loadingSpinner} alt={'loading spinner'} />)
+
   return (
     <svg ref={svgRef} height={height} width={width} id="map"></svg>
   );
