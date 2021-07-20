@@ -335,6 +335,7 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
     // *** Event Listeners ***
     function reset(event) {
       d3.selectAll(".tooltip").attr("visibility", "hidden");
+      svg.selectAll('.subPetalText').remove();
       d3.selectAll(".toolTipName").remove();
       hidePetal();
       setClicked(undefined);
