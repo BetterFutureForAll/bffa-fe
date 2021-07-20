@@ -8,6 +8,7 @@ import {
   opportunityColorScale
 } from '../services/SocialProgress';
 
+
 const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLoading }) => {
 
   // var margin = { top: 0, left: 0, right: 0, bottom: 0, }
@@ -24,14 +25,17 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
 
   let subPetalPath = "M 0 0 L 85 15 A 1 1 0 0 0 85 -15 L 0 0";
 
-  let spiScale = d3.scaleLinear().domain([0, 100]).range([0, 100]);
 
   function ready(data) {
+
+    let checkedSize = Math.min(height, width)
+
+    let spiScale = d3.scaleLinear().domain([0, 100]).range([0, 100]);
 
     //Check Height Vs Width, use the width for small screens and height for large.
 
     let projection = d3.geoEqualEarth()
-      .scale(width / 1.5 / Math.PI)
+      .scale(checkedSize / 1.5 / Math.PI)
       .translate([width / 2, height / 2])
 
     let path = d3.geoPath().projection(projection);
@@ -46,8 +50,6 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
         f.properties.ISO_A3_EH = f.properties.GU_A3;
       }
 
-      //  if( d.id !== "GRL" && d.id !== "ATA)
-      // Clean up PARTIAL data, either place holder / null / Data Unavailable
       let d = spiCountryGroup.get(f.properties.ISO_A3_EH) || null;
 
       let id = f.properties.ISO_A3_EH;
@@ -56,7 +58,6 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
       let spiSize = spi;
 
       let basicNeeds = d ? +d[0]["Basic Human Needs"] : 0;
-      // let basicSize = spiScale(basicNeeds);
 
       let basicSubCat = d ? [
         d[0]["Nutrition and Basic Medical Care"],
@@ -67,7 +68,6 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
         [0, 0, 0, 0];
 
       let foundations = d ? +d[0]["Foundations of Wellbeing"] : 0;
-      // let foundationSize = spiScale(foundations);
 
       let foundationsSubCat = d ? [
         d[0]["Access to Basic Knowledge"],
@@ -78,7 +78,6 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
         [0, 0, 0, 0];
 
       let opportunity = d ? +d[0]["Opportunity"] : 0;
-      // let oppSize = spiScale(opportunity);
 
       let opportunitySubCat = d ? [
         d[0]["Personal Rights"],
@@ -120,7 +119,6 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
         spi,
         center: path.centroid(f),
         bounds: path.bounds(f),
-        zoomK: null
       };
     })
 
@@ -146,6 +144,16 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
           .attr('transform', `translate(${transform.x},${transform.y}) scale(${transform.k})`)
           .attr("stroke-width", 1 / transform.k)
 
+        svg.selectAll('.toolTipName').attr('transform', transform)
+          .attr('transform', `translate(${transform.x},${transform.y}) scale(${transform.k})`)
+          // .attr("font-size", 1 / transform.k)
+
+        svg.selectAll('.subPetalText').remove();
+
+
+        svg.selectAll('.toolTipName').attr('transform', transform)
+          .attr('transform', `translate(${transform.x},${transform.y}) scale(${transform.k})`)
+
         //manually recreating tooltip with new cX, cY;
 
         svg.selectAll('.outer')
@@ -162,7 +170,6 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
 
         svg.selectAll('.name')
           .attr('transform', d => `translate(${d.properties.flower.center[0]},${d.properties.flower.center[1] + spiScale(120) * (1 / initialScale)}) scale(${(1 / initialScale)})`)
-
       })
       .translateExtent([[0, 0], [width * 1.3, height * 1.3]])
       .scaleExtent([1, 10]);
@@ -175,7 +182,7 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
       .on("mouseleave", reset, hidePetal)
       .on('zoom', zoom);
 
-    let g = svg.join("g")
+    let g = svg.join("g");
 
     svg.exit().remove();
 
@@ -199,7 +206,7 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
         d3.select(d.path[0]).style("opacity", "1");
       })
       .append("title")
-      .text(d => { return d.properties.NAME_EN })
+      .text(d => { return `${d.properties.NAME_EN}` })
     countries.exit().remove();
 
     // // *** borders / whitespace mesh ***
@@ -209,6 +216,8 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
       .attr("stroke", "white")
       .attr("stroke-linejoin", "round")
       .attr("d", path(mesh(data[0], data[0].objects.countries, (a, b) => a !== b)))
+      .on('click', reset, hidePetal);
+
     borders.exit().remove();
 
     // *** Tool Tip *** 
@@ -229,7 +238,6 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
       .style('fill', '#c4c2c4')
       .style("opacity", "0.5")
       .style('stroke', 'black')
-
 
     toolTip
       .append("circle")
@@ -301,20 +309,22 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
       .style('stroke', 'black')
       .style('fill', d => d.colorRef)
       .attr("cursor", "pointer")
+      .on('click', clickTitle)
       .append("title")
       .append("text")
-      .text(d => d.text)
+      .text(d => d.text);
 
-    // Formal Name
     // toolTip
+    //   .selectAll('.subPetalTitle')
+    //   .data(d => d.properties.flower.subPetals)
     //   .join('g')
-    //   .append('text')
-    //   .attr('class', 'name')
-    //   .attr('text-anchor', 'middle')
-    //   .style("font-size", "50%")
-    //   .attr('transform', d => `translate(${d.properties.flower.center[0]},${d.properties.flower.center[1] + 110}) scale(${1 / initialScale})`)
-    //   .text(d => d.properties.NAME_EN)
-    // toolTip.exit().remove();
+    //   .attr('class', 'subPetalTitle')
+    //   .attr("text-anchor", function(d) { return d.center[0] + d.petSize * .01 ? "end" : "start"; })
+    //   .attr("transform", d => { return `translate(${d.center[0]}, ${d.center[1]}) rotate(${d.angle + 180}) scale(${d.petSize * .01}  )`})
+    // .append("text")
+    //   .text(d=> { return (d.text)})
+    //   .style("font-size", "11px")
+    //   .attr("alignment-baseline", "middle")
 
     svg.call(zoom);
 
@@ -325,9 +335,31 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
     // *** Event Listeners ***
     function reset(event) {
       d3.selectAll(".tooltip").attr("visibility", "hidden");
-      // d3.selectAll(".name").remove();
+      d3.selectAll(".toolTipName").remove();
       hidePetal();
       setClicked(undefined);
+    }
+
+    function clickTitle(event, d) {
+      d3.selectAll('.subPetalText').remove();
+      // let g = d3.select(this);
+      // // let mouse = [event.x, event.y]
+
+      let textContent = d.text;
+
+
+      d3.select(this.parentNode)
+        .append('text')
+        .attr('class', 'subPetalText')
+        .attr('text-anchor', 'middle')
+        .append('tspan')
+        .attr('transform', `scale(${1 / initialScale})`)
+        .attr('x', event.x)
+        .attr('y', event.y)
+        .attr("font-size", 10 * 1 / initialScale)
+        .attr('transform', d => `translate(${event.x},${event.y * (1 / initialScale)}) scale(${(1 / initialScale)})`)
+        .text(`${textContent} ⓘ`)
+
     }
 
     function toggleVisibility(event, d) {
@@ -335,10 +367,10 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
       d3.selectAll(".tooltip").attr("visibility", "hidden");
       if (!d) { return };
 
-      d3.selectAll(`#${d.properties.ISO_A3_EH}.inner`)
+      d3.selectAll(`#${d.properties.ISO_A3_EH}.outer`)
         .attr("r", 0)
 
-      d3.selectAll(`#${d.properties.ISO_A3_EH}.outer`)
+      d3.selectAll(`#${d.properties.ISO_A3_EH}.inner`)
         .attr("r", 0)
 
       d3.selectAll(`#${d.properties.ISO_A3_EH}.tooltip`)
@@ -348,29 +380,12 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
         .attr("r", 0)
         .transition().duration([750])
         .attr("r", d => d.properties.flower.spiScale ? spiScale(100) * (1 / initialScale) : null)
-        .on('end', () => {
-          d3.selectAll(`#${d.properties.ISO_A3_EH}.tooltip`)
-            .append('text')
-            .attr('class', 'name')
-            .attr('text-anchor', 'middle')
-            .attr('transform', d => `translate(${d.properties.flower.center[0]},${d.properties.flower.center[1] + spiScale(120) * (1 / initialScale)}) scale(${(1 / initialScale)})`)
-            .text(d => d.properties.NAME_EN)
-        })
+        .on('end', addName(event, d))
 
       d3.selectAll(`#${d.properties.ISO_A3_EH}.inner`)
         .attr("r", 0)
         .transition().duration([1750])
         .attr("r", d => d.properties.flower.spiScale * (1 / initialScale))
-
-      d3.selectAll(`#${d.properties.ISO_A3_EH}.petalPath`)
-        .attr('transform', d => `translate(${d.center[0]}, ${d.center[1]}) rotate(${d.angle}) scale(${0})`)
-        .transition().duration([1750])
-        .attr('transform', d => `translate(${d.center[0]}, ${d.center[1]}) rotate(${d.angle}) scale(${d.petSize * .01 * (1 / initialScale)})`)
-        .on('end', () => {
-          console.log(d3.selectAll(`#${d.properties.ISO_A3_EH}.petalPath`));
-          d3.selectAll(`#${d.properties.ISO_A3_EH}.petalPath`)
-            .on("mouseenter", expandPetal);
-        })
 
       d3.selectAll(`#${d.properties.ISO_A3_EH}.petalBackgroundPath`)
         .attr('transform', d => `translate(${d.center[0]}, ${d.center[1]}) rotate(${d.angle}) scale(${0})`)
@@ -431,9 +446,28 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
       toolTip.selectAll(".subPetalBackgroundPath").attr("visibility", "hidden").transition().duration(0);
     }
 
+    function addName(event, d) {
+      d3.selectAll(`#${d.properties.ISO_A3_EH}.tooltip`)
+        .append('text')
+        .attr('class', 'toolTipName')
+        .attr('text-anchor', 'middle')
+        .attr('transform', d => `translate(${d.properties.flower.center[0]},${d.properties.flower.center[1] + spiScale(120) * (1 / initialScale)}) scale(${(1 / initialScale)})`)
+        .append('tspan')
+        .attr('x', 0)
+        .text(d => { return `${d.properties.NAME_EN}` })
+        .append('tspan')
+        .text(d => { return `${d.properties.flower.spi}` })
+        .attr('x', 0)
+        .attr('dy', '1em')
+        .attr('text-anchor', 'middle')
+    };
+
   };
 
+
+
   useEffect(() => {
+
     setLoading(true);
     // D3 parses CSV into JSON
     let mapData = d3.json(localGeoData);

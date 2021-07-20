@@ -20,6 +20,8 @@ const Header = ({ width, height, selectYears, yearValue, selectCountries, handle
   let radiusScale = d3.scaleLinear()
     .domain([0, 100])
     .range([0, (controlBarHeight/2)]);
+
+
   
   useEffect(() => {
     
@@ -124,11 +126,42 @@ const Header = ({ width, height, selectYears, yearValue, selectCountries, handle
 
   }, [width, height, controlBarHeight, quarterWidth, squareSize, radiusScale])
 
+    // Get the modal
+var modal = document.getElementById("myModal");
 
+// When the user clicks on the button, open the modal
+
+// function openButton()  {
+//   console.log('Definitions Clicked');
+//   // modal.style.display = "block";
+// }
+
+// When the user clicks on <span> (x), close the modal
+// function closeButton() {
+//   modal.style.display = "none";
+// }
+
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function(event) {
+  if (event.target === modal) {
+    modal.style.display = "none";
+  }
+}
 
   return (
     <>
       <svg ref={legendRef} id={"legend"} className={'legend'} height={squareSize} width={width / 3}></svg>
+
+
+      {/* <button id="myBtn" onClick={openButton}>Definitions</button> */}
+
+      {/* <div id="myModal" className="modal" display="none">
+        <div className="modal-content" display="none">
+          <span className="closeButton" onClick={closeButton}>&times;</span>
+          <p>Definitions</p>
+        </div>
+      </div> */}
+
 
       {/* <svg ref={legendPetals} id={"legendPetals"} className={'legend'} height={controlBarHeight} width={width / 3}></svg> */}
 
