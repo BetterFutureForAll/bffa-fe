@@ -174,6 +174,8 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
       .translateExtent([[0, 0], [width * 1.3, height * 1.3]])
       .scaleExtent([1, 10]);
 
+    
+
     // *** Top Level Selector (ViewBox) ***
     let svg = d3.select(svgRef.current)
       .attr("id", "viewbox")
@@ -186,9 +188,56 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
 
     svg.exit().remove();
 
+
+    function clickTitle(event, d) {
+      d3.selectAll('.subPetalText').remove();
+      let textContent = d.text;
+      d3.select(this.parentNode)
+        .append('text')
+        .attr('class', 'subPetalText')
+        .attr('text-anchor', 'left')
+        .append('tspan')
+        .attr('x', event.x)
+        .attr('y', event.y)
+        .attr("font-size", 16 / initialScale)
+        .attr('transform', d => `translate(${event.x},${event.y})`)
+        .text(`${textContent} ⓘ`)
+    }
+
+
+    var TextTooltip = d3.select(".tooltip-area")
+      .style("opacity", 0);
+    
+
+    var mouseover = function(event, d) {
+      TextTooltip
+        .style("opacity", 1)
+        // .style("stroke", "black")
+    }
+
+    var mousemove = function(event, d) {
+
+      const text = d3.select('.tooltip-area__text');
+
+      text.text(`${d.text} ⓘ`);
+
+      let x = event.x;
+      let y = event.y;
+
+      TextTooltip
+        .attr("font-size", 16)
+        .attr('transform', `translate(${x}, ${y})`)
+
+    }
+
+    var mouseleave = function(event, d) {
+      TextTooltip
+        .style("opacity", 0)
+        .style("stroke", "none")
+    }
+
     // *** Country groupings ***
     let countries = g.selectAll(".country")
-      // d.properties.ISO_A3_EH !== "GRL" && 
       .data(countriesDataSet.filter(d => d.properties.ISO_A3_EH !== "ATA"))
       .join("path")
       .attr("d", path)
@@ -310,9 +359,12 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
       .style('fill', d => d.colorRef)
       .attr("cursor", "pointer")
       .on('click', clickTitle)
-      .append("title")
-      .append("text")
-      .text(d => d.text);
+      .on("mouseover", mouseover)
+      .on("mousemove", mousemove)
+      .on("mouseleave", mouseleave)
+      // .append("title")
+      // .append("text")
+      // .text(d => d.text)
 
     // toolTip
     //   .selectAll('.subPetalTitle')
@@ -325,6 +377,12 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
     //   .text(d=> { return (d.text)})
     //   .style("font-size", "11px")
     //   .attr("alignment-baseline", "middle")
+
+
+    // svg.append("g")
+    // .attr('class', 'tooltip-area')
+    // .append('text')
+    // .attr('class', 'tooltip-area__text')
 
     svg.call(zoom);
 
@@ -341,27 +399,6 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
       setClicked(undefined);
     }
 
-    function clickTitle(event, d) {
-      d3.selectAll('.subPetalText').remove();
-      // let g = d3.select(this);
-      // // let mouse = [event.x, event.y]
-
-      let textContent = d.text;
-
-
-      d3.select(this.parentNode)
-        .append('text')
-        .attr('class', 'subPetalText')
-        .attr('text-anchor', 'middle')
-        .append('tspan')
-        .attr('transform', `scale(${1 / initialScale})`)
-        .attr('x', event.x)
-        .attr('y', event.y)
-        .attr("font-size", 10 * 1 / initialScale)
-        .attr('transform', d => `translate(${event.x},${event.y * (1 / initialScale)}) scale(${(1 / initialScale)})`)
-        .text(`${textContent} ⓘ`)
-
-    }
 
     function toggleVisibility(event, d) {
 
@@ -463,6 +500,9 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
         .attr('text-anchor', 'middle')
     };
 
+    TextTooltip.raise();
+    TextTooltip.attr("pointer-events", "none");
+
   };
 
 
@@ -489,7 +529,11 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
   while (loading) return (<img src={loadingSpinner} alt={'loading spinner'} />)
 
   return (
-    <svg ref={svgRef} height={height} width={width} id="map"></svg>
+    <svg ref={svgRef} height={height} width={width} id="map">
+        <g className="tooltip-area">
+          <text className="tooltip-area__text"></text>
+        </g>
+    </svg>
   );
 };
 
