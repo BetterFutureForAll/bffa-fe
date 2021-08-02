@@ -300,12 +300,12 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
       .style('stroke', 'black')
       .style('fill', d => d.colorRef)
       .attr("cursor", "pointer")
-      .each(d => {
-        let x = d.center[0];
-        let y = d.center[1];
-        let angle = d.angle;
-        let scale = d.petSize * .01;
-        console.log(d.text);
+      // .each(d => {
+        // let x = d.center[0];
+        // let y = d.center[1];
+        // let angle = d.angle;
+        // let scale = d.petSize * .01;
+        // console.log(d.text);
         // text
         // .append('tspan')
         // .text(`${d.text}`)
@@ -314,7 +314,7 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
         // .attr('style', 'text-shadow: 2px 2px white, -2px -2px white, 2px -2px white, -2px 2px white;')
         // .attr('x', x)
         // .attr('y', y)
-      })
+      // })
 
       toolTip.selectAll('.petalPath').on("mouseover", showSubPetals)
       toolTip.on("mouseleave", countryMouseLeave)
