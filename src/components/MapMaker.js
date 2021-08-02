@@ -131,6 +131,7 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
         const { transform } = event;
         // console.log(event);
         // Save the Current Zoom level so we can scale tooltips. 
+        countryMouseLeave();
         initialScale = transform.k;
 
         svg.selectAll(".country").attr('transform', transform)
@@ -231,8 +232,8 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
       let x = d.properties.flower.center[0];
       let y = d.properties.flower.center[1];
       let id = d.properties.ISO_A3_EH;
-      let r = d.properties.flower.spiScale ? spiScale(100) : null;
-      let scaledRadius = d.properties.flower.spiScale || null;
+      let r = d.properties.flower.spiScale ? spiScale(100)/ initialScale : null;
+      let scaledRadius = d.properties.flower.spiScale / initialScale || null;
       let color = d.properties.color;
       let name = d.properties.NAME_EN;
       let SPI = `Social Progress Index \n ${d.properties.flower.spi}`;
@@ -280,7 +281,7 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
         .attr('transform', d => `translate(${d.center[0]}, ${d.center[1]}) rotate(${d.angle}) scale(${0})`)
         .transition().duration(1250)
         .attr('transform', d => {
-          return `translate(${d.center[0]}, ${d.center[1]}) rotate(${d.angle}) scale(${d.petSize===0 ? 0 : spiScale(100) * .01})`})
+          return `translate(${d.center[0]}, ${d.center[1]}) rotate(${d.angle}) scale(${d.petSize===0 ? 0 : spiScale(100) * .01 / initialScale})`})
         .style('stroke', 'black')
         .style('fill', d => d.colorRef)
         .style("opacity", "0.40")
@@ -295,29 +296,51 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
       .attr('d', d => d.petalPath)
       .attr('transform', d => `translate(${d.center[0]}, ${d.center[1]}) rotate(${d.angle}) scale(${0})`)
       .transition().duration(1250)
-      .attr('transform', d => `translate(${d.center[0]}, ${d.center[1]}) rotate(${d.angle}) scale(${d.petSize * .01})`)
+      .attr('transform', d => `translate(${d.center[0]}, ${d.center[1]}) rotate(${d.angle}) scale(${d.petSize * .01 / initialScale})`)
       .style('stroke', 'black')
       .style('fill', d => d.colorRef)
-      .attr("cursor", "pointer");
+      .attr("cursor", "pointer")
+      .each(d => {
+        let x = d.center[0];
+        let y = d.center[1];
+        let angle = d.angle;
+        let scale = d.petSize * .01;
+        console.log(d.text);
+        // text
+        // .append('tspan')
+        // .text(`${d.text}`)
+        // .attr('transform',  `translate(${x}, ${y}) rotate(${angle}) scale(${scale})`)
+        // .attr("font-size", 16)
+        // .attr('style', 'text-shadow: 2px 2px white, -2px -2px white, 2px -2px white, -2px 2px white;')
+        // .attr('x', x)
+        // .attr('y', y)
+      })
 
       toolTip.selectAll('.petalPath').on("mouseover", showSubPetals)
       toolTip.on("mouseleave", countryMouseLeave)
 
+      
+      var fontSize = 16 / initialScale;
+
       text
-      .attr('text-anchor', 'middle')
-      .attr('transform', `translate(${x}, ${y + spiScale(120)})`)
+      .attr('transform', `translate(${x}, ${(y + spiScale(120)/initialScale)})`)
       .append('tspan')
-      .attr("font-size", 16)
-      .attr('style', 'text-shadow: 2px 2px white, -2px -2px white, 2px -2px white, -2px 2px white;')
       .text(name)
+      .attr('text-anchor', 'middle')
+      .attr("font-size", fontSize)
+      .attr('style', 'text-shadow: 2px 2px white, -2px -2px white, 2px -2px white, -2px 2px white;')
+      .attr('x', 0)
+      .attr('y', 0)
+      .attr('dy', 0)
       .append('tspan')
       .text(SPI)
-      .attr("font-size", 16)
+      .attr("font-size", fontSize)
       .attr('style', 'text-shadow: 2px 2px white, -2px -2px white, 2px -2px white, -2px 2px white;')
       .attr('x', 0)
       .attr('y', 0)
       .attr('dy', '1em')
       .attr('text-anchor', 'middle')
+  
 
       // d3.selectAll('.petalPath').each(function(event, d){
       //   console.log(event, d);
@@ -340,7 +363,7 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
         .attr('d', d => subPetalPath)
         .attr('transform', d => `translate(${x}, ${y}) scale(${0})`)
         .transition().duration(750)
-        .attr('transform', d => `translate(${x}, ${y}) rotate(${d.angle}) scale(${spiScale(d.value) * .01})`)
+        .attr('transform', d => `translate(${x}, ${y}) rotate(${d.angle}) scale(${spiScale(d.value) * .01/ initialScale})`)
         .style('stroke', 'black')
         .style('fill', d => colorScale(d.value))
         .attr("cursor", "pointer");
