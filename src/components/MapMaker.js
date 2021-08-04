@@ -219,7 +219,7 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
       let scaledRadius = d.properties.flower.spiScale / initialScale || null;
       let color = d.properties.color;
       let name = d.properties.NAME_EN;
-      let SPI = `Social Progress Index \n ${d.properties.flower.spi}`;
+      let SPI = `Social Progress Index ${d.properties.flower.spi}`;
 
       let text = d3.select(`.graphicTooltip__text`);
 
