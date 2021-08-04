@@ -94,27 +94,33 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
       // petals change to reflect 3 categories (basic needs etc)
       f.properties.flower = {
         petals: [
-          { id, angle: 30, petalPath, center: path.centroid(f), petSize: basicNeeds, colorRef: basicColorScale(basicNeeds), text: 'Basic Human Needs', 
-          subCat: [ 
-            { angle: 0, value: (basicSubCat[0]), text: `Nutrition and Basic Medical Care: ${basicSubCat[0]}` },
-            { angle: 20, value: (basicSubCat[1]), text: `Water and Sanitation: ${basicSubCat[1]}` },
-            { angle: 40, value: (basicSubCat[2]), text: `Shelter: ${basicSubCat[2]}` },
-            { angle: 60, value: (basicSubCat[3]), text: `Personal Safety: ${basicSubCat[3]}` },
-            ]},
-          { id, angle: 150, petalPath, center: path.centroid(f), petSize: foundations, colorRef: foundationsColorScale(foundations), text: 'Foundations of Wellbeing', 
-          subCat: [
-            { angle: 120, value: (foundationsSubCat[0]), text: `Access to Basic Knowledge: ${foundationsSubCat[0]}` },
-            { angle: 140, value: (foundationsSubCat[1]), text: `Access to Information and Communications: ${foundationsSubCat[1]}` },
-            { angle: 160, value: (foundationsSubCat[2]), text: `Health and Wellness: ${foundationsSubCat[2]}` },
-            { angle: 180, value: (foundationsSubCat[3]), text: `Environmental Quality: ${foundationsSubCat[3]}` },
-            ]},
-          { id, angle: 270, petalPath, center: path.centroid(f), petSize: opportunity, colorRef: opportunityColorScale(opportunity), text: 'Opportunity', 
-          subCat: [
-            { id, angle: 240, value: (opportunitySubCat[0]), text: `Personal Rights: ${opportunitySubCat[0]}` },
-            { id, angle: 260, value: (opportunitySubCat[1]), text: `Personal Freedom and Choice: ${opportunitySubCat[1]}` },
-            { id, angle: 280, value: (opportunitySubCat[2]), text: `Inclusiveness: ${opportunitySubCat[2]}` },
-            { id, angle: 300, value: (opportunitySubCat[3]), text: `Access to Advanced Education: ${opportunitySubCat[3]}` },
-            ]}
+          {
+            id, angle: 30, petalPath, center: path.centroid(f), petSize: basicNeeds, colorRef: basicColorScale(basicNeeds), text: 'Basic Human Needs',
+            subCat: [
+              { angle: 0, value: basicSubCat[0], colorValue: basicColorScale(basicSubCat[0]), text: `Nutrition and Basic Medical Care: ${basicSubCat[0]}` },
+              { angle: 20, value: basicSubCat[1], colorValue: basicColorScale(basicSubCat[1]), text: `Water and Sanitation: ${basicSubCat[1]}` },
+              { angle: 40, value: basicSubCat[2], colorValue: basicColorScale(basicSubCat[2]), text: `Shelter: ${basicSubCat[2]}` },
+              { angle: 60, value: basicSubCat[3], colorValue: basicColorScale(basicSubCat[3]), text: `Personal Safety: ${basicSubCat[3]}` },
+            ]
+          },
+          {
+            id, angle: 150, petalPath, center: path.centroid(f), petSize: foundations, colorRef: foundationsColorScale(foundations), text: 'Foundations of Wellbeing',
+            subCat: [
+              { angle: 120, value: foundationsSubCat[0], colorValue: foundationsColorScale(foundationsSubCat[0]), text: `Access to Basic Knowledge: ${foundationsSubCat[0]}` },
+              { angle: 140, value: foundationsSubCat[1], colorValue: foundationsColorScale(foundationsSubCat[1]), text: `Access to Information and Communications: ${foundationsSubCat[1]}` },
+              { angle: 160, value: foundationsSubCat[2], colorValue: foundationsColorScale(foundationsSubCat[2]), text: `Health and Wellness: ${foundationsSubCat[2]}` },
+              { angle: 180, value: foundationsSubCat[3], colorValue: foundationsColorScale(foundationsSubCat[3]), text: `Environmental Quality: ${foundationsSubCat[3]}` },
+            ]
+          },
+          {
+            id, angle: 270, petalPath, center: path.centroid(f), petSize: opportunity, colorRef: opportunityColorScale(opportunity), text: 'Opportunity',
+            subCat: [
+              { id, angle: 240, value: opportunitySubCat[0], colorValue: opportunityColorScale(opportunitySubCat[0]), text: `Personal Rights: ${opportunitySubCat[0]}` },
+              { id, angle: 260, value: opportunitySubCat[1], colorValue: opportunityColorScale(opportunitySubCat[1]), text: `Personal Freedom and Choice: ${opportunitySubCat[1]}` },
+              { id, angle: 280, value: opportunitySubCat[2], colorValue: opportunityColorScale(opportunitySubCat[2]), text: `Inclusiveness: ${opportunitySubCat[2]}` },
+              { id, angle: 300, value: opportunitySubCat[3], colorValue: opportunityColorScale(opportunitySubCat[3]), text: `Access to Advanced Education: ${opportunitySubCat[3]}` },
+            ]
+          }
         ],
         spiScale: spiSize,
         spi,
@@ -128,10 +134,12 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
 
     const zoom = d3.zoom()
       .on('zoom', (event, d) => {
-        const { transform } = event;
-        // console.log(event);
-        // Save the Current Zoom level so we can scale tooltips. 
+
+        //reset the toolTip before transforming
         countryMouseLeave();
+
+        const { transform } = event;
+        // Save the Current Zoom level so we can scale tooltips. 
         initialScale = transform.k;
 
         svg.selectAll(".country").attr('transform', transform)
@@ -145,17 +153,18 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
         svg.selectAll('.graphicTooltip').attr('transform', transform)
           .attr('transform', `translate(${transform.x},${transform.y}) scale(${transform.k})`)
           .attr("stroke-width", 1 / transform.k)
-          
-        svg.select(".tooltip-area")
-        .attr('transform', `translate(${transform.x},${transform.y}) scale(${transform.k})`)
 
-        
+        svg.select(".tooltip-area")
+          .attr('transform', `translate(${transform.x},${transform.y}) scale(${transform.k})`)
+
+        svg.selectAll('.subPetalText')
+          .attr('transform', `translate(${transform.x},${transform.y}) scale(${transform.k})`)
+
 
       })
       .translateExtent([[0, 0], [width * 1.3, height * 1.3]])
       .scaleExtent([1, 10]);
 
-    
 
     // *** Top Level Selector (ViewBox) ***
     let svg = d3.select(svgRef.current)
@@ -169,37 +178,15 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
 
     svg.exit().remove();
 
-
-    function clickText(event, d) {
-      d3.selectAll('.subPetalText').remove();
-      let textContent = d.text;
-      let x = event.x;
-      let y = event.y;
-      d3.select(this.parentNode)
-        .append('text')
-        .attr('class', 'subPetalText')
-        .attr('text-anchor', 'left')
-        .append('tspan')
-        .attr('x', x)
-        .attr('y', y)
-        .attr('transform', `translate(${x},${y})`)
-        .attr("font-size", 16 / initialScale)
-        .attr('style', 'text-shadow: 2px 2px white, -2px -2px white, 2px -2px white, -2px 2px white;')
-        .text(`${textContent} ⓘ`)
-    }
-
-
     var TextTooltip = d3.select(".tooltip-area")
       .style("opacity", 0);
-    
 
-    var mouseover = function(event, d) {
+    var mouseover = function (event, d) {
       TextTooltip
         .style("opacity", 1)
-        // .style("stroke", "black")
     };
 
-    var mousemove = function(event, d) {
+    var mousemove = function (event, d) {
       const text = d3.select('.tooltip-area__text');
       text.text(`${d.text} ⓘ`);
 
@@ -212,7 +199,7 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
         .attr('transform', `translate(${x}, ${y})`)
     };
 
-    var mouseleave = function(event, d) {
+    var mouseleave = function (event, d) {
       TextTooltip
         .style("opacity", 0)
         .style("stroke", "none")
@@ -222,17 +209,13 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
       .style('visibility', 'hidden')
       .on("mouseleave", countryMouseLeave)
 
-    // let countryMouseOver = function(event, d) {
-    //   toolTip
-    //     .style('visibility', 'visible')
-    // };
 
-    let countryMouseOver = function(event, d) {
-        countryMouseLeave();
+    let countryMouseOver = function (event, d) {
+      countryMouseLeave();
       let x = d.properties.flower.center[0];
       let y = d.properties.flower.center[1];
       let id = d.properties.ISO_A3_EH;
-      let r = d.properties.flower.spiScale ? spiScale(100)/ initialScale : null;
+      let r = d.properties.flower.spiScale ? spiScale(100) / initialScale : null;
       let scaledRadius = d.properties.flower.spiScale / initialScale || null;
       let color = d.properties.color;
       let name = d.properties.NAME_EN;
@@ -254,7 +237,7 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
         .attr("r", r)
         .style('fill', '#c4c2c4')
         .style("opacity", "0.5")
-        .style('stroke', 'black')      
+        .style('stroke', 'black')
 
       toolTip
         .append("circle")
@@ -269,85 +252,76 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
         .style('stroke', 'black')
         .attr("cursor", "pointer")
 
-      // let petals = d.properties.flower.petals;
-
       toolTip
         .selectAll('.petalBackgroundPath')
         .data(d.properties.flower.petals)
         .join('path')
         .attr('class', 'petalBackgroundPath')
-        .attr("id", (d, i)  => `${d.id + i}`)
+        .attr("id", (d, i) => `${d.id + i}`)
         .attr('d', d => d.petalPath)
         .attr('transform', d => `translate(${d.center[0]}, ${d.center[1]}) rotate(${d.angle}) scale(${0})`)
         .transition().duration(1250)
         .attr('transform', d => {
-          return `translate(${d.center[0]}, ${d.center[1]}) rotate(${d.angle}) scale(${d.petSize===0 ? 0 : spiScale(100) * .01 / initialScale})`})
+          return `translate(${d.center[0]}, ${d.center[1]}) rotate(${d.angle}) scale(${d.petSize === 0 ? 0 : spiScale(100) * .01 / initialScale})`
+        })
         .style('stroke', 'black')
         .style('fill', d => d.colorRef)
         .style("opacity", "0.40")
         .attr("cursor", "pointer")
 
       toolTip
-      .selectAll('.petalPath')
-      .data(d.properties.flower.petals)
-      .join('path')
-      .attr('class', 'petalPath')
-      .attr('id', d => d.id)
-      .attr('d', d => d.petalPath)
-      .attr('transform', d => `translate(${d.center[0]}, ${d.center[1]}) rotate(${d.angle}) scale(${0})`)
-      .transition().duration(1250)
-      .attr('transform', d => `translate(${d.center[0]}, ${d.center[1]}) rotate(${d.angle}) scale(${d.petSize * .01 / initialScale})`)
-      .style('stroke', 'black')
-      .style('fill', d => d.colorRef)
-      .attr("cursor", "pointer")
+        .selectAll('.petalPath')
+        .data(d.properties.flower.petals)
+        .join('path')
+        .attr('class', 'petalPath')
+        .attr('id', d => d.id)
+        .attr('d', d => d.petalPath)
+        .attr('transform', d => `translate(${d.center[0]}, ${d.center[1]}) rotate(${d.angle}) scale(${0})`)
+        .transition().duration(1250)
+        .attr('transform', d => `translate(${d.center[0]}, ${d.center[1]}) rotate(${d.angle}) scale(${d.petSize * .01 / initialScale})`)
+        .style('stroke', 'black')
+        .style('fill', d => d.colorRef)
+        .attr("cursor", "pointer")
       // .each(d => {
-        // let x = d.center[0];
-        // let y = d.center[1];
-        // let angle = d.angle;
-        // let scale = d.petSize * .01;
-        // console.log(d.text);
-        // text
-        // .append('tspan')
-        // .text(`${d.text}`)
-        // .attr('transform',  `translate(${x}, ${y}) rotate(${angle}) scale(${scale})`)
-        // .attr("font-size", 16)
-        // .attr('style', 'text-shadow: 2px 2px white, -2px -2px white, 2px -2px white, -2px 2px white;')
-        // .attr('x', x)
-        // .attr('y', y)
+      //   let x = d.center[0];
+      //   let y = d.center[1];
+      //   let angle = d.angle;
+      //   let scale = d.petSize * .01;
+      //   console.log(d.text);
+      //   text
+      //   .append('tspan')
+      //   .text(`${d.text}`)
+      //   .attr('transform',  `translate(${x}, ${y}) rotate(${angle}) scale(${scale})`)
+      //   .attr("font-size", 16)
+      //   .attr('style', 'text-shadow: 2px 2px white, -2px -2px white, 2px -2px white, -2px 2px white;')
+      //   .attr('x', x)
+      //   .attr('y', y)
       // })
 
       toolTip.selectAll('.petalPath').on("mouseover", showSubPetals)
       toolTip.on("mouseleave", countryMouseLeave)
 
-      
+
       var fontSize = 16 / initialScale;
 
       text
-      .attr('transform', `translate(${x}, ${(y + spiScale(120)/initialScale)})`)
-      .append('tspan')
-      .text(name)
-      .attr('text-anchor', 'middle')
-      .attr("font-size", fontSize)
-      .attr('style', 'text-shadow: 2px 2px white, -2px -2px white, 2px -2px white, -2px 2px white;')
-      .attr('x', 0)
-      .attr('y', 0)
-      .attr('dy', 0)
-      .append('tspan')
-      .text(SPI)
-      .attr("font-size", fontSize)
-      .attr('style', 'text-shadow: 2px 2px white, -2px -2px white, 2px -2px white, -2px 2px white;')
-      .attr('x', 0)
-      .attr('y', 0)
-      .attr('dy', '1em')
-      .attr('text-anchor', 'middle')
-  
-
-      // d3.selectAll('.petalPath').each(function(event, d){
-      //   console.log(event, d);
-      //   let text = `${d.text}:${d.petSize}`;
-      //   let angle = d;
-      //   console.log(this);
-      // })
+        .attr('transform', `translate(${x}, ${(y + spiScale(120) / initialScale)})`)
+        .append('tspan')
+        .text(name)
+        .attr('text-anchor', 'middle')
+        .attr("font-size", fontSize)
+        .attr('style', 'text-shadow: 2px 2px white, -2px -2px white, 2px -2px white, -2px 2px white;')
+        .attr('x', 0)
+        .attr('y', 0)
+        .attr('dy', 0)
+        .append('tspan')
+        .text(SPI)
+        .attr("font-size", fontSize)
+        .attr('style', 'text-shadow: 2px 2px white, -2px -2px white, 2px -2px white, -2px 2px white;')
+        .attr('x', 0)
+        .attr('y', 0)
+        .attr('dy', '1em')
+        .attr('text-anchor', 'middle');
 
     };
 
@@ -363,16 +337,16 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
         .attr('d', d => subPetalPath)
         .attr('transform', d => `translate(${x}, ${y}) scale(${0})`)
         .transition().duration(750)
-        .attr('transform', d => `translate(${x}, ${y}) rotate(${d.angle}) scale(${spiScale(d.value) * .01/ initialScale})`)
+        .attr('transform', d => `translate(${x}, ${y}) rotate(${d.angle}) scale(${spiScale(d.value) * .01 / initialScale})`)
         .style('stroke', 'black')
-        .style('fill', d => colorScale(d.value))
+        .style('fill', d => d.colorValue)
         .attr("cursor", "pointer");
 
       d3.selectAll('.subPetalPath')
         .on("mouseover", mouseover)
         .on("mousemove", mousemove)
         .on("mouseleave", mouseleave)
-        .on('click', clickText)
+        .on('click', mousemove)
     }
 
     function countryMouseLeave(event) {
@@ -400,8 +374,8 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
       .on("mouseenter", d => {
         d3.select(d.path[0]).style("opacity", ".8");
       })
-      .on("mouseleave", 
-       d => { d3.select(d.path[0]).style("opacity", "1");})
+      .on("mouseleave",
+        d => { d3.select(d.path[0]).style("opacity", "1"); })
       .append("title")
       .text(d => { return `${d.properties.NAME_EN}` })
     countries.exit().remove();
@@ -413,7 +387,7 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
       .attr("stroke", "white")
       .attr("stroke-linejoin", "round")
       .attr("d", path(mesh(data[0], data[0].objects.countries, (a, b) => a !== b)))
-      // .on('click', reset, countryMouseLeave);
+    // .on('click', reset, countryMouseLeave);
 
     borders.exit().remove();
 
@@ -486,12 +460,12 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
 
   return (
     <svg ref={svgRef} height={height} width={width} id="map">
-        <g className="tooltip-area">
-          <text className="tooltip-area__text"></text>
-        </g>
-        <g className="graphicTooltip">
-          <text className="graphicTooltip__text"></text>
-        </g>
+      <g className="tooltip-area">
+        <text className="tooltip-area__text"></text>
+      </g>
+      <g className="graphicTooltip">
+        <text className="graphicTooltip__text"></text>
+      </g>
     </svg>
   );
 };
