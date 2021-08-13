@@ -9,7 +9,7 @@ import {
 } from '../services/SocialProgress';
 
 
-const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLoading }) => {
+const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLoading, toggleModal }) => {
 
   // var margin = { top: 0, left: 0, right: 0, bottom: 0, }
 
@@ -159,12 +159,9 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
 
         svg.selectAll('.subPetalText')
           .attr('transform', `translate(${transform.x},${transform.y}) scale(${transform.k})`)
-
-
       })
       .translateExtent([[0, 0], [width * 1.3, height * 1.3]])
       .scaleExtent([1, 10]);
-
 
     // *** Top Level Selector (ViewBox) ***
     let svg = d3.select(svgRef.current)
@@ -188,7 +185,7 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
 
     var mousemove = function (event, d) {
       const text = d3.select('.tooltip-area__text');
-      text.text(`${d.text} ⓘ`);
+      text.text(`${d.text}`);
 
       let x = event.x;
       let y = event.y;
@@ -196,6 +193,7 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
       TextTooltip
         .attr("font-size", 16)
         .attr('style', 'text-shadow: 2px 2px white, -2px -2px white, 2px -2px white, -2px 2px white;')
+        .attr('background-color', 'gray;')
         .attr('transform', `translate(${x}, ${y})`)
     };
 
@@ -251,6 +249,7 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
         .style('fill', color)
         .style('stroke', 'black')
         .attr("cursor", "pointer")
+      // .on('mouseover', )
 
       toolTip
         .selectAll('.petalBackgroundPath')
@@ -274,7 +273,7 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
         .data(d.properties.flower.petals)
         .join('path')
         .attr('class', 'petalPath')
-        .attr('id', d => d.id)
+        .attr('id', d => `${d.id}_${d.text}`)
         .attr('d', d => d.petalPath)
         .attr('transform', d => `translate(${d.center[0]}, ${d.center[1]}) rotate(${d.angle}) scale(${0})`)
         .transition().duration(1250)
@@ -282,30 +281,71 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
         .style('stroke', 'black')
         .style('fill', d => d.colorRef)
         .attr("cursor", "pointer")
-      // .each(d => {
-      //   let x = d.center[0];
-      //   let y = d.center[1];
-      //   let angle = d.angle;
-      //   let scale = d.petSize * .01;
-      //   console.log(d.text);
-      //   text
-      //   .append('tspan')
-      //   .text(`${d.text}`)
-      //   .attr('transform',  `translate(${x}, ${y}) rotate(${angle}) scale(${scale})`)
-      //   .attr("font-size", 16)
-      //   .attr('style', 'text-shadow: 2px 2px white, -2px -2px white, 2px -2px white, -2px 2px white;')
-      //   .attr('x', x)
-      //   .attr('y', y)
-      // })
+
+      // var arcGenerator = d3.arc();
+
+      var arc = d3.arc()
+        .startAngle([0])
+        .endAngle([(Math.PI * 2) / 3])
+        .innerRadius([100])
+        .outerRadius([120])
+        .cornerRadius([10])
+
+      var fontSize = 16 / initialScale;
+
+      toolTip.selectAll('.petalArc')
+        .data(d.properties.flower.petals)
+        .join('path')
+        .attr('class', 'petalArc')
+        .attr('id', d => {
+          return `arc_${d.id}_${d.text}`
+        })
+        .attr('d', arc)
+        .attr('fill', d => d.colorRef)
+        .attr('transform', d => `translate(${d.center[0]}, ${d.center[1]}) rotate(${d.angle + 30}) scale(${0})`)
+        .transition().duration(750)
+        .attr('transform', d => `translate(${d.center[0]}, ${d.center[1]}) rotate(${d.angle + 30}) scale(${1 / initialScale})`)
+        .attr("cursor", "pointer")
+
+      toolTip.selectAll('.petalArc')
+        .on('click', toggleModal)
+
+      toolTip.selectAll('.petalText')
+        .data(d.properties.flower.petals)
+        .join('text')
+        .attr('class', 'petalText')
+        .attr("dy", function (d, i) {
+          return (15 / initialScale);
+        })
+        .append('textPath')
+        // .attr("startOffset", function(d) {
+        //   var length = (Math.PI * 200)/ 3;
+        //   return (25-(50 * 140)/length+(50 * 100)/length) + "%";
+        // })
+        .style("text-anchor", "start")
+        .attr("xlink:href", d => { return `#arc_${d.id}_${d.text}` })
+        // .attr('style', 'text-shadow: 1px 1px white, -1px -1px white, 1px -1px white, -1px 1px white;')
+        .attr("font-size", fontSize)
+        .attr("pointer-events", "none")
+        // .append('tspan')
+        .attr("startOffset", function (d) {
+          var textLength = d.text.length;
+          var length = (Math.PI * 200) / 3;
+          return (25 - (50 * 120) / length + (50 * 100) / length) - textLength / 1.5 + "%";
+        })
+        .text(d => {
+          return `${d.text}: ${d.petSize}`;
+        })
+
+      // .append('tspan')
+      // .attr('dy', '1em')
+      // .text(d => {return `${d.petSize}`});
 
       toolTip.selectAll('.petalPath').on("mouseover", showSubPetals)
       toolTip.on("mouseleave", countryMouseLeave)
 
-
-      var fontSize = 16 / initialScale;
-
       text
-        .attr('transform', `translate(${x}, ${(y + spiScale(120) / initialScale)})`)
+        .attr('transform', `translate(${x}, ${(y + spiScale(140) / initialScale)})`)
         .append('tspan')
         .text(name)
         .attr('text-anchor', 'middle')
@@ -355,6 +395,8 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
       toolTip.selectAll('.petalBackgroundPath').remove();
       toolTip.selectAll('.petalPath').remove();
       toolTip.selectAll('.subPetalPath').remove();
+      toolTip.selectAll('.petalArc').remove();
+      toolTip.selectAll('.petalText').remove();
 
       // toolTip.selectAll('title').remove();
       toolTip
@@ -403,36 +445,7 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
       setClicked(undefined);
     }
 
-    // function debounce(fn, delay) {
-    //   var timer = null;
-    //   if (delay === null) {
-    //     clearTimeout(timer);
-    //     return;
-    //   }
-    //   return function (event, abort) {
-    //     var context = this,
-    //       // maybe keep reference to event.previous;
-    //       args = arguments,
-    //       evt = event;
-    //     //we get the D3 event here
-    //     clearTimeout(timer);
-    //     if (abort === true) { return };
-    //     timer = setTimeout(function () {
-    //       event = evt;
-    //       //and use the reference here
-    //       fn.apply(context, args);
-    //     }, delay);
-    //   };
-    // }
-
-    // function hidePetal() {
-    //   toolTip.selectAll(".subPetalPath").attr("visibility", "hidden").transition().duration(0);
-    //   toolTip.selectAll(".subPetalBackgroundPath").attr("visibility", "hidden").transition().duration(0);
-    // }
-
     toolTip.raise();
-    // toolTip.attr("pointer-events", 'none')
-
     TextTooltip.raise();
     TextTooltip.attr("pointer-events", "none");
   };

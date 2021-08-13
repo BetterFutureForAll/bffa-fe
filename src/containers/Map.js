@@ -1,28 +1,30 @@
 import React, { useRef, useState, useEffect } from 'react';
 import Header from '../components/Header';
-import { 
-  useHandleYearChange, 
-  useYears, useCountries, 
+import {
+  useHandleYearChange,
+  useYears, useCountries,
   useHandleCountryChange, useClicked, useMouse,
-  useWindowSize
+  useWindowSize,
 } from '../hooks/hooks';
 import MapMaker from '../components/MapMaker';
+import Modal from '../components/Modal';
 
-function MapContainer() {
+function MapContainer({ showModal, toggleModal }) {
 
   const svgRef = useRef(null);
 
   let [loading, setLoading] = useState(true);
 
   // Query user and set based off browser.
-  
+
   let [width, height] = useWindowSize();
-  // let height = width * .7;
 
   let [clicked, setClicked] = useClicked();
   let [setMouse] = useMouse();
   let [years] = useYears();
   let [yearValue, handleYearChange] = useHandleYearChange();
+
+
 
   let [countries] = useCountries();
   let [countryValue, handleCountryChange] = useHandleCountryChange();
@@ -51,42 +53,48 @@ function MapContainer() {
         </option>
       ))}
     </select>
-    );
-  useEffect(()=>{
+  );
+  useEffect(() => {
     // return adjusted window size
     // add window reSize listener
-  },[]);
+  }, []);
 
 
-        
+
   return (
     <>
-    <div id="MapContainer" >
-      <MapMaker 
-        svgRef={svgRef}
-        setClicked={setClicked}
-        clicked={clicked} 
-        yearValue={yearValue} 
-        setMouse={setMouse} 
-        height={height}
-        width={width}
-        loading={loading}
-        setLoading={setLoading}
+      <div id="MapContainer" >
+        <Modal
+          showModal={showModal}
+          toggleModal={toggleModal}
         />
-      <div className="ControlBar">
-        <Header 
+        <MapMaker
+          svgRef={svgRef}
+          setClicked={setClicked}
+          clicked={clicked}
+          yearValue={yearValue}
+          setMouse={setMouse}
           height={height}
           width={width}
-          selectYears={selectYears} 
-          yearValue={yearValue} 
-          selectCountries={selectCountries}
-          countryValue={countryValue}
+          loading={loading}
+          setLoading={setLoading}
+          toggleModal={toggleModal}
         />
+        <div className="ControlBar">
+          <Header
+            height={height}
+            width={width}
+            selectYears={selectYears}
+            yearValue={yearValue}
+            selectCountries={selectCountries}
+            countryValue={countryValue}
+            toggleModal={toggleModal}
+          />
+        </div>
+
       </div>
 
-  </div>
-
-</>
+    </>
   );
 }
 
