@@ -13,6 +13,18 @@ export const useContent = () => {
   return [content, setContent];
 };
 
+export const useModal = () => {
+  let [showModal, setModal] = useState(false);
+  function toggleModal() {
+    console.log(showModal);
+    setModal(!showModal);
+  }
+  return {
+    showModal,
+    toggleModal
+  };
+}
+
 export const useClicked = () => {
   let [clicked, setClicked] = useState('World');
   return [clicked, setClicked];

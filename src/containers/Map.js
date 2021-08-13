@@ -4,11 +4,12 @@ import {
   useHandleYearChange, 
   useYears, useCountries, 
   useHandleCountryChange, useClicked, useMouse,
-  useWindowSize
+  useWindowSize,
 } from '../hooks/hooks';
 import MapMaker from '../components/MapMaker';
+import Modal from '../components/Modal';
 
-function MapContainer() {
+function MapContainer({ showModal, toggleModal}) {
 
   const svgRef = useRef(null);
 
@@ -17,12 +18,13 @@ function MapContainer() {
   // Query user and set based off browser.
   
   let [width, height] = useWindowSize();
-  // let height = width * .7;
 
   let [clicked, setClicked] = useClicked();
   let [setMouse] = useMouse();
   let [years] = useYears();
   let [yearValue, handleYearChange] = useHandleYearChange();
+
+
 
   let [countries] = useCountries();
   let [countryValue, handleCountryChange] = useHandleCountryChange();
@@ -62,6 +64,10 @@ function MapContainer() {
   return (
     <>
     <div id="MapContainer" >
+      <Modal 
+        showModal={showModal}
+        toggleModal={toggleModal}
+      />
       <MapMaker 
         svgRef={svgRef}
         setClicked={setClicked}
@@ -72,6 +78,7 @@ function MapContainer() {
         width={width}
         loading={loading}
         setLoading={setLoading}
+        toggleModal={toggleModal}
         />
       <div className="ControlBar">
         <Header 
@@ -81,6 +88,7 @@ function MapContainer() {
           yearValue={yearValue} 
           selectCountries={selectCountries}
           countryValue={countryValue}
+          toggleModal={toggleModal}
         />
       </div>
 
