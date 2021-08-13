@@ -13,7 +13,7 @@ const Modal = ({ showModal, toggleModal }) => showModal ? ReactDOM.createPortal(
           X
           </button>
       </div>
-      <section  id="modal_img">
+      <section id="modal_img">
         <img className="modal_png" alt={'Indicator Definitions of Social Progress'} src={indicatorPNG} />
       </section>
     </div>

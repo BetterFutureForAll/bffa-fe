@@ -1,11 +1,11 @@
 import { useState, useEffect, useCallback } from 'react';
-import { 
-        makeYearsArray,
-        getSpiDataByYear, 
-        makeCountriesArray, 
-        getSpiDataByCountry 
-      } 
-from '../services/SocialProgress';
+import {
+  makeYearsArray,
+  getSpiDataByYear,
+  makeCountriesArray,
+  getSpiDataByCountry
+}
+  from '../services/SocialProgress';
 import * as d3 from 'd3';
 
 export const useContent = () => {
@@ -65,7 +65,7 @@ export const useHandleYearChange = () => {
 export const useCountries = () => {
   let [countries, setCountries] = useState(["World"]);
   useEffect(() => {
-    if(countries.length < 2 || !countries) {
+    if (countries.length < 2 || !countries) {
       makeCountriesArray()
         .then(parsedCountries => setCountries(parsedCountries));
     }
@@ -95,17 +95,17 @@ export const useDataByYear = (yearValue) => {
 export const useDataByCountry = (spiByYear, countryValue) => {
   let [spiByCountry, setSpiByCountry] = useState([]);
   useEffect(() => {
-    if(spiByYear && countryValue) {
+    if (spiByYear && countryValue) {
       getSpiDataByCountry(spiByYear, countryValue)
         .then(d => setSpiByCountry(d));
     }
-    }, [spiByYear, countryValue]);
+  }, [spiByYear, countryValue]);
   return [spiByCountry, setSpiByCountry];
 };
 
 export const useLoopAnimator = (yearsArr) => {
   let [animatedYears, setAnimatedYears] = useState('2020');
-  
+
   let loopWrapper = useCallback(() => {
     function yearLoop() {
       var i = 1;
@@ -120,7 +120,7 @@ export const useLoopAnimator = (yearsArr) => {
     }
     yearLoop();
   }, [yearsArr]);
-  
+
   useEffect(() => {
     let handleAnimationChange = () => {
       loopWrapper(yearsArr);
@@ -150,7 +150,7 @@ export function useWindowSize() {
   const isWindowClient = typeof window === "object";
 
   const [windowSize, setWindowSize] = useState(
-    isWindowClient ? [window.innerWidth, window.innerHeight]: undefined
+    isWindowClient ? [window.innerWidth, window.innerHeight] : undefined
   );
 
   useEffect(() => {

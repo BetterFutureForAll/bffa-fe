@@ -285,11 +285,11 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
       // var arcGenerator = d3.arc();
 
       var arc = d3.arc()
-      .startAngle([0])
-      .endAngle([(Math.PI * 2)/ 3])
-      .innerRadius([100])
-      .outerRadius([120])
-      .cornerRadius([10])
+        .startAngle([0])
+        .endAngle([(Math.PI * 2) / 3])
+        .innerRadius([100])
+        .outerRadius([120])
+        .cornerRadius([10])
 
       var fontSize = 16 / initialScale;
 
@@ -297,8 +297,9 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
         .data(d.properties.flower.petals)
         .join('path')
         .attr('class', 'petalArc')
-        .attr('id', d=> { 
-          return `arc_${d.id}_${d.text}`})
+        .attr('id', d => {
+          return `arc_${d.id}_${d.text}`
+        })
         .attr('d', arc)
         .attr('fill', d => d.colorRef)
         .attr('transform', d => `translate(${d.center[0]}, ${d.center[1]}) rotate(${d.angle + 30}) scale(${0})`)
@@ -306,39 +307,40 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
         .attr('transform', d => `translate(${d.center[0]}, ${d.center[1]}) rotate(${d.angle + 30}) scale(${1 / initialScale})`)
         .attr("cursor", "pointer")
 
-      toolTip.selectAll('.petalArc') 
+      toolTip.selectAll('.petalArc')
         .on('click', toggleModal)
 
       toolTip.selectAll('.petalText')
-      .data(d.properties.flower.petals)
-      .join('text')
-      .attr('class', 'petalText')
-      .attr("dy", function(d,i) {
-        return (15/initialScale);
-      })
-      .append('textPath')
-      // .attr("startOffset", function(d) {
-      //   var length = (Math.PI * 200)/ 3;
-      //   return (25-(50 * 140)/length+(50 * 100)/length) + "%";
-      // })
-      .style("text-anchor","start")
-      .attr("xlink:href", d => {return `#arc_${d.id}_${d.text}`})
-      // .attr('style', 'text-shadow: 1px 1px white, -1px -1px white, 1px -1px white, -1px 1px white;')
-      .attr("font-size", fontSize)
-      .attr("pointer-events", "none")
-      // .append('tspan')
-      .attr("startOffset", function(d) {
-        var textLength = d.text.length;
-        var length = (Math.PI * 200)/ 3;
-        return (25-(50 * 120)/length+(50 * 100)/length) - textLength/1.5 + "%";
-      })
-      .text(d => {
-      return `${d.text}: ${d.petSize}`;})
+        .data(d.properties.flower.petals)
+        .join('text')
+        .attr('class', 'petalText')
+        .attr("dy", function (d, i) {
+          return (15 / initialScale);
+        })
+        .append('textPath')
+        // .attr("startOffset", function(d) {
+        //   var length = (Math.PI * 200)/ 3;
+        //   return (25-(50 * 140)/length+(50 * 100)/length) + "%";
+        // })
+        .style("text-anchor", "start")
+        .attr("xlink:href", d => { return `#arc_${d.id}_${d.text}` })
+        // .attr('style', 'text-shadow: 1px 1px white, -1px -1px white, 1px -1px white, -1px 1px white;')
+        .attr("font-size", fontSize)
+        .attr("pointer-events", "none")
+        // .append('tspan')
+        .attr("startOffset", function (d) {
+          var textLength = d.text.length;
+          var length = (Math.PI * 200) / 3;
+          return (25 - (50 * 120) / length + (50 * 100) / length) - textLength / 1.5 + "%";
+        })
+        .text(d => {
+          return `${d.text}: ${d.petSize}`;
+        })
 
       // .append('tspan')
       // .attr('dy', '1em')
       // .text(d => {return `${d.petSize}`});
-        
+
       toolTip.selectAll('.petalPath').on("mouseover", showSubPetals)
       toolTip.on("mouseleave", countryMouseLeave)
 
