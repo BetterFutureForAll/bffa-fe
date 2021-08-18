@@ -131,6 +131,8 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
 
     // initialScale tracks Zoom scale throughout transforms.
     var initialScale = 1;
+    var fontSize = 16 / initialScale;
+
 
     const zoom = d3.zoom()
       .on('zoom', (event, d) => {
@@ -216,9 +218,8 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
       let r = d.properties.flower.spiScale ? spiScale(100) / initialScale : null;
       let scaledRadius = d.properties.flower.spiScale / initialScale || null;
       let color = d.properties.color;
-      let name = d.properties.NAME_EN;
+      let countryName = d.properties.NAME_EN;
       let SPI = `Social Progress Index ${d.properties.flower.spi}`;
-
       let text = d3.select(`.graphicTooltip__text`);
 
       toolTip
@@ -282,72 +283,14 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
         .style('fill', d => d.colorRef)
         .attr("cursor", "pointer")
 
-      // var arcGenerator = d3.arc();
-
-      var arc = d3.arc()
-        .startAngle([0])
-        .endAngle([(Math.PI * 2) / 3])
-        .innerRadius([100])
-        .outerRadius([120])
-        .cornerRadius([10])
-
-      var fontSize = 16 / initialScale;
-
-      toolTip.selectAll('.petalArc')
-        .data(d.properties.flower.petals)
-        .join('path')
-        .attr('class', 'petalArc')
-        .attr('id', d => {
-          return `arc_${d.id}_${d.text}`
-        })
-        .attr('d', arc)
-        .attr('fill', d => d.colorRef)
-        .attr('transform', d => `translate(${d.center[0]}, ${d.center[1]}) rotate(${d.angle + 30}) scale(${0})`)
-        .transition().duration(750)
-        .attr('transform', d => `translate(${d.center[0]}, ${d.center[1]}) rotate(${d.angle + 30}) scale(${1 / initialScale})`)
-        .attr("cursor", "pointer")
-
-      toolTip.selectAll('.petalArc')
-        .on('click', toggleModal)
-
-      toolTip.selectAll('.petalText')
-        .data(d.properties.flower.petals)
-        .join('text')
-        .attr('class', 'petalText')
-        .attr("dy", function (d, i) {
-          return (15 / initialScale);
-        })
-        .append('textPath')
-        // .attr("startOffset", function(d) {
-        //   var length = (Math.PI * 200)/ 3;
-        //   return (25-(50 * 140)/length+(50 * 100)/length) + "%";
-        // })
-        .style("text-anchor", "start")
-        .attr("xlink:href", d => { return `#arc_${d.id}_${d.text}` })
-        // .attr('style', 'text-shadow: 1px 1px white, -1px -1px white, 1px -1px white, -1px 1px white;')
-        .attr("font-size", fontSize)
-        .attr("pointer-events", "none")
-        // .append('tspan')
-        .attr("startOffset", function (d) {
-          var textLength = d.text.length;
-          var length = (Math.PI * 200) / 3;
-          return (25 - (50 * 120) / length + (50 * 100) / length) - textLength / 1.5 + "%";
-        })
-        .text(d => {
-          return `${d.text}: ${d.petSize}`;
-        })
-
-      // .append('tspan')
-      // .attr('dy', '1em')
-      // .text(d => {return `${d.petSize}`});
-
-      toolTip.selectAll('.petalPath').on("mouseover", showSubPetals)
+      toolTip.selectAll('.petalPath').on("mouseover", doItAll)
+      // toolTip.selectAll('.petalPath').on("mouseover", showPetalArc)
       toolTip.on("mouseleave", countryMouseLeave)
 
       text
         .attr('transform', `translate(${x}, ${(y + spiScale(140) / initialScale)})`)
         .append('tspan')
-        .text(name)
+        .text(countryName)
         .attr('text-anchor', 'middle')
         .attr("font-size", fontSize)
         .attr('style', 'text-shadow: 2px 2px white, -2px -2px white, 2px -2px white, -2px 2px white;')
@@ -362,7 +305,69 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
         .attr('y', 0)
         .attr('dy', '1em')
         .attr('text-anchor', 'middle');
+    };
 
+    function doItAll(event, d) {
+      showSubPetals(event, d);
+      showPetalArc(event, d);
+    }
+    //************************* arc function starts here **********************************/    
+    function showPetalArc(event, d) {
+      var arc = d3.arc()
+        .startAngle([0])
+        .endAngle([(Math.PI * 2) / 3])
+        .innerRadius([100])
+        .outerRadius([120])
+        .cornerRadius([10])
+
+      toolTip.selectAll('.petalArc')
+        .data([d])
+        .join('path')
+        .attr('class', 'petalArc')
+        .attr('id', d => {
+          return `arc_${d.id}_${d.text}`
+        })
+        .attr('d', arc)
+        .attr('fill', d => {
+          return d.colorRef
+        })
+        .attr('transform', d => `translate(${d.center[0]}, ${d.center[1]}) rotate(${d.angle + 30}) scale(${0})`)
+        .transition().duration(750)
+        .attr('transform', d => `translate(${d.center[0]}, ${d.center[1]}) rotate(${d.angle + 30}) scale(${1 / initialScale})`)
+        .attr("cursor", "pointer")
+
+      toolTip.selectAll('.petalArc')
+        .on('click', toggleModal)
+
+      toolTip.selectAll('.petalText')
+        .data([d])
+        .join('text')
+        .attr('class', 'petalText')
+        .attr("dy", function (d, i) {
+          return (15 / initialScale);
+        })
+        .append('textPath')
+        .style("text-anchor", "start")
+        .attr("xlink:href", d => { return `#arc_${d.id}_${d.text}` })
+        .attr("font-size", fontSize)
+        .attr("pointer-events", "none")
+        .attr("startOffset", function (d) {
+          var textLength = d.text.length;
+          var length = (Math.PI * 200) / 3;
+
+          if (d.angle === 270) {
+            return (25 - (50 * 120) / length + (50 * 100) / length) - textLength / 1.5 + "%";
+          }
+          if(d.angle === 30) {
+            return (25 - (50 * 120) / length + (50 * 100) / length) - textLength / 1.5 + "%";
+          }
+          else{
+            return (-((25 - (50 * 120) / length + (50 * 100) / length) - textLength )+ "%");
+          }
+        })
+        .text(d => {
+          return `${d.text}: ${d.petSize}`;
+        })
     };
 
     function showSubPetals(event, d) {
