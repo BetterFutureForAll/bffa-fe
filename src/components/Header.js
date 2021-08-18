@@ -33,7 +33,6 @@ const Header = ({ width, height, selectYears, yearValue, handleSubmit, toggleMod
             .attr("class", "legendText")
             .attr("x", squareSize / 2)
             .attr("y", squareSize / 2)
-            // .attr("dy", "1em")
             .attr("text-anchor", "middle")
             .attr("dominant-baseline", "central")
             .attr("font-size", 16)
@@ -43,7 +42,7 @@ const Header = ({ width, height, selectYears, yearValue, handleSubmit, toggleMod
         }
       )
       .attr("transform", (d, i) => { return "translate(" + i * squareSize + ", 0)"; });
-      
+
   }, [width, height, legendData, squareSize])
 
   return (
