@@ -16,7 +16,6 @@ export const useContent = () => {
 export const useModal = () => {
   let [showModal, setModal] = useState(false);
   function toggleModal() {
-    console.log(showModal);
     setModal(!showModal);
   }
   return {
