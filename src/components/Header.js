@@ -26,7 +26,6 @@ const Header = ({ width, height, selectYears, yearValue, handleSubmit, toggleMod
             .attr("height", squareSize)
             .attr("width", squareSize)
             .style("fill", d => {
-              console.log(d);
               return colorScale(d)
             });
           update.selectAll("text")
