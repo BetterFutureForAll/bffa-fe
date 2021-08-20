@@ -136,13 +136,13 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
 
     const zoom = d3.zoom()
       .on('zoom', (event, d) => {
-
         //reset the toolTip before transforming
         countryMouseLeave();
-
+        
         const { transform } = event;
         // Save the Current Zoom level so we can scale tooltips. 
         initialScale = transform.k;
+        fontSize = 16 / initialScale;
 
         svg.selectAll(".country").attr('transform', transform)
           .attr('transform', `translate(${transform.x},${transform.y}) scale(${transform.k})`)
