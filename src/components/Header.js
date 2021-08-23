@@ -7,14 +7,13 @@ const Header = ({ width, height, selectYears, yearValue, handleSubmit, toggleMod
 
   let legendRef = useRef(null);
   let legendData = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
-  let squareSize = ((width / 3) / 12 > 25)? (width / 3) / 12 : 26;
+  let squareSize = ((width / 3) / 12 > 25) ? (width / 3) / 12 : 26;
   if (width < 376) {
     squareSize = 26;
   };
 
   useEffect(() => {
     let svg = d3.select(legendRef.current)
-    console.log(squareSize);
     svg
       .selectAll("g")
       .data(legendData)
