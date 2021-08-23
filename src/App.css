@@ -16,19 +16,6 @@
   position: absolute;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
 .ControlBar {
   display: flex;
   position: fixed;
@@ -37,6 +24,13 @@
   align-items: center;
   justify-content: space-evenly;
   background-color:lightblue;
+
+  
+}
+@media only screen and (max-width: 400px) {
+  .ControlBar {
+    flex-direction: column;
+  }
 }
 
 .App-link {

@@ -4,11 +4,17 @@ import * as d3 from 'd3';
 import { colorScale } from '../services/SocialProgress';
 
 const Header = ({ width, height, selectYears, yearValue, handleSubmit, toggleModal }) => {
+
   let legendRef = useRef(null);
   let legendData = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
-  let squareSize = (width / 3) / 12;
+  let squareSize = ((width / 3) / 12 > 25)? (width / 3) / 12 : 26;
+  if (width < 376) {
+    squareSize = 26;
+  };
+
   useEffect(() => {
     let svg = d3.select(legendRef.current)
+    console.log(squareSize);
     svg
       .selectAll("g")
       .data(legendData)
@@ -44,16 +50,29 @@ const Header = ({ width, height, selectYears, yearValue, handleSubmit, toggleMod
 
   }, [width, height, legendData, squareSize])
 
+  if (width < 376) return (
+    <>
+      <div>
+        <svg ref={legendRef} id={"legend"} className={'legend'} height={squareSize} width={squareSize * 12}></svg>
+      </div>
+      <div className={"controls"}>
+        <button id="myBtn" onClick={toggleModal}>Data Definitions</button>
+        <form onSubmit={handleSubmit}>
+          <label id="years" value={yearValue} >Year </label>
+          {selectYears}
+        </form>
+      </div>
+    </>
+  )
+
   return (
     <>
-      <svg ref={legendRef} id={"legend"} className={'legend'} height={squareSize} width={width / 3}></svg>
-
+      <svg ref={legendRef} id={"legend"} className={'legend'} height={squareSize} width={squareSize * 12}></svg>
       <button id="myBtn" onClick={toggleModal}>Data Definitions</button>
 
       <form onSubmit={handleSubmit}>
         <label id="years" value={yearValue} >Year </label>
         {selectYears}
-        {/* {selectCountries} */}
       </form>
     </>
   );
