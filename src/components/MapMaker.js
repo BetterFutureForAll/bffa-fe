@@ -219,7 +219,7 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
       let scaledRadius = d.properties.flower.spiScale / initialScale || null;
       let color = d.properties.color;
       let countryName = d.properties.NAME_EN;
-      let SPI = `Social Progress Index ${d.properties.flower.spi}`;
+      let SPI = `SPI - ${d.properties.flower.spi}`;
       let text = d3.select(`.graphicTooltip__text`);
 
       toolTip
@@ -282,6 +282,19 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
         .style('stroke', 'black')
         .style('fill', d => d.colorRef)
         .attr("cursor", "pointer")
+
+      // toolTip
+      // .selectAll('.spiPetalText')
+      // // .data(d.properties.flower.petals)
+      // .append('text')
+      // .attr('class', 'spiPetalText')
+      // .append('textPath')
+      // .style("text-anchor", "start")
+      // .attr("xlink:href", d => { return `#${d.id}_${d.text}` })
+      // .text(d=> {
+      //   console.log(`#${d.id}_${d.text}`, d.petSize);
+      //   return d.petSize;
+      // })
 
       toolTip.selectAll('.petalPath').on("mouseover", doItAll)
       // toolTip.selectAll('.petalPath').on("mouseover", showPetalArc)
@@ -366,7 +379,7 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
           }
         })
         .text(d => {
-          return `${d.text}: ${d.petSize}`;
+          return `${d.text} - ${d.petSize}`;
         })
     };
 
