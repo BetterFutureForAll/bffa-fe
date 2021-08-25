@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import * as d3 from 'd3';
 
-const definitions = require('../services/SocialProgress');
+// Needs to be parsed w/ D3
+const definitions = require('../assets/GlobalDefinitions.csv');
 
 // This will be a table of definitions. Need to actually make it into a REACT COMPONENT, so that D3 and React don't fight for DOM.
 

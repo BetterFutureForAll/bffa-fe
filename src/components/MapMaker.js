@@ -97,28 +97,28 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
           {
             id, angle: 30, petalPath, center: path.centroid(f), petSize: basicNeeds, colorRef: basicColorScale(basicNeeds), text: 'Basic Human Needs',
             subCat: [
-              { angle: 0, value: basicSubCat[0], colorValue: basicColorScale(basicSubCat[0]), text: `Nutrition and Basic Medical Care: ${basicSubCat[0]}` },
-              { angle: 20, value: basicSubCat[1], colorValue: basicColorScale(basicSubCat[1]), text: `Water and Sanitation: ${basicSubCat[1]}` },
-              { angle: 40, value: basicSubCat[2], colorValue: basicColorScale(basicSubCat[2]), text: `Shelter: ${basicSubCat[2]}` },
-              { angle: 60, value: basicSubCat[3], colorValue: basicColorScale(basicSubCat[3]), text: `Personal Safety: ${basicSubCat[3]}` },
+              { angle: 0, value: basicSubCat[0], colorValue: basicColorScale(basicSubCat[0]), text: `Nutrition and Basic Medical Care - ${basicSubCat[0]}` },
+              { angle: 20, value: basicSubCat[1], colorValue: basicColorScale(basicSubCat[1]), text: `Water and Sanitation - ${basicSubCat[1]}` },
+              { angle: 40, value: basicSubCat[2], colorValue: basicColorScale(basicSubCat[2]), text: `Shelter - ${basicSubCat[2]}` },
+              { angle: 60, value: basicSubCat[3], colorValue: basicColorScale(basicSubCat[3]), text: `Personal Safety - ${basicSubCat[3]}` },
             ]
           },
           {
             id, angle: 150, petalPath, center: path.centroid(f), petSize: foundations, colorRef: foundationsColorScale(foundations), text: 'Foundations of Wellbeing',
             subCat: [
-              { angle: 120, value: foundationsSubCat[0], colorValue: foundationsColorScale(foundationsSubCat[0]), text: `Access to Basic Knowledge: ${foundationsSubCat[0]}` },
-              { angle: 140, value: foundationsSubCat[1], colorValue: foundationsColorScale(foundationsSubCat[1]), text: `Access to Information and Communications: ${foundationsSubCat[1]}` },
-              { angle: 160, value: foundationsSubCat[2], colorValue: foundationsColorScale(foundationsSubCat[2]), text: `Health and Wellness: ${foundationsSubCat[2]}` },
-              { angle: 180, value: foundationsSubCat[3], colorValue: foundationsColorScale(foundationsSubCat[3]), text: `Environmental Quality: ${foundationsSubCat[3]}` },
+              { angle: 120, value: foundationsSubCat[0], colorValue: foundationsColorScale(foundationsSubCat[0]), text: `Access to Basic Knowledge - ${foundationsSubCat[0]}` },
+              { angle: 140, value: foundationsSubCat[1], colorValue: foundationsColorScale(foundationsSubCat[1]), text: `Access to Information and Communications - ${foundationsSubCat[1]}` },
+              { angle: 160, value: foundationsSubCat[2], colorValue: foundationsColorScale(foundationsSubCat[2]), text: `Health and Wellness - ${foundationsSubCat[2]}` },
+              { angle: 180, value: foundationsSubCat[3], colorValue: foundationsColorScale(foundationsSubCat[3]), text: `Environmental Quality - ${foundationsSubCat[3]}` },
             ]
           },
           {
             id, angle: 270, petalPath, center: path.centroid(f), petSize: opportunity, colorRef: opportunityColorScale(opportunity), text: 'Opportunity',
             subCat: [
-              { id, angle: 240, value: opportunitySubCat[0], colorValue: opportunityColorScale(opportunitySubCat[0]), text: `Personal Rights: ${opportunitySubCat[0]}` },
-              { id, angle: 260, value: opportunitySubCat[1], colorValue: opportunityColorScale(opportunitySubCat[1]), text: `Personal Freedom and Choice: ${opportunitySubCat[1]}` },
-              { id, angle: 280, value: opportunitySubCat[2], colorValue: opportunityColorScale(opportunitySubCat[2]), text: `Inclusiveness: ${opportunitySubCat[2]}` },
-              { id, angle: 300, value: opportunitySubCat[3], colorValue: opportunityColorScale(opportunitySubCat[3]), text: `Access to Advanced Education: ${opportunitySubCat[3]}` },
+              { id, angle: 240, value: opportunitySubCat[0], colorValue: opportunityColorScale(opportunitySubCat[0]), text: `Personal Rights - ${opportunitySubCat[0]}` },
+              { id, angle: 260, value: opportunitySubCat[1], colorValue: opportunityColorScale(opportunitySubCat[1]), text: `Personal Freedom and Choice - ${opportunitySubCat[1]}` },
+              { id, angle: 280, value: opportunitySubCat[2], colorValue: opportunityColorScale(opportunitySubCat[2]), text: `Inclusiveness - ${opportunitySubCat[2]}` },
+              { id, angle: 300, value: opportunitySubCat[3], colorValue: opportunityColorScale(opportunitySubCat[3]), text: `Access to Advanced Education - ${opportunitySubCat[3]}` },
             ]
           }
         ],
@@ -132,6 +132,24 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
     // initialScale tracks Zoom scale throughout transforms.
     var initialScale = 1;
     var fontSize = 16 / initialScale;
+    
+    // var centered;
+
+    // function clickCenter(event, d) {
+    //   var x = 0,
+    //       y = 0;
+    //   if (!d || centered === d) {
+    //     centered = null;
+    //   } else {
+    //     var centroid = path.centroid(d);
+    //     x = width / 2 - centroid[0];
+    //     y = height / 2 - centroid[1];
+    //     centered = d;
+    //   }
+    //   svg.selectAll("g").transition()
+    //       .duration(750)
+    //       .attr("transform", "translate(" + x + "," + y + ")");
+    // }
 
 
     const zoom = d3.zoom()
@@ -250,7 +268,6 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
         .style('fill', color)
         .style('stroke', 'black')
         .attr("cursor", "pointer")
-      // .on('mouseover', )
 
       toolTip
         .selectAll('.petalBackgroundPath')
@@ -297,7 +314,6 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
       // })
 
       toolTip.selectAll('.petalPath').on("mouseover", doItAll)
-      // toolTip.selectAll('.petalPath').on("mouseover", showPetalArc)
       toolTip.on("mouseleave", countryMouseLeave)
 
       text
@@ -324,14 +340,14 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
       showSubPetals(event, d);
       showPetalArc(event, d);
     }
-    //************************* arc function starts here **********************************/    
+
     function showPetalArc(event, d) {
       var arc = d3.arc()
-        .startAngle([0])
-        .endAngle([(Math.PI * 2) / 3])
+        .startAngle([(Math.PI * 2) / 3])
+        .endAngle([0])
         .innerRadius([100])
         .outerRadius([120])
-        .cornerRadius([10])
+        .cornerRadius([10]);
 
       toolTip.selectAll('.petalArc')
         .data([d])
@@ -344,8 +360,8 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
         .attr('fill', d => {
           return d.colorRef
         })
-        .attr('transform', d => `translate(${d.center[0]}, ${d.center[1]}) rotate(${d.angle + 30}) scale(${0})`)
-        .transition().duration(750)
+        // .attr('transform', d => `translate(${d.center[0]}, ${d.center[1]}) rotate(${d.angle + 30}) scale(${0})`)
+        // .transition().duration(750)
         .attr('transform', d => `translate(${d.center[0]}, ${d.center[1]}) rotate(${d.angle + 30}) scale(${1 / initialScale})`)
         .attr("cursor", "pointer")
 
@@ -356,26 +372,28 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
         .data([d])
         .join('text')
         .attr('class', 'petalText')
-        .attr("dy", function (d, i) {
-          return (15 / initialScale);
-        })
+        .attr("dy", -5/initialScale)
         .append('textPath')
-        .style("text-anchor", "start")
+        .style("text-anchor", "middle")
         .attr("xlink:href", d => { return `#arc_${d.id}_${d.text}` })
         .attr("font-size", fontSize)
+        .attr("fill", d=>{
+          let fontColor = 'black'
+          if(d.angle === 30 && d.petSize > 90) {
+            fontColor = 'yellow'
+          }
+          return fontColor;
+        })
         .attr("pointer-events", "none")
         .attr("startOffset", function (d) {
-          var textLength = d.text.length;
-          var length = (Math.PI * 200) / 3;
-
           if (d.angle === 270) {
-            return (25 - (50 * 120) / length + (50 * 100) / length) - textLength / 1.5 + "%";
+            return 370 / initialScale;
           }
           if(d.angle === 30) {
-            return (25 - (50 * 120) / length + (50 * 100) / length) - textLength / 1.5 + "%";
+            return 130 / initialScale;
           }
-          else{
-            return (-((25 - (50 * 120) / length + (50 * 100) / length) - textLength )+ "%");
+          else {
+            return 135 / initialScale;
           }
         })
         .text(d => {
@@ -436,6 +454,7 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
       })
       .on("mouseleave",
         d => { d3.select(d.path[0]).style("opacity", "1"); })
+      // .on('click', clickCenter)
       .append("title")
       .text(d => { return `${d.properties.NAME_EN}` })
     countries.exit().remove();
