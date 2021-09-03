@@ -366,7 +366,6 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
         })
         .text(d => {
           if (d.petSize === 0) { return null }
-          console.log(`#${d.id}_${d.text}`, d.petSize, d.angle);
           return `${d.petSize}`;
         })
 
