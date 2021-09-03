@@ -132,12 +132,14 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
     // initialScale tracks Zoom scale throughout transforms.
     var initialScale = 1;
     var fontSize = 16 / initialScale;
-    
+
     // var centered;
 
     // function clickCenter(event, d) {
     //   var x = 0,
-    //       y = 0;
+    //     y = 0;
+    //   // If the click was on the centered state or the background, re-center.
+    //   // Otherwise, center the clicked-on state.
     //   if (!d || centered === d) {
     //     centered = null;
     //   } else {
@@ -146,18 +148,18 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
     //     y = height / 2 - centroid[1];
     //     centered = d;
     //   }
-    //   svg.selectAll("g").transition()
-    //       .duration(750)
-    //       .attr("transform", "translate(" + x + "," + y + ")");
-    // }
+    //   var t = [x, y];
+    //   // Transition to the new transform.
+    //   svg.call(zoom.transform, `translate(${x},${y}) scale(1)`)
 
+    // }
 
     const zoom = d3.zoom()
       .on('zoom', (event, d) => {
         //reset the toolTip before transforming
         countryMouseLeave();
-        
         const { transform } = event;
+
         // Save the Current Zoom level so we can scale tooltips. 
         initialScale = transform.k;
         fontSize = 16 / initialScale;
@@ -180,8 +182,9 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
         svg.selectAll('.subPetalText')
           .attr('transform', `translate(${transform.x},${transform.y}) scale(${transform.k})`)
       })
-      .translateExtent([[0, 0], [width * 1.3, height * 1.3]])
+      .translateExtent([[0, 0], [width, height]])
       .scaleExtent([1, 10]);
+    // .on('end', countryMouseOver);
 
     // *** Top Level Selector (ViewBox) ***
     let svg = d3.select(svgRef.current)
@@ -192,6 +195,7 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
       .on('zoom', zoom);
 
     let g = svg.append("g").attr('class', 'countries');
+    // Join (enter, update) here v6 style.
 
     svg.exit().remove();
 
@@ -212,6 +216,7 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
 
       TextTooltip
         .attr("font-size", 16)
+        .attr('text-anchor', 'middle')
         .attr('style', 'text-shadow: 2px 2px white, -2px -2px white, 2px -2px white, -2px 2px white;')
         .attr('background-color', 'gray;')
         .attr('transform', `translate(${x}, ${y})`)
@@ -228,7 +233,7 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
       .on("mouseleave", countryMouseLeave)
 
 
-    let countryMouseOver = function (event, d) {
+    function countryMouseOver(event, d) {
       countryMouseLeave();
       let x = d.properties.flower.center[0];
       let y = d.properties.flower.center[1];
@@ -274,7 +279,7 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
         .data(d.properties.flower.petals)
         .join('path')
         .attr('class', 'petalBackgroundPath')
-        .attr("id", (d, i) => `${d.id + i}`)
+        .attr("id", (d, i) => `${d.id}${d.text}`)
         .attr('d', d => d.petalPath)
         .attr('transform', d => `translate(${d.center[0]}, ${d.center[1]}) rotate(${d.angle}) scale(${0})`)
         .transition().duration(1250)
@@ -283,7 +288,7 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
         })
         .style('stroke', 'black')
         .style('fill', d => d.colorRef)
-        .style("opacity", "0.40")
+        .style("opacity", "0.50")
         .attr("cursor", "pointer")
 
       toolTip
@@ -301,17 +306,72 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
         .attr("cursor", "pointer")
 
       // toolTip
-      // .selectAll('.spiPetalText')
-      // // .data(d.properties.flower.petals)
-      // .append('text')
+      // .data(d.properties.flower.petals)
+      // .join('g')
       // .attr('class', 'spiPetalText')
-      // .append('textPath')
-      // .style("text-anchor", "start")
-      // .attr("xlink:href", d => { return `#${d.id}_${d.text}` })
-      // .text(d=> {
-      //   console.log(`#${d.id}_${d.text}`, d.petSize);
-      //   return d.petSize;
-      // })
+
+      toolTip.selectAll('.petalScoreText')
+        .data(d.properties.flower.petals)
+        .join('text')
+        .attr('class', 'petalScoreText')
+        //*** Text Path Version */
+        // .append('textPath')
+        // .attr('xlink:href', d =>{ return `#${d.id}${d.text}`})
+        // .attr("font-size", fontSize)
+        // .attr("startOffset", d=> { 
+        //   if(d.petSize < 60){
+        //     if(d.angle === 150){
+        //       return "75%";
+        //     }
+        //     return "25%"
+        //   }
+        //   if(d.petSize > 60){
+        //     if(d.angle === 150){
+        //       return "90%";
+        //     }
+        //     return "10%";
+        //   }
+        // })
+        // .style("text-anchor", "middle")
+        //*** tspan version */
+        .append("tspan")
+        .attr("font-size", 0)
+        .attr("x", d => d.center[0])
+        .attr("y", d => d.center[1])
+        .transition().duration(750)
+        .attr("text-anchor", "middle")
+        .attr("font-size", fontSize)
+        // .attr("font-weight", 700)
+        .attr("x", d => {
+          if (d.angle === 30) {
+            return d.center[0] + (d.petSize / Math.sqrt(2)) + (d.petSize > 60 ? - 20 : + 20);
+          }
+          if (d.angle === 150) {
+            return d.center[0] - (d.petSize / Math.sqrt(2)) + (d.petSize > 60 ? + 20 : - 20);
+          }
+          if (d.angle === 270) {
+            return d.center[0]
+          }
+        })
+        .attr("y", d => {
+          if (d.angle === 30) {
+            return d.center[1] + (d.petSize / Math.sqrt(2)) + (d.petSize > 60 ? - 25 : + 10);
+          }
+          if (d.angle === 150) {
+            return d.center[1] + (d.petSize / Math.sqrt(2)) + (d.petSize > 60 ? - 25 : + 10);
+          }
+          if (d.angle === 270) {
+            return d.center[1] - (d.petSize / Math.sqrt(2)) + (d.petSize > 60 ? + 20 : -20);
+          }
+        })
+        .text(d => {
+          if (d.petSize === 0) { return null }
+          console.log(`#${d.id}_${d.text}`, d.petSize, d.angle);
+          return `${d.petSize}`;
+        })
+
+      toolTip.selectAll('.petalScoreText')
+        .raise();
 
       toolTip.selectAll('.petalPath').on("mouseover", doItAll)
       toolTip.on("mouseleave", countryMouseLeave)
@@ -360,8 +420,6 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
         .attr('fill', d => {
           return d.colorRef
         })
-        // .attr('transform', d => `translate(${d.center[0]}, ${d.center[1]}) rotate(${d.angle + 30}) scale(${0})`)
-        // .transition().duration(750)
         .attr('transform', d => `translate(${d.center[0]}, ${d.center[1]}) rotate(${d.angle + 30}) scale(${1 / initialScale})`)
         .attr("cursor", "pointer")
 
@@ -372,14 +430,14 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
         .data([d])
         .join('text')
         .attr('class', 'petalText')
-        .attr("dy", -5/initialScale)
+        .attr("dy", -5 / initialScale)
         .append('textPath')
         .style("text-anchor", "middle")
         .attr("xlink:href", d => { return `#arc_${d.id}_${d.text}` })
         .attr("font-size", fontSize)
-        .attr("fill", d=>{
+        .attr("fill", d => {
           let fontColor = 'black'
-          if(d.angle === 30 && d.petSize > 90) {
+          if (d.angle === 30 && d.petSize > 85) {
             fontColor = 'yellow'
           }
           return fontColor;
@@ -389,7 +447,7 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
           if (d.angle === 270) {
             return 370 / initialScale;
           }
-          if(d.angle === 30) {
+          if (d.angle === 30) {
             return 130 / initialScale;
           }
           else {
