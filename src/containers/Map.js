@@ -57,7 +57,7 @@ function MapContainer({ showModal, toggleModal }) {
   useEffect(() => {
     // return adjusted window size
     // add window reSize listener
-  }, []);
+  }, [width, height]);
 
 
 
