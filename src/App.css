@@ -12,8 +12,11 @@
   text-align: justify;
 }
 
-.flower {
-  position: absolute;
+.loading_spinner {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 50%;
 }
 
 .ControlBar {
