@@ -24,11 +24,11 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
   let petalPath = 'M 0 0 c 100 100 80 0 100 0 C 80 0 100 -100 0 0';
 
   let subPetalPath = "M 0 0 L 85 15 A 1 1 0 0 0 85 -15 L 0 0";
-
+  
+  let checkedSize = Math.min(height, width)
 
   function ready(data) {
 
-    let checkedSize = Math.min(height, width)
 
     let spiScale = d3.scaleLinear().domain([0, 100]).range([0, 100]);
 
@@ -183,8 +183,9 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
           .attr('transform', `translate(${transform.x},${transform.y}) scale(${transform.k})`)
       })
       .translateExtent([[0, 0], [width, height]])
-      .scaleExtent([1, 10]);
-    // .on('end', countryMouseOver);
+      .scaleExtent([1, 10])
+      // Restore
+    // .on('end', countryMouseOver(d));
 
     // *** Top Level Selector (ViewBox) ***
     let svg = d3.select(svgRef.current)
@@ -217,6 +218,7 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
       TextTooltip
         .attr("font-size", 16)
         .attr('text-anchor', 'middle')
+        .attr("font-weight", 700)
         .attr('style', 'text-shadow: 2px 2px white, -2px -2px white, 2px -2px white, -2px 2px white;')
         .attr('background-color', 'gray;')
         .attr('transform', `translate(${x}, ${y})`)
@@ -305,63 +307,37 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
         .style('fill', d => d.colorRef)
         .attr("cursor", "pointer")
 
-      // toolTip
-      // .data(d.properties.flower.petals)
-      // .join('g')
-      // .attr('class', 'spiPetalText')
 
       toolTip.selectAll('.petalScoreText')
         .data(d.properties.flower.petals)
         .join('text')
+        .attr("id", d=> `${d.id}_${d.text}_txt`)
         .attr('class', 'petalScoreText')
-        //*** Text Path Version */
-        // .append('textPath')
-        // .attr('xlink:href', d =>{ return `#${d.id}${d.text}`})
-        // .attr("font-size", fontSize)
-        // .attr("startOffset", d=> { 
-        //   if(d.petSize < 60){
-        //     if(d.angle === 150){
-        //       return "75%";
-        //     }
-        //     return "25%"
-        //   }
-        //   if(d.petSize > 60){
-        //     if(d.angle === 150){
-        //       return "90%";
-        //     }
-        //     return "10%";
-        //   }
-        // })
-        // .style("text-anchor", "middle")
-        //*** tspan version */
         .append("tspan")
-        .attr("font-size", 0)
-        .attr("x", d => d.center[0])
-        .attr("y", d => d.center[1])
-        .transition().duration(750)
         .attr("text-anchor", "middle")
         .attr("font-size", fontSize)
-        // .attr("font-weight", 700)
+        .attr("font-weight", 700)
         .attr("x", d => {
+          // adjust for initial scale
           if (d.angle === 30) {
-            return d.center[0] + (d.petSize / Math.sqrt(2)) + (d.petSize > 60 ? - 20 : + 20);
+            return x + (d.petSize / Math.sqrt(2))/initialScale + (d.petSize > 60 ? - 20 : + 20)/initialScale;
           }
           if (d.angle === 150) {
-            return d.center[0] - (d.petSize / Math.sqrt(2)) + (d.petSize > 60 ? + 20 : - 20);
+            return x - (d.petSize / Math.sqrt(2))/initialScale + (d.petSize > 60 ? + 20 : - 20)/initialScale;
           }
           if (d.angle === 270) {
-            return d.center[0]
+            return x
           }
         })
         .attr("y", d => {
           if (d.angle === 30) {
-            return d.center[1] + (d.petSize / Math.sqrt(2)) + (d.petSize > 60 ? - 25 : + 10);
+            return d.center[1] + (d.petSize / Math.sqrt(2))/initialScale + (d.petSize > 60 ? - 25 : + 10)/initialScale;
           }
           if (d.angle === 150) {
-            return d.center[1] + (d.petSize / Math.sqrt(2)) + (d.petSize > 60 ? - 25 : + 10);
+            return d.center[1] + (d.petSize / Math.sqrt(2))/initialScale + (d.petSize > 60 ? - 25 : + 10)/initialScale;
           }
           if (d.angle === 270) {
-            return d.center[1] - (d.petSize / Math.sqrt(2)) + (d.petSize > 60 ? + 20 : -20);
+            return d.center[1] - (d.petSize / Math.sqrt(2))/initialScale + (d.petSize > 60 ? + 20 : -20)/initialScale;
           }
         })
         .text(d => {
@@ -381,14 +357,16 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
         .text(countryName)
         .attr('text-anchor', 'middle')
         .attr("font-size", fontSize)
-        .attr('style', 'text-shadow: 2px 2px white, -2px -2px white, 2px -2px white, -2px 2px white;')
+        .attr("font-weight", 700)
+
         .attr('x', 0)
         .attr('y', 0)
         .attr('dy', 0)
         .append('tspan')
         .text(SPI)
         .attr("font-size", fontSize)
-        .attr('style', 'text-shadow: 2px 2px white, -2px -2px white, 2px -2px white, -2px 2px white;')
+        .attr("font-weight", 700)
+
         .attr('x', 0)
         .attr('y', 0)
         .attr('dy', '1em')
@@ -523,7 +501,6 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
       .attr("stroke", "white")
       .attr("stroke-linejoin", "round")
       .attr("d", path(mesh(data[0], data[0].objects.countries, (a, b) => a !== b)))
-    // .on('click', reset, countryMouseLeave);
 
     borders.exit().remove();
 
@@ -561,7 +538,7 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
     });
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [yearValue, localGeoData, hardData, svgRef]);
+  }, [yearValue, localGeoData, hardData, svgRef, checkedSize]);
 
   while (loading) return (<img src={loadingSpinner} alt={'loading spinner'} />)
 
