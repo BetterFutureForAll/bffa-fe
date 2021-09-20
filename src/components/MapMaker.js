@@ -35,7 +35,7 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
     //Check Height Vs Width, use the width for small screens and height for large.
 
     let projection = d3.geoEqualEarth()
-      .scale(checkedSize / 1.5 / Math.PI)
+      .scale(checkedSize / 1.3 / Math.PI)
       .translate([width / 2, height / 2])
 
     let path = d3.geoPath().projection(projection);
@@ -182,7 +182,7 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
         svg.selectAll('.subPetalText')
           .attr('transform', `translate(${transform.x},${transform.y}) scale(${transform.k})`)
       })
-      .translateExtent([[0, 0], [width, height]])
+      .translateExtent([[0, 0], [width * 1.3, height * 1.3]])
       .scaleExtent([1, 10])
       // Restore
     // .on('end', countryMouseOver(d));
