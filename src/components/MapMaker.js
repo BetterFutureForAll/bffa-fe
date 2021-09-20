@@ -35,7 +35,7 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
     //Check Height Vs Width, use the width for small screens and height for large.
 
     let projection = d3.geoEqualEarth()
-      .scale(checkedSize / 1.5 / Math.PI)
+      .scale(checkedSize / 1.3 / Math.PI)
       .translate([width / 2, height / 2])
 
     let path = d3.geoPath().projection(projection);
@@ -148,10 +148,22 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
     //     y = height / 2 - centroid[1];
     //     centered = d;
     //   }
-    //   var t = [x, y];
-    //   // Transition to the new transform.
-    //   svg.call(zoom.transform, `translate(${x},${y}) scale(1)`)
+    //   var transform = {
+    //     x: x,
+    //     y: y,
+    //     k: 1
+    //   };
+      
+      // Transition to the new transform.
 
+      // svg.call(zoom.translateBy([x,y]));
+      
+    //   svg.call(zoom.transform,
+    //     d3.zoomIdentity
+    //     .translate(x,y)
+    //     .scale(initialScale)
+    //   )
+    //   .on("end", countryMouseOver(event, d));
     // }
 
     const zoom = d3.zoom()
@@ -159,7 +171,6 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
         //reset the toolTip before transforming
         countryMouseLeave();
         const { transform } = event;
-
         // Save the Current Zoom level so we can scale tooltips. 
         initialScale = transform.k;
         fontSize = 16 / initialScale;
@@ -181,11 +192,11 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
 
         svg.selectAll('.subPetalText')
           .attr('transform', `translate(${transform.x},${transform.y}) scale(${transform.k})`)
-      })
-      .translateExtent([[0, 0], [width, height]])
-      .scaleExtent([1, 10])
-      // Restore
-    // .on('end', countryMouseOver(d));
+        })
+        .translateExtent([[-width * .25, -height * .1], [width * 1.25, height * 1.25]])
+        .scaleExtent([1, 10])
+        // Restore
+        // .on('end', countryMouseOver);
 
     // *** Top Level Selector (ViewBox) ***
     let svg = d3.select(svgRef.current)
