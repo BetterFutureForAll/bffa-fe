@@ -158,23 +158,19 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
 
       // svg.call(zoom.translateBy([x,y]));
       
-      svg.call(zoom.transform,
-        d3.zoomIdentity
-        .translate(x,y)
-        .scale(initialScale)
-      )
-      .on("end", countryMouseOver(event, d));
+    //   svg.call(zoom.transform,
+    //     d3.zoomIdentity
+    //     .translate(x,y)
+    //     .scale(initialScale)
+    //   )
+    //   .on("end", countryMouseOver(event, d));
     }
-
-    let savedEvent;
 
     const zoom = d3.zoom()
       .on('zoom', (event, d) => {
         //reset the toolTip before transforming
         countryMouseLeave();
         const { transform } = event;
-        console.log(transform);
-        savedEvent = { event, d };
         // Save the Current Zoom level so we can scale tooltips. 
         initialScale = transform.k;
         fontSize = 16 / initialScale;
@@ -197,7 +193,7 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
         svg.selectAll('.subPetalText')
           .attr('transform', `translate(${transform.x},${transform.y}) scale(${transform.k})`)
         })
-        .translateExtent([[0, 0], [width * 1.3, height * 1.3]])
+        .translateExtent([[-width * .25, -height * .1], [width * 1.25, height * 1.25]])
         .scaleExtent([1, 10])
         // Restore
         // .on('end', countryMouseOver);
