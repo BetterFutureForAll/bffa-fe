@@ -133,26 +133,26 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
     var initialScale = 1;
     var fontSize = 16 / initialScale;
 
-    var centered;
+    // var centered;
 
-    function clickCenter(event, d) {
-      var x = 0,
-        y = 0;
-      // If the click was on the centered state or the background, re-center.
-      // Otherwise, center the clicked-on state.
-      if (!d || centered === d) {
-        centered = null;
-      } else {
-        var centroid = path.centroid(d);
-        x = width / 2 - centroid[0];
-        y = height / 2 - centroid[1];
-        centered = d;
-      }
-      var transform = {
-        x: x,
-        y: y,
-        k: 1
-      };
+    // function clickCenter(event, d) {
+    //   var x = 0,
+    //     y = 0;
+    //   // If the click was on the centered state or the background, re-center.
+    //   // Otherwise, center the clicked-on state.
+    //   if (!d || centered === d) {
+    //     centered = null;
+    //   } else {
+    //     var centroid = path.centroid(d);
+    //     x = width / 2 - centroid[0];
+    //     y = height / 2 - centroid[1];
+    //     centered = d;
+    //   }
+    //   var transform = {
+    //     x: x,
+    //     y: y,
+    //     k: 1
+    //   };
       
       // Transition to the new transform.
 
@@ -164,7 +164,7 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
     //     .scale(initialScale)
     //   )
     //   .on("end", countryMouseOver(event, d));
-    }
+    // }
 
     const zoom = d3.zoom()
       .on('zoom', (event, d) => {
@@ -500,7 +500,7 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
       })
       .on("mouseleave",
         d => { d3.select(d.path[0]).style("opacity", "1"); })
-      .on('click', clickCenter)
+      // .on('click', clickCenter)
       .append("title")
       .text(d => { return `${d.properties.NAME_EN}` })
     countries.exit().remove();
