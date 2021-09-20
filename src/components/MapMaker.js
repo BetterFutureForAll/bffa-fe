@@ -133,33 +133,48 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
     var initialScale = 1;
     var fontSize = 16 / initialScale;
 
-    // var centered;
+    var centered;
 
-    // function clickCenter(event, d) {
-    //   var x = 0,
-    //     y = 0;
-    //   // If the click was on the centered state or the background, re-center.
-    //   // Otherwise, center the clicked-on state.
-    //   if (!d || centered === d) {
-    //     centered = null;
-    //   } else {
-    //     var centroid = path.centroid(d);
-    //     x = width / 2 - centroid[0];
-    //     y = height / 2 - centroid[1];
-    //     centered = d;
-    //   }
-    //   var t = [x, y];
-    //   // Transition to the new transform.
-    //   svg.call(zoom.transform, `translate(${x},${y}) scale(1)`)
+    function clickCenter(event, d) {
+      var x = 0,
+        y = 0;
+      // If the click was on the centered state or the background, re-center.
+      // Otherwise, center the clicked-on state.
+      if (!d || centered === d) {
+        centered = null;
+      } else {
+        var centroid = path.centroid(d);
+        x = width / 2 - centroid[0];
+        y = height / 2 - centroid[1];
+        centered = d;
+      }
+      var transform = {
+        x: x,
+        y: y,
+        k: 1
+      };
+      
+      // Transition to the new transform.
 
-    // }
+      // svg.call(zoom.translateBy([x,y]));
+      
+      svg.call(zoom.transform,
+        d3.zoomIdentity
+        .translate(x,y)
+        .scale(initialScale)
+      )
+      .on("end", countryMouseOver(event, d));
+    }
+
+    let savedEvent;
 
     const zoom = d3.zoom()
       .on('zoom', (event, d) => {
         //reset the toolTip before transforming
         countryMouseLeave();
         const { transform } = event;
-
+        console.log(transform);
+        savedEvent = { event, d };
         // Save the Current Zoom level so we can scale tooltips. 
         initialScale = transform.k;
         fontSize = 16 / initialScale;
@@ -181,11 +196,11 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
 
         svg.selectAll('.subPetalText')
           .attr('transform', `translate(${transform.x},${transform.y}) scale(${transform.k})`)
-      })
-      .translateExtent([[0, 0], [width * 1.3, height * 1.3]])
-      .scaleExtent([1, 10])
-      // Restore
-    // .on('end', countryMouseOver(d));
+        })
+        .translateExtent([[0, 0], [width * 1.3, height * 1.3]])
+        .scaleExtent([1, 10])
+        // Restore
+        // .on('end', countryMouseOver);
 
     // *** Top Level Selector (ViewBox) ***
     let svg = d3.select(svgRef.current)
@@ -489,7 +504,7 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
       })
       .on("mouseleave",
         d => { d3.select(d.path[0]).style("opacity", "1"); })
-      // .on('click', clickCenter)
+      .on('click', clickCenter)
       .append("title")
       .text(d => { return `${d.properties.NAME_EN}` })
     countries.exit().remove();
