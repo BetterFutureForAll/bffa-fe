@@ -193,7 +193,7 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
         svg.selectAll('.subPetalText')
           .attr('transform', `translate(${transform.x},${transform.y}) scale(${transform.k})`)
         })
-        .translateExtent([[-width * .25, -height * .1], [width * 1.25, height * 1.25]])
+        .translateExtent([[-width * .25, -height * .1], [width * 1.5, height * 1.25]])
         .scaleExtent([1, 10])
         // Restore
         // .on('end', countryMouseOver);
