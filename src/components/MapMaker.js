@@ -133,38 +133,59 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
     var initialScale = 1;
     var fontSize = 16 / initialScale;
 
-    // var centered;
+    var centered;
 
-    // function clickCenter(event, d) {
-    //   var x = 0,
-    //     y = 0;
-    //   // If the click was on the centered state or the background, re-center.
-    //   // Otherwise, center the clicked-on state.
-    //   if (!d || centered === d) {
-    //     centered = null;
-    //   } else {
-    //     var centroid = path.centroid(d);
-    //     x = width / 2 - centroid[0];
-    //     y = height / 2 - centroid[1];
-    //     centered = d;
-    //   }
-    //   var transform = {
-    //     x: x,
-    //     y: y,
-    //     k: 1
-    //   };
-      
+    function clickCenter(event, d) {
+      var x = 0,
+        y = 0;
+      // If the click was on the centered state or the background, re-center.
+      // Otherwise, center the clicked-on state.
+      if (!d || centered === d) {
+        centered = null;
+      } else {
+        var centroid = path.centroid(d);
+        x = width / 2 - centroid[0];
+        y = height / 2 - centroid[1];
+        centered = d;
+      }
+      var transform = {
+        x: x,
+        y: y,
+        k: 1
+      };
+      console.log(this, event, d);
       // Transition to the new transform.
-
-      // svg.call(zoom.translateBy([x,y]));
+      // d3.select(svg).zoom().translateTo([x,y])
+      // this.call(zoom.translateTo([x,y]))
       
-    //   svg.call(zoom.transform,
-    //     d3.zoomIdentity
-    //     .translate(x,y)
-    //     .scale(initialScale)
-    //   )
-    //   .on("end", countryMouseOver(event, d));
-    // }
+
+      // svg.selectAll(".country").attr('transform', transform)
+      // .attr('transform', `translate(${transform.x},${transform.y}) scale(${transform.k})`)
+      // .attr("stroke-width", 1 / transform.k)
+
+      // svg.selectAll(".border").attr('transform', transform)
+      //   .attr('transform', `translate(${transform.x},${transform.y}) scale(${transform.k})`)
+      //   .attr("stroke-width", 1 / transform.k)
+
+      // svg.selectAll('.graphicTooltip').attr('transform', transform)
+      //   .attr('transform', `translate(${transform.x},${transform.y}) scale(${transform.k})`)
+      //   .attr("stroke-width", 1 / transform.k)
+
+      // svg.select(".tooltip-area")
+      //   .attr('transform', `translate(${transform.x},${transform.y}) scale(${transform.k})`)
+
+      // svg.selectAll('.subPetalText')
+      //   .attr('transform', `translate(${transform.x},${transform.y}) scale(${transform.k})`)
+
+      // zoom.translateTo(x,y)
+        // d3.zoomIdentity
+        // .translate(x,y)
+        // .scale(initialScale)
+      // .on("end", countryMouseOver(event, d));
+    }
+
+    let savedEvent;
+    let savedD;
 
     const zoom = d3.zoom()
       .on('zoom', (event, d) => {
@@ -174,6 +195,11 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
         // Save the Current Zoom level so we can scale tooltips. 
         initialScale = transform.k;
         fontSize = 16 / initialScale;
+
+        savedEvent = event;
+        savedD = d;
+
+        // countryMouseOver(event, d);
 
         svg.selectAll(".country").attr('transform', transform)
           .attr('transform', `translate(${transform.x},${transform.y}) scale(${transform.k})`)
@@ -192,10 +218,13 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
 
         svg.selectAll('.subPetalText')
           .attr('transform', `translate(${transform.x},${transform.y}) scale(${transform.k})`)
+        
         })
         .translateExtent([[-width * .25, -height * .1], [width * 1.5, height * 1.25]])
         .scaleExtent([1, 10])
         // Restore
+
+        // Need to find a way to save the Zoom Event, and Data;
         // .on('end', countryMouseOver);
 
     // *** Top Level Selector (ViewBox) ***
@@ -500,7 +529,7 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
       })
       .on("mouseleave",
         d => { d3.select(d.path[0]).style("opacity", "1"); })
-      // .on('click', clickCenter)
+      .on('click', clickCenter)
       .append("title")
       .text(d => { return `${d.properties.NAME_EN}` })
     countries.exit().remove();
