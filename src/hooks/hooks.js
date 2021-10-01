@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import {
   makeYearsArray,
   getSpiDataByYear,
@@ -71,6 +71,7 @@ export const useCountries = () => {
   }, [countries]);
   return [countries, setCountries];
 };
+
 export const useHandleCountryChange = () => {
   let [countryValue, setCountryValue] = useState('World');
   let handleCountryChange = (e) => {
@@ -100,34 +101,6 @@ export const useDataByCountry = (spiByYear, countryValue) => {
     }
   }, [spiByYear, countryValue]);
   return [spiByCountry, setSpiByCountry];
-};
-
-export const useLoopAnimator = (yearsArr) => {
-  let [animatedYears, setAnimatedYears] = useState('2020');
-
-  let loopWrapper = useCallback(() => {
-    function yearLoop() {
-      var i = 1;
-      setTimeout(function () {
-        //  increment the counter
-        i++;
-        if (i < yearsArr.length) {
-          yearLoop();
-        }
-        //  ..  setTimeout()
-      }, 1500);
-    }
-    yearLoop();
-  }, [yearsArr]);
-
-  useEffect(() => {
-    let handleAnimationChange = () => {
-      loopWrapper(yearsArr);
-      setAnimatedYears(loopWrapper);
-    };
-    handleAnimationChange(animatedYears);
-  }, [animatedYears, loopWrapper, yearsArr]);
-  return [animatedYears];
 };
 
 export function scoreToColor(score) {
