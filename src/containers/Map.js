@@ -4,7 +4,7 @@ import {
   useHandleYearChange,
   useYears, useCountries,
   useHandleCountryChange, useClicked, useMouse,
-  useWindowSize,
+  useWindowSize, useClickedSubCat
 } from '../hooks/hooks';
 import MapMaker from '../components/MapMaker';
 import Modal from '../components/Modal';
@@ -23,11 +23,12 @@ function MapContainer({ showModal, toggleModal }) {
   let [setMouse] = useMouse();
   let [years] = useYears();
   let [yearValue, handleYearChange] = useHandleYearChange();
+  let [clickedSubCat, setClickedSubCat] = useClickedSubCat();
 
 
 
   let [countries] = useCountries();
-  let [countryValue, handleCountryChange] = useHandleCountryChange();
+  let [countryValue, handleCountryChange, setCountryValue] = useHandleCountryChange();
 
   let selectYears = (
     <>
@@ -48,16 +49,18 @@ function MapContainer({ showModal, toggleModal }) {
   let selectCountries = (
     <select onChange={handleCountryChange} defaultValue={countryValue}>
       {countries.map(item => (
-        <option key={item} value={item}>
+        <option key={item} value={item} onSelect={handleCountryChange}>
           {item}
         </option>
       ))}
     </select>
   );
   useEffect(() => {
+    // console.log();
+      setCountryValue(countryValue)
     // return adjusted window size
     // add window reSize listener
-  }, [width, height]);
+  }, [width, height, countryValue, setCountryValue]);
 
 
 
@@ -67,11 +70,16 @@ function MapContainer({ showModal, toggleModal }) {
         <Modal
           showModal={showModal}
           toggleModal={toggleModal}
+          countryValue={countryValue}
+          clicked={clicked}
+          clickedSubCat={clickedSubCat}
         />
         <MapMaker
           svgRef={svgRef}
           setClicked={setClicked}
           clicked={clicked}
+          setClickedSubCat={setClickedSubCat}
+          clickedSubCat={clickedSubCat}
           yearValue={yearValue}
           setMouse={setMouse}
           height={height}
@@ -79,6 +87,10 @@ function MapContainer({ showModal, toggleModal }) {
           loading={loading}
           setLoading={setLoading}
           toggleModal={toggleModal}
+          countries={countries}
+          countryValue={countryValue}
+          setCountryValue={setCountryValue}
+          handleCountryChange={handleCountryChange}
         />
         <div className="ControlBar">
           <Header

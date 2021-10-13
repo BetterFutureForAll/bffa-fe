@@ -1,9 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import indicatorPNG from '../assets/2020-indicator.png';
-// import PropTypes from 'prop-types';
+import ModalDefinitions from '../containers/ModalDefinitions';
 
-const Modal = ({ showModal, toggleModal }) => showModal ? ReactDOM.createPortal(
+const Modal = ({ showModal, toggleModal, countryValue, clicked, clickedSubCat }) => showModal ? ReactDOM.createPortal(
+  
   <React.Fragment>
     <div className="modal-overlay" />
     <div className="modal-wrapper" aria-modal aria-hidden tabIndex={-1} role="dialog" onClick={toggleModal}></div>
@@ -13,12 +14,16 @@ const Modal = ({ showModal, toggleModal }) => showModal ? ReactDOM.createPortal(
           X
           </button>
       </div>
-      <section id="modal_img">
-        <img className="modal_png" alt={'Indicator Definitions of Social Progress'} src={indicatorPNG} />
-      </section>
+        <ModalDefinitions
+          countryValue={countryValue}
+          clicked={clicked}
+          clickedSubCat={clickedSubCat}
+        />
+
     </div>
   </React.Fragment>, document.body
 ) : null;
+
 
 // Modal.propTypes = {
 //   showModal: PropTypes.bool,

@@ -85,12 +85,12 @@
   z-index: 2;
   display: flex !important;
   background: white;
-  margin: 1.75rem auto;
+  margin: 1rem auto;
   border-radius: 3px;
   max-width: 90%;
   max-height: 90%;
   width: auto !important;
-  padding: 2rem;
+  padding: 1rem;
   position: fixed;
   top: 50%;
   left: 50%;
@@ -101,4 +101,28 @@
   width: 100%;
   height: auto;
   object-fit: contain;
+}
+
+.dimension {
+  cursor: pointer;
+  transition: 0.4s;
+  max-width: 90%;
+  max-height: 90%;
+  z-index: 3;
+  object-fit: contain;
+}
+
+.dimension_img {
+  max-width: 40%;
+  max-height: 40%;
+}
+
+.active, .dimension:hover {
+  background-color: #ccc;
+  z-index: 4;
+}
+
+.category_img {
+  max-height: 25%;
+  max-width: 25%;
 }

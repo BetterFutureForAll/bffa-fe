@@ -4,8 +4,7 @@ import {
   getSpiDataByYear,
   makeCountriesArray,
   getSpiDataByCountry
-}
-  from '../services/SocialProgress';
+} from '../services/SocialProgress';
 import * as d3 from 'd3';
 
 export const useContent = () => {
@@ -26,7 +25,18 @@ export const useModal = () => {
 
 export const useClicked = () => {
   let [clicked, setClicked] = useState('World');
+  useEffect(()=>{
+    setClicked(clicked);
+  },[clicked])
   return [clicked, setClicked];
+}
+
+export const useClickedSubCat = () => {
+  let [clickedSubCat, setClickedSubCat] = useState(null);
+  useEffect(()=>{
+    setClickedSubCat(clickedSubCat);
+  },[clickedSubCat])
+  return [clickedSubCat, setClickedSubCat];
 }
 
 export const useMouse = () => {
@@ -79,8 +89,10 @@ export const useHandleCountryChange = () => {
   };
   useEffect(() => {
     setCountryValue(countryValue);
+    console.log(countryValue);
+    
   }, [countryValue]);
-  return [countryValue, handleCountryChange];
+  return [countryValue, handleCountryChange, setCountryValue];
 };
 
 export const useDataByYear = (yearValue) => {

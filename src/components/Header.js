@@ -9,7 +9,8 @@ const Header = ({
     selectYears, 
     yearValue, 
     handleSubmit, 
-    selectCountries, 
+    selectCountries,
+    handleCountryChange, 
     countryValue, 
     toggleModal 
     }) => {
@@ -65,6 +66,10 @@ const Header = ({
       </div>
       <div className={"controls"}>
         <button id="myBtn" onClick={toggleModal}>Data Definitions</button>
+        <form onSubmit={handleCountryChange}>
+        <label id="country_list" value={countryValue} >Country </label>
+        {selectCountries}
+      </form>
         <form onSubmit={handleSubmit}>
           <label id="years" value={yearValue} >Year </label>
           {selectYears}
@@ -82,7 +87,7 @@ const Header = ({
         <label id="years" value={yearValue} >Year </label>
         {selectYears}
       </form>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleCountryChange}>
         <label id="country_list" value={countryValue} >Country </label>
         {selectCountries}
       </form>

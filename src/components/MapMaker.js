@@ -8,8 +8,16 @@ import {
   opportunityColorScale
 } from '../services/SocialProgress';
 
+// countryMouseOver and countryValue need to be synchronized 
 
-const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLoading, toggleModal }) => {
+// country = countryValue, dimension = petals, category = subPetal, indicator = value
+
+const MapMaker = ({ 
+  svgRef,  width, height,
+  clicked, setClicked, clickedSubCat, setClickedSubCat,
+  yearValue, loading, setLoading, 
+  toggleModal, countries, countryValue, setCountryValue,
+  handleCountryChange }) => {
 
   // var margin = { top: 0, left: 0, right: 0, bottom: 0, }
 
@@ -27,8 +35,14 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
   
   let checkedSize = Math.min(height, width)
 
+  let selectCountry = <select onChange={handleCountryChange} defaultValue={countryValue}>
+  {countries.map(item => (
+    <option key={item} value={item}>
+      {item}
+    </option>
+  ))}
+  </select>
   function ready(data) {
-
 
     let spiScale = d3.scaleLinear().domain([0, 100]).range([0, 100]);
 
@@ -135,97 +149,84 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
 
     var centered;
 
-    function clickCenter(event, d) {
+    let clickCenter = (event, d) => {
+      countryMouseLeave();
       var x = 0,
-        y = 0;
+      y = 0;
       // If the click was on the centered state or the background, re-center.
       // Otherwise, center the clicked-on state.
-      if (!d || centered === d) {
+      if (!d || centered === data) {
         centered = null;
       } else {
         var centroid = path.centroid(d);
         x = width / 2 - centroid[0];
         y = height / 2 - centroid[1];
-        centered = d;
+        centered = data;
       }
       var transform = {
         x: x,
         y: y,
-        k: 1
+        k: initialScale
       };
-      console.log(this, event, d);
+      // var t = d3.zoomIdentity.translateBy(transform.x, transform.y).scale(transform.k)
+
+      // svg.selectAll(".country, .border, .graphicTooltip").call(zoom.transform, t);
+      // svg.select(".tooltip-area, .subPetalText").call(zoom.transform, t);
+
       // Transition to the new transform.
-      // d3.select(svg).zoom().translateTo([x,y])
-      // this.call(zoom.translateTo([x,y]))
-      
+      svg.selectAll(".country, .border, .graphicTooltip")
+        .attr('transform', transform)
+        .attr('transform', `translate(${x},${y}) scale(${transform.k})`)
+        .attr("stroke-width", 1 / transform.k);
 
-      // svg.selectAll(".country").attr('transform', transform)
-      // .attr('transform', `translate(${transform.x},${transform.y}) scale(${transform.k})`)
-      // .attr("stroke-width", 1 / transform.k)
-
-      // svg.selectAll(".border").attr('transform', transform)
-      //   .attr('transform', `translate(${transform.x},${transform.y}) scale(${transform.k})`)
-      //   .attr("stroke-width", 1 / transform.k)
-
-      // svg.selectAll('.graphicTooltip').attr('transform', transform)
-      //   .attr('transform', `translate(${transform.x},${transform.y}) scale(${transform.k})`)
-      //   .attr("stroke-width", 1 / transform.k)
-
-      // svg.select(".tooltip-area")
-      //   .attr('transform', `translate(${transform.x},${transform.y}) scale(${transform.k})`)
-
-      // svg.selectAll('.subPetalText')
-      //   .attr('transform', `translate(${transform.x},${transform.y}) scale(${transform.k})`)
-
-      // zoom.translateTo(x,y)
-        // d3.zoomIdentity
-        // .translate(x,y)
-        // .scale(initialScale)
-      // .on("end", countryMouseOver(event, d));
+      svg.select(".tooltip-area, .subPetalText")
+        .attr('transform', `translate(${x},${y}) scale(${transform.k})`)
     }
 
-    let savedEvent;
-    let savedD;
+    let zoomed = (event, d) => {
+      //reset the toolTip before transforming
+      countryMouseLeave();
+      
+      const { transform } = event;
 
+      // Save the Current Zoom level so we can scale tooltips. 
+      initialScale = transform.k;
+      fontSize = 16 / initialScale;
+
+      //If Zoomed on a Country, center the map on that country.
+        let x, y;
+        if (!d || centered === data) {
+          centered = null;
+        } else {
+          var centroid = path.centroid(d);
+          x = width / 2 - centroid[0];
+          y = height / 2 - centroid[1];
+          centered = data;
+        }
+      
+      svg.selectAll(".country, .border, .graphicTooltip")
+      .attr('transform', transform)
+      .attr('transform', `translate(${(x? x : transform.x)},${(y? y : transform.y )}) scale(${transform.k})`)
+      .attr("stroke-width", 1 / transform.k);
+      
+      svg.select(".tooltip-area, .subPetalText")
+      .attr('transform', `translate(${(x? x : transform.x)},${(y? y : transform.y )}) scale(${transform.k})`)
+      
+    };
+    
     const zoom = d3.zoom()
-      .on('zoom', (event, d) => {
-        //reset the toolTip before transforming
-        countryMouseLeave();
-        const { transform } = event;
-        // Save the Current Zoom level so we can scale tooltips. 
-        initialScale = transform.k;
-        fontSize = 16 / initialScale;
+    .translateExtent([[-width * .25, -height * .1], [width * 1.5, height * 1.25]])
+    .scaleExtent([1, 10])
+    .on('zoom', zoomed)
+    // .on('end', (event, d) => {
+      // d3.select(`${event.sourceEvent}`).dispatch('mouseover')
+      // d3.select(`${event.target}`).dispatch('mouseover');
+    // })
 
-        savedEvent = event;
-        savedD = d;
-
-        // countryMouseOver(event, d);
-
-        svg.selectAll(".country").attr('transform', transform)
-          .attr('transform', `translate(${transform.x},${transform.y}) scale(${transform.k})`)
-          .attr("stroke-width", 1 / transform.k);
-
-        svg.selectAll(".border").attr('transform', transform)
-          .attr('transform', `translate(${transform.x},${transform.y}) scale(${transform.k})`)
-          .attr("stroke-width", 1 / transform.k)
-
-        svg.selectAll('.graphicTooltip').attr('transform', transform)
-          .attr('transform', `translate(${transform.x},${transform.y}) scale(${transform.k})`)
-          .attr("stroke-width", 1 / transform.k)
-
-        svg.select(".tooltip-area")
-          .attr('transform', `translate(${transform.x},${transform.y}) scale(${transform.k})`)
-
-        svg.selectAll('.subPetalText')
-          .attr('transform', `translate(${transform.x},${transform.y}) scale(${transform.k})`)
-        
-        })
-        .translateExtent([[-width * .25, -height * .1], [width * 1.5, height * 1.25]])
-        .scaleExtent([1, 10])
-        // Restore
-
-        // Need to find a way to save the Zoom Event, and Data;
-        // .on('end', countryMouseOver);
+    const clickZoom = d3.zoom()
+    .translateExtent([[-width * .25, -height * .1], [width * 1.5, height * 1.25]])
+    .scaleExtent([1, 4])
+    .on('zoom', zoomed);
 
     // *** Top Level Selector (ViewBox) ***
     let svg = d3.select(svgRef.current)
@@ -233,11 +234,13 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
       .attr("viewBox", [0, 0, width, height])
       .attr('preserveAspectRatio', 'xMinYMid')
       .on("mouseleave", reset, countryMouseLeave)
-      .on('zoom', zoom);
-
+      .on('zoom', zoom)
+      
     let g = svg.append("g").attr('class', 'countries');
     // Join (enter, update) here v6 style.
 
+    svg.call(zoom);
+    
     svg.exit().remove();
 
     var TextTooltip = d3.select(".tooltip-area")
@@ -249,6 +252,7 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
     };
 
     var mousemove = function (event, d) {
+
       const text = d3.select('.tooltip-area__text');
       text.text(`${d.text}`);
 
@@ -276,7 +280,18 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
 
 
     function countryMouseOver(event, d) {
+
+      //tooltip should be extracted as an fn and this refactored ********
+      // console.log('countryMouseOver Data',d);
+      if(!d) return;
       countryMouseLeave();
+
+      if(d.properties.spi) { 
+        setClicked(d.properties.spi) 
+        setCountryValue(d.properties.spi.Country);
+      };
+
+
       let x = d.properties.flower.center[0];
       let y = d.properties.flower.center[1];
       let id = d.properties.ISO_A3_EH;
@@ -398,15 +413,14 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
         .attr('text-anchor', 'middle')
         .attr("font-size", fontSize)
         .attr("font-weight", 700)
-
         .attr('x', 0)
         .attr('y', 0)
         .attr('dy', 0)
+
         .append('tspan')
         .text(SPI)
         .attr("font-size", fontSize)
         .attr("font-weight", 700)
-
         .attr('x', 0)
         .attr('y', 0)
         .attr('dy', '1em')
@@ -479,12 +493,15 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
     function showSubPetals(event, d) {
       let x = d.center[0];
       let y = d.center[1];
+
       toolTip
         .selectAll('.subPetalPath')
         .data(d.subCat)
         .join('path')
         .attr('class', 'subPetalPath')
-        .attr("id", (d, i) => d.id)
+        .attr("id", (d, i) => {
+          setClickedSubCat(d.text);
+          return d.id})
         .attr('d', d => subPetalPath)
         .attr('transform', d => `translate(${x}, ${y}) scale(${0})`)
         .transition().duration(750)
@@ -524,14 +541,14 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
       .attr("cursor", "pointer")
       .attr("fill", d => { return d.properties.color || "#c4c2c4" })
       .on("mouseover", countryMouseOver)
-      .on("mouseenter", d => {
-        d3.select(d.path[0]).style("opacity", ".8");
+      .on("mouseenter", (event, d) => {
+        d3.select(event.path[0]).style("opacity", ".8");
       })
       .on("mouseleave",
         d => { d3.select(d.path[0]).style("opacity", "1"); })
-      .on('click', clickCenter)
       .append("title")
       .text(d => { return `${d.properties.NAME_EN}` })
+
     countries.exit().remove();
 
     // // *** borders / whitespace mesh ***
@@ -543,8 +560,6 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
       .attr("d", path(mesh(data[0], data[0].objects.countries, (a, b) => a !== b)))
 
     borders.exit().remove();
-
-    svg.call(zoom);
 
     reset();
 
@@ -560,6 +575,10 @@ const MapMaker = ({ svgRef, setClicked, yearValue, width, height, loading, setLo
     TextTooltip.raise();
     TextTooltip.attr("pointer-events", "none");
   };
+
+  useEffect(()=>{
+    // selectCountry()
+  }, [countryValue])
 
   useEffect(() => {
 
