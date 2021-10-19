@@ -8,6 +8,8 @@ import {
 } from '../hooks/hooks';
 import MapMaker from '../components/MapMaker';
 import Modal from '../components/Modal';
+import Portal from './Portal';
+import ModalDefinitions from './ModalDefinitions';
 
 function MapContainer({ showModal, toggleModal }) {
 
@@ -55,6 +57,17 @@ function MapContainer({ showModal, toggleModal }) {
       ))}
     </select>
   );
+
+  let target = "modal-root";
+
+  let children = 
+  <ModalDefinitions
+    countryValue={countryValue}
+    clicked={clicked}
+    clickedSubCat={clickedSubCat}
+    showModal={showModal}
+  />;
+
   useEffect(() => {
     // console.log();
       setCountryValue(countryValue)
@@ -67,12 +80,9 @@ function MapContainer({ showModal, toggleModal }) {
   return (
     <>
       <div id="MapContainer" >
-        <Modal
-          showModal={showModal}
-          toggleModal={toggleModal}
-          countryValue={countryValue}
-          clicked={clicked}
-          clickedSubCat={clickedSubCat}
+        <Portal 
+          id={target}
+          children={children}
         />
         <MapMaker
           svgRef={svgRef}
