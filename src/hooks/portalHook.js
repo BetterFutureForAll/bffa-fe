@@ -5,7 +5,6 @@ import { useRef, useEffect } from 'react';
 function createRootElement(id) {
   const rootContainer = document.createElement('div');
   rootContainer.setAttribute('id', id);
-  rootContainer.setAttribute('class', `${id}-overlay`);
   return rootContainer;
 }
 
@@ -54,7 +53,7 @@ function usePortal(id) {
   function getRootElem() {
     if (!rootElemRef.current) {
       rootElemRef.current = document.createElement('div');
-      rootElemRef.current.setAttribute("class", `${id}`)
+      rootElemRef.current.setAttribute("class", `${id}-root`)
     }
     return rootElemRef.current;
   }
