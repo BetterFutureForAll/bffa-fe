@@ -2,6 +2,10 @@
   text-align: center;
   position: relative;
 }
+div {
+  display: flex;
+  flex-direction: column;
+}
 
 .MapContainer {
   position: relative;
@@ -21,17 +25,30 @@
 .ControlBar {
   display: flex;
   position: fixed;
+  flex-direction: row;
   bottom: 0;
   width: 100%;
+  padding: 2px;
   align-items: center;
   justify-content: space-evenly;
   background-color:lightblue;
-
-  
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.47);
 }
+
+
 @media only screen and (max-width: 400px) {
   .ControlBar {
     flex-direction: column;
+    align-items: center;
+  }
+  .modal-wrapper {
+    display: flex;
+    flex-direction: row;
+  }
+  .modal {
+    flex-direction: column!important;
   }
 }
 
@@ -59,31 +76,39 @@
 }
 
 .modal-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   position: fixed;
   top: 0;
   left: 0;
   z-index: 1;
-  width: 100vw;
-  height: 100vh;
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
   background-color:rgba(255,255,255,0.5);
 }
 
+
+h2 {
+  font-size: x-large;
+}
+
+h3 {
+  font-size: larger;
+}
+
 .modal {
-  z-index: 2;
-  display: flex !important;
-  background: white;
-  margin: 1rem auto;
-  border-radius: 3px;
-  max-width: 90%;
-  max-height: 90%;
-  width: auto !important;
-  padding: 1rem;
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  object-fit: contain;
-  opacity: 1;
+  max-width: 990px;
+  background: rgba(255, 255, 255, 0.5);
+  height: 80vmax;
+  margin: 20px auto;
+  display: flex;
+  border-radius: 10px;
+  box-shadow: 0px 20px 30px rgba(0, 0, 0, 0.47);
+  flex-direction: row;
+  cursor: pointer;
 }
 
 .modal_png {
@@ -93,26 +118,27 @@
 }
 .button {
   position: absolute;
+  align-self: flex-start;
   top: 0.5em;
+  box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.47);
 }
 
 .dimension {
   display: flex;
-  flex-direction: column;
+  position: relative;
+  justify-content: space-evenly;
   align-items: center;
-  cursor: pointer;
-  transition: 0.4s;
-  max-width: 90%;
-  max-height: 90%;
-  z-index: 3;
-  object-fit: contain;
-  margin: 0;
-  padding: 0;
-  list-style-type: none;
+  height: 100%;
+  flex: 1;
+  background-position: left;
+  background-size: cover;
+  transition: .7s;
+  border-radius: 10px;
+  box-shadow: 0px 20px 30px rgba(0, 0, 0, 0.47);
 }
 
 .dimension_img {
-  max-width: 60%;
+  max-width: 10em;
   max-height: 60%;
 }
 
@@ -121,20 +147,77 @@
   z-index: 4;
   max-width: 100%;
   width: 100%;
+  border-radius: 10px;
+  box-shadow: 0px 20px 30px rgba(0, 0, 0, 0.47);
+  flex-grow: 3;
 }
+
+.active, .category:hover {
+  background-color: rgba(160, 80, 80, 0.5);
+  z-index: 4;
+  max-width: 100%;
+  width: 100%;
+  border-radius: 10px;
+  box-shadow: 0px 20px 30px rgba(0, 0, 0, 0.47);
+  flex-grow: 1;
+  grid-template-rows: 25% 25% 50%;
+  grid-template-areas: 
+  "img h3"
+  "img p"
+  "ind ind";
+}
+
 
 .category {
   cursor: pointer;
-  display: flex;
+  display: grid;
+  grid-template-columns: 50%  50%;
+  grid-template-rows: 50% 50%;
+  grid-template-areas: 
+    "img h3"
+    "img p";
   flex-direction: row;
+  min-height: 5em;
   justify-content: center;
-  align-items: center;
+  align-items: baseline;
   object-fit: contain;
+  z-index: 4;
+}
+
+.category h3 {
+  grid-area: h3;
+  align-self: center;
+  justify-self: flex-start;
+}
+
+.category p {
+  grid-area: p;
+  align-self: center;
+  justify-self: flex-start;
+}
+
+.category:hover p {
+  display: flex;
+  grid-area: p;
+  align-self: center;
+  justify-self: flex-start;
+}
+
+.indicator-box {
+  display: none;
+}
+
+.category:hover .indicator-box {
+  display: flex;
+  grid-area: ind;
 }
 
 .category_img {
-  max-height: 5EM;
-  max-width: 50%;
+  justify-self: center;
+  align-self: center;
+  max-height: 5em;
+  max-width: auto;
   height: auto;
   width: auto;
+  grid-area: img;
 }
