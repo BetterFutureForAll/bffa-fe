@@ -62,7 +62,7 @@ const Header = ({
   if (width < 376) return (
     <>
       <div>
-        <svg ref={legendRef} id={"legend"} className={'legend'} height={squareSize} width={squareSize * 12}></svg>
+        <svg ref={legendRef} id={"legend"} className={'legend'} height={squareSize} width={squareSize * 11}></svg>
       </div>
       <div className={"controls"}>
         <button id="myBtn" onClick={toggleModal}>Data Definitions</button>
@@ -80,7 +80,7 @@ const Header = ({
 
   return (
     <>
-      <svg ref={legendRef} id={"legend"} className={'legend'} height={squareSize} width={squareSize * 12}></svg>
+      <svg ref={legendRef} id={"legend"} className={'legend'} height={squareSize} width={squareSize * 11}></svg>
       <button id="myBtn" onClick={toggleModal}>Data Definitions</button>
 
       <form onSubmit={handleSubmit}>
