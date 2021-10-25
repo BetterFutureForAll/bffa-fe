@@ -1,4 +1,5 @@
 import React from 'react';
+import './Reset.css';
 import './App.css';
 import MapContainer from './containers/Map';
 import { useModal } from './hooks/hooks';
