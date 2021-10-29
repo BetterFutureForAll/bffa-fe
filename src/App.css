@@ -134,12 +134,13 @@ h3 {
   background-size: cover;
   transition: .7s;
   border-radius: 10px;
+  background-color: rgba(255, 255, 255, 0.47);
   box-shadow: 0px 20px 30px rgba(0, 0, 0, 0.47);
 }
 
 .dimension_img {
-  max-width: 10em;
-  max-height: 60%;
+  max-width: 7em;
+  max-height: 50%;
 }
 
 .active, .dimension:hover {
@@ -152,7 +153,7 @@ h3 {
   flex-grow: 3;
 }
 
-.active, .category:hover {
+.active, .component:hover {
   background-color: rgba(160, 80, 80, 0.5);
   z-index: 4;
   max-width: 100%;
@@ -160,7 +161,7 @@ h3 {
   border-radius: 10px;
   box-shadow: 0px 20px 30px rgba(0, 0, 0, 0.47);
   flex-grow: 1;
-  grid-template-rows: 25% 25% 50%;
+  grid-template-rows: 20% 20% 60%;
   grid-template-areas: 
   "img h3"
   "img p"
@@ -168,7 +169,9 @@ h3 {
 }
 
 
-.category {
+.component {
+  background-color: rgba(160, 80, 80, 0.281);
+
   cursor: pointer;
   display: grid;
   grid-template-columns: 50%  50%;
@@ -184,19 +187,19 @@ h3 {
   z-index: 4;
 }
 
-.category h3 {
+.component h3 {
   grid-area: h3;
   align-self: center;
   justify-self: flex-start;
 }
 
-.category p {
+.component p {
   grid-area: p;
   align-self: center;
   justify-self: flex-start;
 }
 
-.category:hover p {
+.component:hover p {
   display: flex;
   grid-area: p;
   align-self: center;
@@ -207,12 +210,12 @@ h3 {
   display: none;
 }
 
-.category:hover .indicator-box {
+.component:hover .indicator-box {
   display: flex;
   grid-area: ind;
 }
 
-.category_img {
+.component_img {
   justify-self: center;
   align-self: center;
   max-height: 5em;
@@ -220,4 +223,8 @@ h3 {
   height: auto;
   width: auto;
   grid-area: img;
+}
+
+.indicator {
+  background-color: rgba(4, 56, 139, 0.47);
 }
