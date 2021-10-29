@@ -48,7 +48,11 @@ function ModalDefinitions({ countryValue, clicked, clickedSubCat, toggleModal, m
     let dimensionsDiv = dimDiv.selectAll('.dimension')
       .data(groupedData, d => d[0])
       .join("div")
-      .attr("class", "dimension")
+      .attr("class", d => {
+        if (d[0].length === 0) {
+          return "footer";
+        }
+        return "dimension";})
       .attr("id", d => {
         if (d[0].length === 0) {
           return "footer";
