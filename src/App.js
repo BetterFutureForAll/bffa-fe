@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef} from 'react';
 import './Reset.css';
 import './App.css';
 import MapContainer from './containers/Map';
@@ -9,11 +9,13 @@ import Portal from './containers/Portal'
 function App() {
   let { showModal, toggleModal } = useModal();
   let target = "modal-ref";
+  let modalRef = useRef(null);
   let children = 
   <> 
   <ModalDefinitions
     toggleModal={toggleModal}
     showModal={showModal}
+    modalRef={modalRef}
     // countryValue={countryValue}
   />
   </>;
