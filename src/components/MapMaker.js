@@ -35,13 +35,7 @@ const MapMaker = ({
   
   let checkedSize = Math.min(height, width)
 
-  let selectCountry = <select onChange={handleCountryChange} defaultValue={countryValue}>
-  {countries.map(item => (
-    <option key={item} value={item}>
-      {item}
-    </option>
-  ))}
-  </select>
+
   function ready(data) {
 
     let spiScale = d3.scaleLinear().domain([0, 100]).range([0, 100]);
@@ -149,39 +143,39 @@ const MapMaker = ({
 
     var centered;
 
-    let clickCenter = (event, d) => {
-      countryMouseLeave();
-      var x = 0,
-      y = 0;
-      // If the click was on the centered state or the background, re-center.
-      // Otherwise, center the clicked-on state.
-      if (!d || centered === data) {
-        centered = null;
-      } else {
-        var centroid = path.centroid(d);
-        x = width / 2 - centroid[0];
-        y = height / 2 - centroid[1];
-        centered = data;
-      }
-      var transform = {
-        x: x,
-        y: y,
-        k: initialScale
-      };
-      // var t = d3.zoomIdentity.translateBy(transform.x, transform.y).scale(transform.k)
+    // let clickCenter = (event, d) => {
+    //   countryMouseLeave();
+    //   var x = 0,
+    //   y = 0;
+    //   // If the click was on the centered state or the background, re-center.
+    //   // Otherwise, center the clicked-on state.
+    //   if (!d || centered === data) {
+    //     centered = null;
+    //   } else {
+    //     var centroid = path.centroid(d);
+    //     x = width / 2 - centroid[0];
+    //     y = height / 2 - centroid[1];
+    //     centered = data;
+    //   }
+    //   var transform = {
+    //     x: x,
+    //     y: y,
+    //     k: initialScale
+    //   };
+    //   // var t = d3.zoomIdentity.translateBy(transform.x, transform.y).scale(transform.k)
 
-      // svg.selectAll(".country, .border, .graphicTooltip").call(zoom.transform, t);
-      // svg.select(".tooltip-area, .subPetalText").call(zoom.transform, t);
+    //   // svg.selectAll(".country, .border, .graphicTooltip").call(zoom.transform, t);
+    //   // svg.select(".tooltip-area, .subPetalText").call(zoom.transform, t);
 
-      // Transition to the new transform.
-      svg.selectAll(".country, .border, .graphicTooltip")
-        .attr('transform', transform)
-        .attr('transform', `translate(${x},${y}) scale(${transform.k})`)
-        .attr("stroke-width", 1 / transform.k);
+    //   // Transition to the new transform.
+    //   svg.selectAll(".country, .border, .graphicTooltip")
+    //     .attr('transform', transform)
+    //     .attr('transform', `translate(${x},${y}) scale(${transform.k})`)
+    //     .attr("stroke-width", 1 / transform.k);
 
-      svg.select(".tooltip-area, .subPetalText")
-        .attr('transform', `translate(${x},${y}) scale(${transform.k})`)
-    }
+    //   svg.select(".tooltip-area, .subPetalText")
+    //     .attr('transform', `translate(${x},${y}) scale(${transform.k})`)
+    // }
 
     let zoomed = (event, d) => {
       //reset the toolTip before transforming
@@ -223,10 +217,10 @@ const MapMaker = ({
       // d3.select(`${event.target}`).dispatch('mouseover');
     // })
 
-    const clickZoom = d3.zoom()
-    .translateExtent([[-width * .25, -height * .1], [width * 1.5, height * 1.25]])
-    .scaleExtent([1, 4])
-    .on('zoom', zoomed);
+    // const clickZoom = d3.zoom()
+    // .translateExtent([[-width * .25, -height * .1], [width * 1.5, height * 1.25]])
+    // .scaleExtent([1, 4])
+    // .on('zoom', zoomed);
 
     // *** Top Level Selector (ViewBox) ***
     let svg = d3.select(svgRef.current)
