@@ -92,11 +92,38 @@ div {
 
 
 h2 {
+  font-weight: bold;
   font-size: x-large;
 }
 
 h3 {
+  font-weight: bold;
   font-size: larger;
+}
+
+h4 {
+  font-weight: bold;
+}
+
+/* unvisited link */
+a {
+  color: #0000EE;
+  text-decoration: underline;
+}
+
+/* visited link */
+a:visited {
+  color: #551A8B;
+}
+
+/* mouse over link */
+a:hover {
+  color: #EE0000;
+}
+
+/* selected link */
+a:active {
+  color: blue;
 }
 
 .modal {
@@ -105,10 +132,13 @@ h3 {
   height: 80vmax;
   margin: 20px auto;
   display: flex;
+  grid-template-columns: repeat(3, minmax(100px, 1fr));
+  grid-template-rows: 5em, 80%, 1fr;
   border-radius: 10px;
   box-shadow: 0px 20px 30px rgba(0, 0, 0, 0.47);
   flex-direction: row;
   cursor: pointer;
+  justify-items: stretch;
 }
 
 .modal_png {
@@ -123,13 +153,23 @@ h3 {
   box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.47);
 }
 
+.footer {
+  display: flex;
+  position: bottom;
+  grid-column: 1 / -1;
+  grid-row: 2;
+}
+
 .dimension {
   display: flex;
+  flex-direction: column;
   position: relative;
   justify-content: space-evenly;
   align-items: center;
   height: 100%;
   flex: 1;
+  grid-column: auto;
+  grid-row: 1;
   background-position: left;
   background-size: cover;
   transition: .7s;
@@ -139,17 +179,25 @@ h3 {
 }
 
 .dimension_img {
-  max-width: 7em;
+  max-width: 5em;
   max-height: 50%;
+  grid-row-start: 1;
+  grid-row-end: 2;
 }
 
-.active, .dimension:hover {
+.dimension h2 {
+  grid-row-start: 1;
+  grid-row-end: 2;
+}
+
+.active, .dimension1:hover {
   background-color: #ccc;
   z-index: 4;
   max-width: 100%;
   width: 100%;
   border-radius: 10px;
   box-shadow: 0px 20px 30px rgba(0, 0, 0, 0.47);
+  grid-column: 2fr;
   flex-grow: 3;
 }
 
@@ -161,25 +209,29 @@ h3 {
   border-radius: 10px;
   box-shadow: 0px 20px 30px rgba(0, 0, 0, 0.47);
   flex-grow: 1;
-  grid-template-rows: 20% 20% 60%;
+  grid-template-rows: 10% 10% 80%;
   grid-template-areas: 
-  "img h3"
-  "img p"
-  "ind ind";
+    "img h3 h3"
+    "p p p "
+    "i i i"
+    "i i i";
 }
 
 
 .component {
   background-color: rgba(160, 80, 80, 0.281);
-
   cursor: pointer;
   display: grid;
-  grid-template-columns: 50%  50%;
-  grid-template-rows: 50% 50%;
+  grid-template-columns: 33% 33% 33%;
+  grid-template-rows: 10% 10% 80%;
   grid-template-areas: 
-    "img h3"
-    "img p";
-  flex-direction: row;
+    "img h3 h3"
+    "p p p "
+    "i i i"
+    "i i i";
+  flex-direction: column;
+  grid-column: auto;
+  grid-row: auto;
   min-height: 5em;
   justify-content: center;
   align-items: baseline;
@@ -193,7 +245,7 @@ h3 {
   justify-self: flex-start;
 }
 
-.component p {
+.component1 p {
   grid-area: p;
   align-self: center;
   justify-self: flex-start;
@@ -206,19 +258,23 @@ h3 {
   justify-self: flex-start;
 }
 
-.indicator-box {
-  display: none;
+.indicator {
+  display: flex;
+  grid-area: i;
+  grid-row: auto;
+  grid-column: auto;
 }
 
-.component:hover .indicator-box {
+.component:hover .indicator {
   display: flex;
-  grid-area: ind;
+  flex-direction: column;
+  grid-area: i;
 }
 
 .component_img {
   justify-self: center;
   align-self: center;
-  max-height: 5em;
+  max-height: 2em;
   max-width: auto;
   height: auto;
   width: auto;
