@@ -27,140 +27,141 @@ function ModalDefinitions({ countryValue, clicked, clickedSubCat, toggleModal, m
 
   let parsedDefinitions = d3.csv(rawDefinitions);
 
-  function tabulateModal(data) {
-    // Dimension,Component,Indicator name,Definition,Source,Link
-    // let columnHeaders = data.columns.slice(0);
+  useEffect(() => {
+    function tabulateModal(data) {
 
-    // Group data on each column, indicator will hold the unique values.
-    let groupedData = d3.group(data, d => d["Dimension"], d => d["Component"], d => d['Indicator name'])
+      // Dimension,Component,Indicator name,Definition,Source,Link
+      // Group data on each column, indicator will hold the unique values.
+      let groupedData = d3.group(data, d => d["Dimension"], d => d["Component"], d => d['Indicator name'])
 
-    let modal = d3.select(modalRef.current);
-    let dimDiv = modal.append('div').attr('class', 'modal')
+      let modal = d3.select(modalRef.current);
+      let dimDiv = modal.append('div').attr('class', 'modal')
 
-    let dimensionsDiv = dimDiv.selectAll('.dimension')
-      .data(groupedData, d => d[0])
-      .join(div => {
-        let imgImport = (d) => {
-          switch (d[0]) {
-            case "Basic Human Needs": return basic_needs;
-            case "Foundations of Wellbeing": return foundations;
-            case "Opportunity": return opportunity;
-            default: return null;
-          };
-        };
-        let enter = div.append("div");
-        //class and ID to isolate footer
-        enter
-          .attr("class", (d, i) => {
-            if (d[0].length === 0) {
-              return "footer";
-            }
-            return `dimension.${i}`;
-          })
-          .attr("id", d => {
-            if (d[0].length === 0) {
-              return "footer";
-            }
-            return d[0]
-          });
-        enter.append("img").attr('src', d => imgImport(d)).attr("class", "dimension_img");
-        enter.append('h2').text(d => d[0] === "" ? '*' : d[0]);
-        return enter;
-
-      });
-
-    let componentDiv = dimensionsDiv
-      .each((d, i, event) => {
-        d3.select(event[i])
-          .selectAll('.component')
-          .data(d[1])
-          .join(div => {
-            let enter = div.append('div').attr("class", "component").attr("id", d => d[0])
-            let componentImgImport = (d) => {
-              switch (d[0]) {
-                case "Nutrition and Basic Medical Care": return [basic_nutrition, 'Do people have enough food to eat and are they receiving basic medical care? '];
-                case "Water and Sanitation": return [basic_water, 'Can people drink water and keep themselves clean without getting sick?'];
-                case "Shelter": return [basic_shelter, 'Do people have adequate housing with basic utilities?'];
-                case "Personal Safety": return [basic_safety, 'Do people feel safe?'];
-
-                case "Access to Basic Knowledge": return [foundations_knowledge, 'Do people have access to an educational foundation?'];
-                case "Access to Information and Communications": return [foundations_communication, 'Can people freely access ideas and in formation from anywhere in the world?'];
-                case "Health and Wellness": return [foundations_health, 'Do people live long and healthy lives?'];
-                case "Environmental Quality": return [foundations_environmental, 'Is this society using its resources so they will be available for future generations?'];
-
-                case "Personal Rights": return [opportunity_rights, 'Are people’s rights as individuals protected?'];
-                case "Personal Freedom and Choice": return [opportunity_freedom, 'Are people free to make their own life choices?'];
-                case "Inclusiveness": return [opportunity_inclusiveness, 'Is no one excluded from the opportunity to be a contributing member of society?'];
-                case "Access to Advanced Education": return [opportunity_education, 'Do people have access to the world’s most advanced knowledge?'];
-
-                default: return [logo, ''];
-              };
+      let dimensionsDiv = dimDiv.selectAll('.dimension')
+        .data(groupedData, d => d[0])
+        .join(div => {
+          let imgImport = (d) => {
+            switch (d[0]) {
+              case "Basic Human Needs": return basic_needs;
+              case "Foundations of Wellbeing": return foundations;
+              case "Opportunity": return opportunity;
+              default: return logo;
             };
-
-            enter.append('h3').text(d => d[0]);
-
-            enter.append("img")
-              .attr('src', d => {
-                let result = componentImgImport(d);
-                return result[0]
-              })
-              .attr("class", "component_img");
-
-            enter.append('p').text(d => {
-              let result = componentImgImport(d);
-              return result[1];
+          };
+          let enter = div.append("div");
+          //class and ID to isolate footer
+          enter
+            .attr("class", (d, i) => {
+              if (d[0].length === 0) {
+                return "footer";
+              }
+              return `dimension${i}`;
+            })
+            .attr("id", d => {
+              if (d[0].length === 0) {
+                return "footer";
+              }
+              return d[0]
             });
-          })
-      });
+          enter.append("img").attr('src', d => imgImport(d)).attr("class", "dimension_img");
+          enter.append('h2').text(d => d[0] === "" ? '*' : d[0]);
+          return enter;
 
-    let indicatorDiv =
-      d3.selectAll('.component')
+        });
+
+      let componentDiv = dimensionsDiv
         .each((d, i, event) => {
           d3.select(event[i])
-            .selectAll('.indicator')
+            .selectAll('.component')
             .data(d[1])
             .join(div => {
-              let enter = div.append("div")
-                .attr("class", "indicator")
-                .attr("id", d => {
-                  return d[0]
-                });
-              enter.append('h4')
-                .text(d => {
-                  return d[0]
-                }).attr('class', 'indicator-name');
+              let enter = div.append('div').attr("class", "component").attr("id", d => d[0])
+              let componentImgImport = (d) => {
+                switch (d[0]) {
+                  case "Nutrition and Basic Medical Care": return [basic_nutrition, 'Do people have enough food to eat and are they receiving basic medical care? '];
+                  case "Water and Sanitation": return [basic_water, 'Can people drink water and keep themselves clean without getting sick?'];
+                  case "Shelter": return [basic_shelter, 'Do people have adequate housing with basic utilities?'];
+                  case "Personal Safety": return [basic_safety, 'Do people feel safe?'];
 
-              enter.append('p')
-                .text(d => {
-                  return d[1][0]['Definition']
+                  case "Access to Basic Knowledge": return [foundations_knowledge, 'Do people have access to an educational foundation?'];
+                  case "Access to Information and Communications": return [foundations_communication, 'Can people freely access ideas and in formation from anywhere in the world?'];
+                  case "Health and Wellness": return [foundations_health, 'Do people live long and healthy lives?'];
+                  case "Environmental Quality": return [foundations_environmental, 'Is this society using its resources so they will be available for future generations?'];
+
+                  case "Personal Rights": return [opportunity_rights, 'Are people’s rights as individuals protected?'];
+                  case "Personal Freedom and Choice": return [opportunity_freedom, 'Are people free to make their own life choices?'];
+                  case "Inclusiveness": return [opportunity_inclusiveness, 'Is no one excluded from the opportunity to be a contributing member of society?'];
+                  case "Access to Advanced Education": return [opportunity_education, 'Do people have access to the world’s most advanced knowledge?'];
+
+                  default: return [null, ''];
+                };
+              };
+
+              enter.append('h3').text(d => d[0]);
+
+              enter.append("img")
+                .attr('src', d => {
+                  let result = componentImgImport(d);
+                  return result[0]
                 })
-                .attr("class", "indicator-definition")
-              enter.append('a')
-                .text(d => {
-                  return `${d[1][0]['Source']} ⓘ`
-                })
-                .attr("class", "indicator-source")
-                .attr("xlink:href", d => d[1][0]['Link']);
+                .attr("class", "component_img");
+
+              enter.append('p').text(d => {
+                let result = componentImgImport(d);
+                return result[1];
+              });
             })
-        })
+        });
+
+      let indicatorDiv =
+        d3.selectAll('.component')
+          .each((d, i, event) => {
+            d3.select(event[i])
+              .selectAll('.indicator')
+              .data(d[1])
+              .join(div => {
+                let enter = div.append("div")
+                  .attr("class", "indicator")
+                  .attr("id", d => {
+                    return d[0]
+                  });
+                enter.append('h4')
+                  .text(d => {
+                    return d[0]
+                  }).attr('class', 'indicator-name');
+
+                enter.append('p')
+                  .text(d => {
+                    return d[1][0]['Definition']
+                  })
+                  .attr("class", "indicator-definition")
+                enter.append('a')
+                  .text(d => {
+                    if(d[1][0]['Source']==='') return;
+                    return `${d[1][0]['Source']} ⓘ`
+                  })
+                  .attr("class", "indicator-source")
+                  .attr("xlink:href", d => d[1][0]['Link']);
+              })
+          })
+      // visibility with D3, may adjust style more here vs CSS    
       indicatorDiv.selectAll(".indicator p").style("display", "none")
       indicatorDiv.selectAll("a").style("display", "none")
-      indicatorDiv.on('mouseenter', (event, d)=> {
+      indicatorDiv.on('mouseenter', (event, d) => {
         d3.select(event.target).selectAll(".indicator p").style("display", "flex");
         d3.select(event.target).selectAll("a").style("display", "flex");
       })
-      indicatorDiv.on('mouseleave', (event, d)=> {
+      indicatorDiv.on('mouseleave', (event, d) => {
         d3.select(event.target).selectAll(".indicator p").style("display", "none");
         d3.select(event.target).selectAll("a").style("display", "none");
       })
-  }
+    }
 
-  useEffect(() => {
     parsedDefinitions.then((data) => {
       tabulateModal(data);
     })
 
-  }, [parsedDefinitions]);
+  }, [parsedDefinitions, modalRef]);
 
   return (
     <div className="modal-wrapper" ref={modalRef} >
