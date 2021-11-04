@@ -55,7 +55,7 @@ function ModalDefinitions({ countryValue, clicked, clickedSubCat, toggleModal, m
               if (d[0].length === 0) {
                 return "footer";
               }
-              return `dimension${i}`;
+              return `dim-${i}`;
             })
             .attr("id", d => {
               if (d[0].length === 0) {
@@ -63,15 +63,18 @@ function ModalDefinitions({ countryValue, clicked, clickedSubCat, toggleModal, m
               }
               return d[0]
             });
-          enter.append("img").attr('src', d => imgImport(d)).attr("class", "dimension_img");
-          enter.append('h2').text(d => d[0] === "" ? '*' : d[0]);
+          let divTitle = enter.append('div').attr('class', 'dimension-title')
+          divTitle.append("img").attr('src', d => imgImport(d)).attr("class", "dimension_img");
+          divTitle.append('h2').text(d => d[0] === "" ? '*' : d[0]);
           return enter;
 
         });
 
-      let componentDiv = dimensionsDiv
+      dimensionsDiv
         .each((d, i, event) => {
           d3.select(event[i])
+            .append('div')
+            .attr('class', 'component-box')
             .selectAll('.component')
             .data(d[1])
             .join(div => {
@@ -97,16 +100,18 @@ function ModalDefinitions({ countryValue, clicked, clickedSubCat, toggleModal, m
                 };
               };
 
-              enter.append('h3').text(d => d[0]);
+              let componentTitle = enter.append('div').attr('class', 'component-title')
 
-              enter.append("img")
+              componentTitle.append("img")
                 .attr('src', d => {
                   let result = componentImgImport(d);
                   return result[0]
                 })
                 .attr("class", "component_img");
 
-              enter.append('p').text(d => {
+              componentTitle.append('h3').text(d => d[0]);
+
+              componentTitle.append('p').text(d => {
                 let result = componentImgImport(d);
                 return result[1];
               });
@@ -117,12 +122,17 @@ function ModalDefinitions({ countryValue, clicked, clickedSubCat, toggleModal, m
         d3.selectAll('.component')
           .each((d, i, event) => {
             d3.select(event[i])
+              .append('ul')
+              .attr('class', 'indicator-box')
               .selectAll('.indicator')
               .data(d[1])
               .join(div => {
-                let enter = div.append("div")
+                let enter = div.append("li")
                   .attr("class", "indicator")
                   .attr("id", d => {
+                    if(d[0].length===0){
+                      return "remove"
+                    }
                     return d[0]
                   });
                 enter.append('h4')
@@ -130,31 +140,49 @@ function ModalDefinitions({ countryValue, clicked, clickedSubCat, toggleModal, m
                     return d[0]
                   }).attr('class', 'indicator-name');
 
-                enter.append('p')
+                let indicatorDef = enter.append('div')
+                  .attr('class', 'indicator-definitions')
+
+                indicatorDef.append('p')
                   .text(d => {
                     return d[1][0]['Definition']
                   })
                   .attr("class", "indicator-definition")
-                enter.append('a')
+
+                indicatorDef.append("a")
+                  .attr("xlink:href", d => { return `${d[1][0]['Link']}` })
                   .text(d => {
-                    if(d[1][0]['Source']==='') return;
+                    if (d[1][0]['Source'] === '') return;
                     return `${d[1][0]['Source']} ⓘ`
                   })
                   .attr("class", "indicator-source")
-                  .attr("xlink:href", d => d[1][0]['Link']);
+                  .attr('target', "_blank")
+                  .attr("rel", "noopener noreferrer");
+
+                enter.on('mouseenter', (event, d) => {
+                  d3.select(event.target).selectAll(".indicator-definitions").style("display", "flex");
+                })
+                enter.on('mouseleave', (event, d) => {
+                  d3.select(event.target).selectAll(".indicator-definitions").style("display", "none");
+                })
+
+                // indicatorDef.html(d, d =>{
+                //   function text(d){
+                //     if (d[1][0]['Source'] === '') return;
+                //     return `${d[1][0]['Source']} ⓘ`
+                //   }
+                //   let link =`<a href= "${d[1][0]['Link']}" rel="noopener noreferrer">${text}"</a>"`;
+                //   return link;
+                // }).attr("class", "indicator-source")  
               })
           })
+
+
       // visibility with D3, may adjust style more here vs CSS    
-      indicatorDiv.selectAll(".indicator p").style("display", "none")
-      indicatorDiv.selectAll("a").style("display", "none")
-      indicatorDiv.on('mouseenter', (event, d) => {
-        d3.select(event.target).selectAll(".indicator p").style("display", "flex");
-        d3.select(event.target).selectAll("a").style("display", "flex");
-      })
-      indicatorDiv.on('mouseleave', (event, d) => {
-        d3.select(event.target).selectAll(".indicator p").style("display", "none");
-        d3.select(event.target).selectAll("a").style("display", "none");
-      })
+      indicatorDiv.selectAll(".indicator-definitions").style("display", "none");
+      d3.selectAll('#remove').remove();
+
+
     }
 
     parsedDefinitions.then((data) => {

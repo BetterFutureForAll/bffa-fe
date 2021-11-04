@@ -2,9 +2,11 @@
   text-align: center;
   position: relative;
 }
+
 div {
   display: flex;
   flex-direction: column;
+  
 }
 
 .MapContainer {
@@ -47,9 +49,7 @@ div {
     display: flex;
     flex-direction: row;
   }
-  .modal {
-    flex-direction: column!important;
-  }
+
 }
 
 .App-link {
@@ -82,14 +82,12 @@ div {
   position: fixed;
   top: 0;
   left: 0;
-  z-index: 1;
   height: 100%;
   width: 100%;
   margin: 0;
   padding: 0;
   background-color:rgba(255,255,255,0.5);
 }
-
 
 h2 {
   font-weight: bold;
@@ -101,14 +99,11 @@ h3 {
   font-size: larger;
 }
 
-h4 {
-  font-weight: bold;
-}
-
 /* unvisited link */
 a {
   color: #0000EE;
   text-decoration: underline;
+  z-index: 10;
 }
 
 /* visited link */
@@ -128,24 +123,72 @@ a:active {
 
 .modal {
   max-width: 990px;
-  background: rgba(255, 255, 255, 0.5);
   height: 80vmax;
-  margin: 20px auto;
-  display: flex;
-  grid-template-columns: repeat(3, minmax(100px, 1fr));
-  grid-template-rows: 5em, 80%, 1fr;
+  margin: 10px auto;
   border-radius: 10px;
+  background: rgba(255, 255, 255, 0.5);
+  box-shadow: 20px 20px 30px rgba(0, 0, 0, 0.47);
+  overflow: scroll;
+  text-align: left;
+  display: grid;
+  align-items: stretch;
+  grid-template-columns: repeat(6, 1fr);
+  grid-template-rows: 5fr, 1fr;
+  grid-template-areas: 
+  'left left middle middle right right' 
+  'footer footer footer footer footer footer';
+  /*
+  .div-0:hover {
+    grid-area: active;
+  }
+  :active {
+    grid-template-areas: 
+    "active active active active middle right"
+    "footer footer footer footer footer footer";
+  }
+  */
+}
+/* Responsive layout - makes the three columns stack on top of each other instead of next to each other */
+@media (max-width: 600px) {
+  .modal {
+    overflow: scroll;
+    grid-template-areas: 
+    'left left left left left left' 
+    'middle middle middle middle middle middle' 
+    'right right right right right right' 
+    'footer footer footer footer footer footer';
+  }
+}
+.dim-0 {
+  grid-area: left;
+  border-radius: 10px;
+  background-color: rgb(37, 150, 190, 0.35);
+  border-style: solid;
+  border-width: 1px;
+  border-color: rgb(0, 0, 0);
   box-shadow: 0px 20px 30px rgba(0, 0, 0, 0.47);
-  flex-direction: row;
-  cursor: pointer;
-  justify-items: stretch;
 }
 
-.modal_png {
-  width: auto;
-  height: auto;
-  object-fit: contain;
+.dim-1{
+  grid-area: middle;
+  border-radius: 10px;
+  background-color: rgba(249,164,86, 0.35);
+  border-style: solid;
+  border-width: 1px;
+  border-color: rgb(0, 0, 0);
+  box-shadow: 0px 20px 30px rgba(0, 0, 0, 0.47);
 }
+
+.dim-2{
+  grid-area: right;
+  border-radius: 10px;
+  background-color: rgba(156,193,109, 0.47);
+  border-style: solid;
+  border-width: 1px;
+  border-color: rgb(0, 0, 0);
+  box-shadow: 0px 20px 30px rgba(0, 0, 0, 0.47);
+}
+
 .button {
   position: absolute;
   align-self: flex-start;
@@ -155,132 +198,138 @@ a:active {
 
 .footer {
   display: flex;
-  position: bottom;
-  grid-column: 1 / -1;
-  grid-row: 2;
+  grid-area: footer;
 }
 
-.dimension {
-  display: flex;
-  flex-direction: column;
-  position: relative;
-  justify-content: space-evenly;
-  align-items: center;
-  height: 100%;
-  flex: 1;
-  grid-column: auto;
-  grid-row: 1;
-  background-position: left;
-  background-size: cover;
-  transition: .7s;
+.modal div {
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-items: flex-start;
+  min-width: 32%;
+  width: calc(100% - 2px);
   border-radius: 10px;
-  background-color: rgba(255, 255, 255, 0.47);
-  box-shadow: 0px 20px 30px rgba(0, 0, 0, 0.47);
+}
+
+.active, div:hover {
+  border-width: 2px;
+}
+
+.dimension-title {
+  width: 100%;
+  display: grid;
+  text-align: center;
+  align-items: stretch;
+  grid-template-areas: 
+  "icon h2";
+  background-color: rgba(255, 255, 255, 0.6);
+}
+
+.dimension-title h2 {
+  grid-area: h2;
+  padding: 5px;
+
 }
 
 .dimension_img {
-  max-width: 5em;
-  max-height: 50%;
-  grid-row-start: 1;
-  grid-row-end: 2;
-}
-
-.dimension h2 {
-  grid-row-start: 1;
-  grid-row-end: 2;
-}
-
-.active, .dimension1:hover {
-  background-color: #ccc;
-  z-index: 4;
+  grid-area: icon;
   max-width: 100%;
-  width: 100%;
-  border-radius: 10px;
-  box-shadow: 0px 20px 30px rgba(0, 0, 0, 0.47);
-  grid-column: 2fr;
-  flex-grow: 3;
+  max-height: 2em;
+  padding: 5px;
+}
+
+.component-title h3 p {
+  padding: 5px;
+}
+
+.component-title {
+  width: auto;
+  display: grid;
+  text-align: flex-start;
+  align-items: stretch;
+  grid-template-areas: 
+  "icon h3"
+  "icon p";
+  
+}
+
+.component_img {
+  justify-self: flex-start;
+  align-self: flex-start;
+  max-height: 2em;
+  max-width: auto;
+  height: auto;
+  width: auto;
+  grid-area: icon;
+  padding: 5px;
 }
 
 .active, .component:hover {
-  background-color: rgba(160, 80, 80, 0.5);
-  z-index: 4;
-  max-width: 100%;
-  width: 100%;
   border-radius: 10px;
-  box-shadow: 0px 20px 30px rgba(0, 0, 0, 0.47);
-  flex-grow: 1;
-  grid-template-rows: 10% 10% 80%;
-  grid-template-areas: 
-    "img h3 h3"
-    "p p p "
-    "i i i"
-    "i i i";
+  box-shadow: 20px 0px 30px rgba(0, 0, 0, 0.47);
 }
 
-
 .component {
-  background-color: rgba(160, 80, 80, 0.281);
   cursor: pointer;
-  display: grid;
-  grid-template-columns: 33% 33% 33%;
-  grid-template-rows: 10% 10% 80%;
-  grid-template-areas: 
-    "img h3 h3"
-    "p p p "
-    "i i i"
-    "i i i";
-  flex-direction: column;
-  grid-column: auto;
-  grid-row: auto;
+  display: flex;
+  flex-direction: row;
+  width: 100%;
   min-height: 5em;
   justify-content: center;
   align-items: baseline;
   object-fit: contain;
-  z-index: 4;
+  border-style: solid;
+  border-radius: 10px;
+  border-width: 1px;
+  border-color: rgb(0, 0, 0);
+  box-shadow: 0px 20px 30px rgba(0, 0, 0, 0.47);
 }
 
 .component h3 {
   grid-area: h3;
   align-self: center;
   justify-self: flex-start;
+
 }
 
-.component1 p {
-  grid-area: p;
+.component p {
   align-self: center;
   justify-self: flex-start;
+  text-align: left;
+
 }
 
 .component:hover p {
   display: flex;
-  grid-area: p;
   align-self: center;
   justify-self: flex-start;
 }
 
 .indicator {
-  display: flex;
   grid-area: i;
   grid-row: auto;
   grid-column: auto;
-}
-
-.component:hover .indicator {
-  display: flex;
+  grid-auto-flow: dense;
   flex-direction: column;
-  grid-area: i;
+  
 }
 
-.component_img {
-  justify-self: center;
-  align-self: center;
-  max-height: 2em;
-  max-width: auto;
-  height: auto;
-  width: auto;
-  grid-area: img;
+.indicator-box {
+  display: list-item;
+  list-style-type: disc;
+  margin-top: 1em;
+  margin-bottom: 1 em;
+  margin-left: 0;
+  margin-right: 0;
+  padding-left: 40px;
 }
 
-.indicator {
-  background-color: rgba(4, 56, 139, 0.47);
+.indicator-box p h4 {
+  padding: 3px;
+}
+
+.indicator-definition {
+  list-style-type: none;
+  display: flex;
+  font-style: italic;
+  white-space: pre-wrap;
 }
