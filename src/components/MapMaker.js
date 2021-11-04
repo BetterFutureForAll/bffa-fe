@@ -10,8 +10,6 @@ import {
 
 // countryMouseOver and countryValue need to be synchronized 
 
-// country = countryValue, dimension = petals, category = subPetal, indicator = value
-
 const MapMaker = ({ 
   svgRef,  width, height,
   clicked, setClicked, clickedSubCat, setClickedSubCat,
@@ -19,13 +17,10 @@ const MapMaker = ({
   toggleModal, countries, countryValue, setCountryValue,
   handleCountryChange }) => {
 
-  // var margin = { top: 0, left: 0, right: 0, bottom: 0, }
-
   let loadingSpinner = require('../assets/loading.gif');
 
   // import topoJSON and CSV here
   let localGeoData = process.env.PUBLIC_URL + '/topoMap.json';
-  // *** Look into overlaying Raster style maps (Google Maps, Leaflet, etc) *** //
 
   let hardData = require('../assets/2011-2020-Social-Progress-Index.csv');
 
@@ -143,40 +138,6 @@ const MapMaker = ({
 
     var centered;
 
-    // let clickCenter = (event, d) => {
-    //   countryMouseLeave();
-    //   var x = 0,
-    //   y = 0;
-    //   // If the click was on the centered state or the background, re-center.
-    //   // Otherwise, center the clicked-on state.
-    //   if (!d || centered === data) {
-    //     centered = null;
-    //   } else {
-    //     var centroid = path.centroid(d);
-    //     x = width / 2 - centroid[0];
-    //     y = height / 2 - centroid[1];
-    //     centered = data;
-    //   }
-    //   var transform = {
-    //     x: x,
-    //     y: y,
-    //     k: initialScale
-    //   };
-    //   // var t = d3.zoomIdentity.translateBy(transform.x, transform.y).scale(transform.k)
-
-    //   // svg.selectAll(".country, .border, .graphicTooltip").call(zoom.transform, t);
-    //   // svg.select(".tooltip-area, .subPetalText").call(zoom.transform, t);
-
-    //   // Transition to the new transform.
-    //   svg.selectAll(".country, .border, .graphicTooltip")
-    //     .attr('transform', transform)
-    //     .attr('transform', `translate(${x},${y}) scale(${transform.k})`)
-    //     .attr("stroke-width", 1 / transform.k);
-
-    //   svg.select(".tooltip-area, .subPetalText")
-    //     .attr('transform', `translate(${x},${y}) scale(${transform.k})`)
-    // }
-
     let zoomed = (event, d) => {
       //reset the toolTip before transforming
       countryMouseLeave();
@@ -216,11 +177,6 @@ const MapMaker = ({
       // d3.select(`${event.sourceEvent}`).dispatch('mouseover')
       // d3.select(`${event.target}`).dispatch('mouseover');
     // })
-
-    // const clickZoom = d3.zoom()
-    // .translateExtent([[-width * .25, -height * .1], [width * 1.5, height * 1.25]])
-    // .scaleExtent([1, 4])
-    // .on('zoom', zoomed);
 
     // *** Top Level Selector (ViewBox) ***
     let svg = d3.select(svgRef.current)
