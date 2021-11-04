@@ -69,7 +69,7 @@ function ModalDefinitions({ countryValue, clicked, clickedSubCat, toggleModal, m
           return enter;
 
         });
-
+      // Component Div
       dimensionsDiv
         .each((d, i, event) => {
           d3.select(event[i])
@@ -130,7 +130,7 @@ function ModalDefinitions({ countryValue, clicked, clickedSubCat, toggleModal, m
                 let enter = div.append("li")
                   .attr("class", "indicator")
                   .attr("id", d => {
-                    if(d[0].length===0){
+                    if (d[0].length === 0) {
                       return "remove"
                     }
                     return d[0]
@@ -165,15 +165,6 @@ function ModalDefinitions({ countryValue, clicked, clickedSubCat, toggleModal, m
                 enter.on('mouseleave', (event, d) => {
                   d3.select(event.target).selectAll(".indicator-definitions").style("display", "none");
                 })
-
-                // indicatorDef.html(d, d =>{
-                //   function text(d){
-                //     if (d[1][0]['Source'] === '') return;
-                //     return `${d[1][0]['Source']} ⓘ`
-                //   }
-                //   let link =`<a href= "${d[1][0]['Link']}" rel="noopener noreferrer">${text}"</a>"`;
-                //   return link;
-                // }).attr("class", "indicator-source")  
               })
           })
 
@@ -181,25 +172,21 @@ function ModalDefinitions({ countryValue, clicked, clickedSubCat, toggleModal, m
       // visibility with D3, may adjust style more here vs CSS    
       indicatorDiv.selectAll(".indicator-definitions").style("display", "none");
       d3.selectAll('#remove').remove();
-
-
     }
 
     parsedDefinitions.then((data) => {
       tabulateModal(data);
     })
 
-  }, [parsedDefinitions, modalRef]);
+  }, [parsedDefinitions, modalRef, toggleModal]);
+
+  let onClick = e => {
+    if (e.target !== e.currentTarget) return;
+    else toggleModal();
+  }
 
   return (
-    <div className="modal-wrapper" ref={modalRef} >
-      <div className="button">
-        <button type="button"
-          className="modal-close-button"
-          onClick={toggleModal}>
-          X
-        </button>
-      </div>
+    <div className="modal-wrapper" ref={modalRef} role="button" tabIndex={0} onClick={onClick} >
     </div>
   );
 
