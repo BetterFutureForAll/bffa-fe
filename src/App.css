@@ -1,12 +1,17 @@
+* { margin: 0; padding: 0; }
+
 .App {
   text-align: center;
   position: relative;
+  font-size: 100%;
+}
+
+body {
+	line-height: 1;
 }
 
 div {
-  display: flex;
-  flex-direction: column;
-  
+  display: block;
 }
 
 .MapContainer {
@@ -21,6 +26,7 @@ div {
   display: block;
   margin-left: auto;
   margin-right: auto;
+  height: 50%;
   width: 50%;
 }
 
@@ -89,38 +95,6 @@ div {
   background-color:rgba(255,255,255,0.5);
 }
 
-h2 {
-  font-weight: bold;
-  font-size: x-large;
-}
-
-h3 {
-  font-weight: bold;
-  font-size: larger;
-}
-
-/* unvisited link */
-a {
-  color: #0000EE;
-  text-decoration: underline;
-  z-index: 10;
-}
-
-/* visited link */
-a:visited {
-  color: #551A8B;
-}
-
-/* mouse over link */
-a:hover {
-  color: #EE0000;
-}
-
-/* selected link */
-a:active {
-  color: blue;
-}
-
 .modal div {
   flex-wrap: wrap;
   justify-content: flex-start;
@@ -142,31 +116,28 @@ a:active {
   text-align: left;
   display: grid;
   align-items: stretch;
-  grid-template-columns: repeat(6, 1fr);
-  grid-template-rows: 5fr, 1fr;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: 10fr, 1fr;
   grid-template-areas: 
-  'left left middle middle right right' 
-  'footer footer footer footer footer footer';
-  /*
-  .div-0:hover {
-    grid-area: active;
-  }
-  :active {
-    grid-template-areas: 
-    "active active active active middle right"
-    "footer footer footer footer footer footer";
-  }
-  */
+  'left middle right' 
+  'footer footer footer';
 }
+/*
+.dimension:not(.footer):hover{
+  grid-column: span 2;
+}
+*/
+
 /* Responsive layout - makes the three columns stack on top of each other instead of next to each other */
 @media (max-width: 600px) {
   .modal {
+    max-width: 95vw;
     overflow: scroll;
     grid-template-areas: 
-    'left left left left left left' 
-    'middle middle middle middle middle middle' 
-    'right right right right right right' 
-    'footer footer footer footer footer footer';
+    'left left left' 
+    'middle middle middle' 
+    'right right right' 
+    'footer footer footer';
   }
 }
 .dim-0 {
@@ -311,26 +282,38 @@ a:active {
   grid-column: auto;
   grid-auto-flow: dense;
   flex-direction: column;
-  
 }
 
+.indicator:hover {
+  background-color: rgba(255, 255, 255, 0.5);
+  padding: .5em;
+}
+
+
 .indicator-box {
-  display: list-item;
-  list-style-type: disc;
+  list-style-type: circle;
   margin-top: 1em;
   margin-bottom: 1 em;
   margin-left: 0;
   margin-right: 0;
-  padding-left: 40px;
+  padding-left: 2em;
 }
 
 .indicator-box p h4 {
   padding: 3px;
 }
 
+.indicator-name {
+  font-weight: 500;
+}
+
+.indicator-link {
+  padding: 1em;
+}
 .indicator-definition {
   list-style-type: none;
   display: flex;
   font-style: italic;
   white-space: pre-wrap;
+  padding-left: 1em;
 }
