@@ -1,5 +1,5 @@
 import React, { useRef} from 'react';
-import './Reset.css';
+// import './Reset.css';
 import './App.css';
 import MapContainer from './containers/Map';
 import { useModal } from './hooks/hooks';
