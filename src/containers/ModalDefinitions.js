@@ -55,7 +55,7 @@ function ModalDefinitions({ countryValue, clicked, clickedSubCat, toggleModal, m
               if (d[0].length === 0) {
                 return "footer";
               }
-              return `dim-${i}`;
+              return `dim-${i} dimension`;
             })
             .attr("id", d => {
               if (d[0].length === 0) {
@@ -135,7 +135,7 @@ function ModalDefinitions({ countryValue, clicked, clickedSubCat, toggleModal, m
                     }
                     return d[0]
                   });
-                enter.append('h4')
+                enter.append('tspan')
                   .text(d => {
                     return d[0]
                   }).attr('class', 'indicator-name');
