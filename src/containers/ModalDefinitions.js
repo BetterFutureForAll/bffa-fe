@@ -50,6 +50,7 @@ function ModalDefinitions({ countryValue, clicked, clickedSubCat, toggleModal, m
           };
           let enter = div.append("div");
           //class and ID to isolate footer
+//** look into isolating footer, dimensions in a wrapper div. */
           enter
             .attr("class", (d, i) => {
               if (d[0].length === 0) {
@@ -118,6 +119,7 @@ function ModalDefinitions({ countryValue, clicked, clickedSubCat, toggleModal, m
             })
         });
 
+
       let indicatorDiv =
         d3.selectAll('.component')
           .each((d, i, event) => {
@@ -137,8 +139,16 @@ function ModalDefinitions({ countryValue, clicked, clickedSubCat, toggleModal, m
                   });
                 enter.append('tspan')
                   .text(d => {
-                    return d[0]
+                    let match = d[0].match(/\((.*)\)/);
+                    let subString = match ? d[0].substring(0, match.index) : d[0];
+                    return subString;
                   }).attr('class', 'indicator-name');
+                enter.append('tspan')
+                  .text(d => {
+                    let match = d[0].match(/\((.*)\)/);
+                    let subString = match ? match[0] : null;
+                    return subString;
+                  }).attr('class', 'indicator-substring')
 
                 let indicatorDef = enter.append('div')
                   .attr('class', 'indicator-definitions')
@@ -149,6 +159,7 @@ function ModalDefinitions({ countryValue, clicked, clickedSubCat, toggleModal, m
                   })
                   .attr("class", "indicator-definition")
 
+//********** hyperlink not working correctly as is. 
                 indicatorDef.append("a")
                   .attr("xlink:href", d => { return `${d[1][0]['Link']}` })
                   .text(d => {
@@ -161,17 +172,86 @@ function ModalDefinitions({ countryValue, clicked, clickedSubCat, toggleModal, m
 
                 enter.on('mouseenter', (event, d) => {
                   d3.select(event.target).selectAll(".indicator-definitions").style("display", "flex");
-                })
+                  d3.select(event.target).selectAll(".indicator-substring").style("display", "flex");
+                });
                 enter.on('mouseleave', (event, d) => {
                   d3.select(event.target).selectAll(".indicator-definitions").style("display", "none");
-                })
-              })
-          })
+                  d3.select(event.target).selectAll(".indicator-substring").style("display", "none");
+                });
+              });
+          });
 
 
-      // visibility with D3, may adjust style more here vs CSS    
+      // visibility with D3, may adjust style more here vs CSS 
+      // .modal:hover .dim-0:not(:hover) {
+      //   grid-column: 1 / span 1;
+      // }
+      // /* column 2 or 11. negative columns?  */
+      // .modal:hover .dim-1:not(:hover) {
+      //   grid-column: 11 / span 1;
+      // }
+      // .modal:hover .dim-2:not(:hover) {
+      //   grid-column: 12 / span 1;
+      // }
+      // .dim-0:hover {
+      //   grid-column: 1 / span 10;
+      // }
+      
+      // .dim-1:hover {
+      //   grid-column: 2 / span 10;
+      // }
+      // .dim-2:hover {
+      //   grid-column: 3 / span 10;
+      //   .dim-1 {
+      //     grid-column: 2 / span 1;
+      //   }
+      // }
+
+      // function gridShift(id) {
+      //   switch (id) {
+      //     case "Basic Human Needs": return 'grid-column: 1 / span 10';
+      //     case "Foundations of Wellbeing": return 'grid-column: 2 / span 10';
+      //     case "Opportunity": return 'grid-column: 3 / span 10';
+      //     default: return logo;
+      //   };
+      // }
+
+      function titleShift(event, d) {
+        //hide all dimensions components and indicators other than whats targeted.
+        d3.selectAll(".dimension").each(function () {
+          var clickedTarget = event.target;
+          var currentTarget = this;
+          d3.select(this).selectAll('.dimension-title').style("writing-mode", function () {
+            return (currentTarget === clickedTarget) ? "lr-tb" : "tb-rl";
+          });
+          d3.select(this).selectAll('.component-box').style("display", function () {
+            return (currentTarget === clickedTarget) ? "flex" : "none";
+          });
+        });
+      }
+
+      function footerShift(event, d) {
+        d3.selectAll(".dimension").each(function () {
+          d3.select(this).selectAll('.component-box').style("display", "none")
+        });
+        d3.selectAll('.dimension').style('height', 'fit-content');
+        d3.select(this).style('height', 'fit-content');
+      }
+
+      function unshiftTitle(event, d) {
+        d3.selectAll(".dimension").each(function () {
+          d3.selectAll('.component-box').style("display", "flex");
+          d3.selectAll('.dimension-title').style("writing-mode", "lr-tb");
+        });
+      }
+      
+      d3.selectAll('.dimension').on('mouseenter', titleShift);
+      d3.selectAll('.dimension').on('mouseleave', unshiftTitle);
+      d3.select('.footer').on('mouseenter', footerShift);
       indicatorDiv.selectAll(".indicator-definitions").style("display", "none");
+      indicatorDiv.selectAll(".indicator-substring").style("display", "none");
       d3.selectAll('#remove').remove();
+
     }
 
     parsedDefinitions.then((data) => {
