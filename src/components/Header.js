@@ -40,6 +40,8 @@ const Header = ({
             .attr("class", "colorSquare")
             .attr("height", squareSize)
             .attr("width", squareSize)
+            .attr('rx', 7.5)
+            .attr('ry', 7.5)
             .style("fill", d => {
               return colorScale(d)
             });
