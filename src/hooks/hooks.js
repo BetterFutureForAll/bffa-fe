@@ -1,11 +1,10 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import {
   makeYearsArray,
   getSpiDataByYear,
   makeCountriesArray,
   getSpiDataByCountry
-}
-  from '../services/SocialProgress';
+} from '../services/SocialProgress';
 import * as d3 from 'd3';
 
 export const useContent = () => {
@@ -26,7 +25,18 @@ export const useModal = () => {
 
 export const useClicked = () => {
   let [clicked, setClicked] = useState('World');
+  useEffect(()=>{
+    setClicked(clicked);
+  },[clicked])
   return [clicked, setClicked];
+}
+
+export const useClickedSubCat = () => {
+  let [clickedSubCat, setClickedSubCat] = useState(null);
+  useEffect(()=>{
+    setClickedSubCat(clickedSubCat);
+  },[clickedSubCat])
+  return [clickedSubCat, setClickedSubCat];
 }
 
 export const useMouse = () => {
@@ -71,6 +81,7 @@ export const useCountries = () => {
   }, [countries]);
   return [countries, setCountries];
 };
+
 export const useHandleCountryChange = () => {
   let [countryValue, setCountryValue] = useState('World');
   let handleCountryChange = (e) => {
@@ -79,7 +90,7 @@ export const useHandleCountryChange = () => {
   useEffect(() => {
     setCountryValue(countryValue);
   }, [countryValue]);
-  return [countryValue, handleCountryChange];
+  return [countryValue, handleCountryChange, setCountryValue];
 };
 
 export const useDataByYear = (yearValue) => {
@@ -100,34 +111,6 @@ export const useDataByCountry = (spiByYear, countryValue) => {
     }
   }, [spiByYear, countryValue]);
   return [spiByCountry, setSpiByCountry];
-};
-
-export const useLoopAnimator = (yearsArr) => {
-  let [animatedYears, setAnimatedYears] = useState('2020');
-
-  let loopWrapper = useCallback(() => {
-    function yearLoop() {
-      var i = 1;
-      setTimeout(function () {
-        //  increment the counter
-        i++;
-        if (i < yearsArr.length) {
-          yearLoop();
-        }
-        //  ..  setTimeout()
-      }, 1500);
-    }
-    yearLoop();
-  }, [yearsArr]);
-
-  useEffect(() => {
-    let handleAnimationChange = () => {
-      loopWrapper(yearsArr);
-      setAnimatedYears(loopWrapper);
-    };
-    handleAnimationChange(animatedYears);
-  }, [animatedYears, loopWrapper, yearsArr]);
-  return [animatedYears];
 };
 
 export function scoreToColor(score) {

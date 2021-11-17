@@ -1,22 +1,42 @@
-import React from 'react';
+import React, { useRef} from 'react';
+// import './Reset.css';
 import './App.css';
-import Modal from './components/Modal';
 import MapContainer from './containers/Map';
 import { useModal } from './hooks/hooks';
+import ModalDefinitions from './containers/ModalDefinitions';
+import Portal from './containers/Portal';
+import { useWindowSize } from './hooks/hooks';
 
 function App() {
   let { showModal, toggleModal } = useModal();
+  let target = "modal-ref";
+  let modalRef = useRef(null);
+  let [width, height] = useWindowSize();
+  let children = 
+  <> 
+  <ModalDefinitions
+    toggleModal={toggleModal}
+    showModal={showModal}
+    modalRef={modalRef}
+  />
+  </>;
 
   return (
     <div className="App">
-      <Modal
-        showModal={showModal}
-        toggleModal={toggleModal}
-      ></Modal>
+      <div id={target} >
+      <Portal
+        id={target}
+        children={showModal? children : null}
+        width={width}
+        height={height}
+      />
       <MapContainer
         showModal={showModal}
         toggleModal={toggleModal}
+        width={width}
+        height={height}
       />
+      </div>
     </div>
   );
 }

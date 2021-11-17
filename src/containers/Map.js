@@ -4,30 +4,23 @@ import {
   useHandleYearChange,
   useYears, useCountries,
   useHandleCountryChange, useClicked, useMouse,
-  useWindowSize,
+  useClickedSubCat
 } from '../hooks/hooks';
 import MapMaker from '../components/MapMaker';
-import Modal from '../components/Modal';
 
-function MapContainer({ showModal, toggleModal }) {
+function MapContainer({ toggleModal, width, height }) {
 
   const svgRef = useRef(null);
 
   let [loading, setLoading] = useState(true);
-
-  // Query user and set based off browser.
-
-  let [width, height] = useWindowSize();
-
   let [clicked, setClicked] = useClicked();
   let [setMouse] = useMouse();
   let [years] = useYears();
   let [yearValue, handleYearChange] = useHandleYearChange();
-
-
+  let [clickedSubCat, setClickedSubCat] = useClickedSubCat();
 
   let [countries] = useCountries();
-  let [countryValue, handleCountryChange] = useHandleCountryChange();
+  let [countryValue, handleCountryChange, setCountryValue] = useHandleCountryChange();
 
   let selectYears = (
     <>
@@ -48,30 +41,27 @@ function MapContainer({ showModal, toggleModal }) {
   let selectCountries = (
     <select onChange={handleCountryChange} defaultValue={countryValue}>
       {countries.map(item => (
-        <option key={item} value={item}>
+        <option key={item} value={item} onSelect={handleCountryChange}>
           {item}
         </option>
       ))}
     </select>
   );
-  useEffect(() => {
-    // return adjusted window size
-    // add window reSize listener
-  }, [width, height]);
 
+  useEffect(() => {
+      setCountryValue(countryValue)
+  }, [width, height, countryValue, setCountryValue]);
 
 
   return (
     <>
       <div id="MapContainer" >
-        <Modal
-          showModal={showModal}
-          toggleModal={toggleModal}
-        />
         <MapMaker
           svgRef={svgRef}
           setClicked={setClicked}
           clicked={clicked}
+          setClickedSubCat={setClickedSubCat}
+          clickedSubCat={clickedSubCat}
           yearValue={yearValue}
           setMouse={setMouse}
           height={height}
@@ -79,6 +69,10 @@ function MapContainer({ showModal, toggleModal }) {
           loading={loading}
           setLoading={setLoading}
           toggleModal={toggleModal}
+          countries={countries}
+          countryValue={countryValue}
+          setCountryValue={setCountryValue}
+          handleCountryChange={handleCountryChange}
         />
         <div className="ControlBar">
           <Header

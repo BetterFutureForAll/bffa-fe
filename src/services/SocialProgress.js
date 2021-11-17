@@ -62,7 +62,6 @@ export async function getSpiDataByYear(year) {
 
 export async function getSpiDataByCountry(data, countryValue) {
   let countries = d3.group(data, d => d['Country']);
-  // console.log('Country Changed', countries.get(countryValue));
   return countries.get(countryValue);
 };
 

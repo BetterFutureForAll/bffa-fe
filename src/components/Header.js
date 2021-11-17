@@ -3,7 +3,17 @@ import PropTypes from 'prop-types';
 import * as d3 from 'd3';
 import { colorScale } from '../services/SocialProgress';
 
-const Header = ({ width, height, selectYears, yearValue, handleSubmit, toggleModal }) => {
+const Header = ({ 
+    width, 
+    height, 
+    selectYears, 
+    yearValue, 
+    handleSubmit, 
+    selectCountries,
+    handleCountryChange, 
+    countryValue, 
+    toggleModal 
+    }) => {
 
   let legendRef = useRef(null);
   let legendData = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
@@ -30,6 +40,8 @@ const Header = ({ width, height, selectYears, yearValue, handleSubmit, toggleMod
             .attr("class", "colorSquare")
             .attr("height", squareSize)
             .attr("width", squareSize)
+            .attr('rx', 7.5)
+            .attr('ry', 7.5)
             .style("fill", d => {
               return colorScale(d)
             });
@@ -52,10 +64,14 @@ const Header = ({ width, height, selectYears, yearValue, handleSubmit, toggleMod
   if (width < 376) return (
     <>
       <div>
-        <svg ref={legendRef} id={"legend"} className={'legend'} height={squareSize} width={squareSize * 12}></svg>
+        <svg ref={legendRef} id={"legend"} className={'legend'} height={squareSize} width={squareSize * 11}></svg>
       </div>
       <div className={"controls"}>
         <button id="myBtn" onClick={toggleModal}>Data Definitions</button>
+        <form onSubmit={handleCountryChange}>
+        <label id="country_list" value={countryValue} >Country </label>
+        {selectCountries}
+      </form>
         <form onSubmit={handleSubmit}>
           <label id="years" value={yearValue} >Year </label>
           {selectYears}
@@ -66,12 +82,16 @@ const Header = ({ width, height, selectYears, yearValue, handleSubmit, toggleMod
 
   return (
     <>
-      <svg ref={legendRef} id={"legend"} className={'legend'} height={squareSize} width={squareSize * 12}></svg>
+      <svg ref={legendRef} id={"legend"} className={'legend'} height={squareSize} width={squareSize * 11}></svg>
       <button id="myBtn" onClick={toggleModal}>Data Definitions</button>
 
       <form onSubmit={handleSubmit}>
         <label id="years" value={yearValue} >Year </label>
         {selectYears}
+      </form>
+      <form onSubmit={handleCountryChange}>
+        <label id="country_list" value={countryValue} >Country </label>
+        {selectCountries}
       </form>
     </>
   );
