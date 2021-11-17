@@ -4,19 +4,20 @@ import './App.css';
 import MapContainer from './containers/Map';
 import { useModal } from './hooks/hooks';
 import ModalDefinitions from './containers/ModalDefinitions';
-import Portal from './containers/Portal'
+import Portal from './containers/Portal';
+import { useWindowSize } from './hooks/hooks';
 
 function App() {
   let { showModal, toggleModal } = useModal();
   let target = "modal-ref";
   let modalRef = useRef(null);
+  let [width, height] = useWindowSize();
   let children = 
   <> 
   <ModalDefinitions
     toggleModal={toggleModal}
     showModal={showModal}
     modalRef={modalRef}
-    // countryValue={countryValue}
   />
   </>;
 
@@ -26,10 +27,14 @@ function App() {
       <Portal
         id={target}
         children={showModal? children : null}
+        width={width}
+        height={height}
       />
       <MapContainer
         showModal={showModal}
         toggleModal={toggleModal}
+        width={width}
+        height={height}
       />
       </div>
     </div>

@@ -21,7 +21,7 @@ import opportunity_inclusiveness from '../assets/bffa_icons/2_3_inclusiveness.pn
 import opportunity_education from '../assets/bffa_icons/2_4_education.png';
 
 
-function ModalDefinitions({ countryValue, clicked, clickedSubCat, toggleModal, modalRef }) {
+function ModalDefinitions({ countryValue, clicked, clickedSubCat, toggleModal, modalRef, width }) {
 
   let rawDefinitions = require('../assets/GlobalDefinitions.csv');
 
@@ -50,7 +50,6 @@ function ModalDefinitions({ countryValue, clicked, clickedSubCat, toggleModal, m
           };
           let enter = div.append("div");
           //class and ID to isolate footer
-//** look into isolating footer, dimensions in a wrapper div. */
           enter
             .attr("class", (d, i) => {
               if (d[0].length === 0) {
@@ -70,6 +69,7 @@ function ModalDefinitions({ countryValue, clicked, clickedSubCat, toggleModal, m
           return enter;
 
         });
+        
       // Component Div
       dimensionsDiv
         .each((d, i, event) => {
@@ -153,21 +153,23 @@ function ModalDefinitions({ countryValue, clicked, clickedSubCat, toggleModal, m
                 let indicatorDef = enter.append('div')
                   .attr('class', 'indicator-definitions')
 
+                //Definitions
                 indicatorDef.append('p')
                   .text(d => {
                     return d[1][0]['Definition']
                   })
                   .attr("class", "indicator-definition")
 
-//********** hyperlink not working correctly as is. 
-                indicatorDef.append("a")
-                  .attr("xlink:href", d => { return `${d[1][0]['Link']}` })
+                //Source Links
+                indicatorDef
+                  .append("a")
+                  .attr("href", d => { return `${d[1][0]['Link']}` })
                   .text(d => {
-                    if (d[1][0]['Source'] === '') return;
+                    // if (d[1][0]['Source'] === '') return;
                     return `${d[1][0]['Source']} ⓘ`
                   })
                   .attr("class", "indicator-source")
-                  .attr('target', "_blank")
+                  .attr("target", "_blank")
                   .attr("rel", "noopener noreferrer");
 
                 enter.on('mouseenter', (event, d) => {
@@ -180,41 +182,6 @@ function ModalDefinitions({ countryValue, clicked, clickedSubCat, toggleModal, m
                 });
               });
           });
-
-
-      // visibility with D3, may adjust style more here vs CSS 
-      // .modal:hover .dim-0:not(:hover) {
-      //   grid-column: 1 / span 1;
-      // }
-      // /* column 2 or 11. negative columns?  */
-      // .modal:hover .dim-1:not(:hover) {
-      //   grid-column: 11 / span 1;
-      // }
-      // .modal:hover .dim-2:not(:hover) {
-      //   grid-column: 12 / span 1;
-      // }
-      // .dim-0:hover {
-      //   grid-column: 1 / span 10;
-      // }
-      
-      // .dim-1:hover {
-      //   grid-column: 2 / span 10;
-      // }
-      // .dim-2:hover {
-      //   grid-column: 3 / span 10;
-      //   .dim-1 {
-      //     grid-column: 2 / span 1;
-      //   }
-      // }
-
-      // function gridShift(id) {
-      //   switch (id) {
-      //     case "Basic Human Needs": return 'grid-column: 1 / span 10';
-      //     case "Foundations of Wellbeing": return 'grid-column: 2 / span 10';
-      //     case "Opportunity": return 'grid-column: 3 / span 10';
-      //     default: return logo;
-      //   };
-      // }
 
       function titleShift(event, d) {
         //hide all dimensions components and indicators other than whats targeted.
@@ -244,7 +211,7 @@ function ModalDefinitions({ countryValue, clicked, clickedSubCat, toggleModal, m
           d3.selectAll('.dimension-title').style("writing-mode", "lr-tb");
         });
       }
-      
+
       d3.selectAll('.dimension').on('mouseenter', titleShift);
       d3.selectAll('.dimension').on('mouseleave', unshiftTitle);
       d3.select('.footer').on('mouseenter', footerShift);
