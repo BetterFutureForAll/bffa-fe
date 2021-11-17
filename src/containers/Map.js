@@ -4,27 +4,20 @@ import {
   useHandleYearChange,
   useYears, useCountries,
   useHandleCountryChange, useClicked, useMouse,
-  useWindowSize, useClickedSubCat
+  useClickedSubCat
 } from '../hooks/hooks';
 import MapMaker from '../components/MapMaker';
 
-function MapContainer({ showModal, toggleModal }) {
+function MapContainer({ toggleModal, width, height }) {
 
   const svgRef = useRef(null);
 
   let [loading, setLoading] = useState(true);
-
-  // Query user and set based off browser.
-
-  let [width, height] = useWindowSize();
-
   let [clicked, setClicked] = useClicked();
   let [setMouse] = useMouse();
   let [years] = useYears();
   let [yearValue, handleYearChange] = useHandleYearChange();
   let [clickedSubCat, setClickedSubCat] = useClickedSubCat();
-
-
 
   let [countries] = useCountries();
   let [countryValue, handleCountryChange, setCountryValue] = useHandleCountryChange();
@@ -55,12 +48,8 @@ function MapContainer({ showModal, toggleModal }) {
     </select>
   );
 
-
   useEffect(() => {
-    // console.log();
       setCountryValue(countryValue)
-    // return adjusted window size
-    // add window reSize listener
   }, [width, height, countryValue, setCountryValue]);
 
 
