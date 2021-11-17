@@ -89,8 +89,6 @@ export const useHandleCountryChange = () => {
   };
   useEffect(() => {
     setCountryValue(countryValue);
-    console.log(countryValue);
-    
   }, [countryValue]);
   return [countryValue, handleCountryChange, setCountryValue];
 };
