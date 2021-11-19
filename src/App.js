@@ -5,13 +5,14 @@ import MapContainer from './containers/Map';
 import { useModal } from './hooks/hooks';
 import ModalDefinitions from './containers/ModalDefinitions';
 import Portal from './containers/Portal';
-import { useWindowSize } from './hooks/hooks';
+import { useWindowSize, useHandleCountryChange } from './hooks/hooks';
 
 function App() {
   let { showModal, toggleModal } = useModal();
   let target = "modal-ref";
   let modalRef = useRef(null);
   let [width, height] = useWindowSize();
+  let [countryValue, handleCountryChange, setCountryValue] = useHandleCountryChange();
 
   let children =
   <> 
@@ -37,6 +38,9 @@ function App() {
         toggleModal={toggleModal}
         width={width}
         height={height}
+        countryValue={countryValue}
+        setCountryValue={setCountryValue}
+        handleCountryChange={handleCountryChange}
       />
       </div>
     </div>
