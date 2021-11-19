@@ -12,7 +12,8 @@ function App() {
   let target = "modal-ref";
   let modalRef = useRef(null);
   let [width, height] = useWindowSize();
-  let children = 
+
+  let children =
   <> 
   <ModalDefinitions
     toggleModal={toggleModal}
@@ -20,6 +21,7 @@ function App() {
     modalRef={modalRef}
   />
   </>;
+
 
   return (
     <div className="App">

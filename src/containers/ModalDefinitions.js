@@ -35,8 +35,8 @@ function ModalDefinitions({ countryValue, clicked, clickedSubCat, toggleModal, m
       let groupedData = d3.group(data, d => d["Dimension"], d => d["Component"], d => d['Indicator name'])
 
       let modal = d3.select(modalRef.current);
-      let dimDiv = modal.append('div').attr('class', 'modal')
-
+      modal.selectAll('.modal').remove();
+      let dimDiv = modal.append('div').attr('class', 'modal');
       let dimensionsDiv = dimDiv.selectAll('.dimension')
         .data(groupedData, d => d[0])
         .join(div => {
@@ -64,12 +64,16 @@ function ModalDefinitions({ countryValue, clicked, clickedSubCat, toggleModal, m
               return d[0]
             });
           let divTitle = enter.append('div').attr('class', 'dimension-title')
-          divTitle.append("img").attr('src', d => imgImport(d)).attr("class", "dimension_img");
-          divTitle.append('h2').text(d => d[0] === "" ? '*' : d[0]);
+              divTitle.append("img").attr('src', d => imgImport(d)).attr("class", "dimension_img");
+              divTitle.append('h2').text(d => d[0] === "" ? '*' : d[0]);
+          dimDiv.exit().remove();
           return enter;
+        },
+        //exit statement may need to be fixed to help stop duplication of elements
+        exit => exit.remove());
 
-        });
-        
+
+
       // Component Div
       dimensionsDiv
         .each((d, i, event) => {
@@ -218,7 +222,6 @@ function ModalDefinitions({ countryValue, clicked, clickedSubCat, toggleModal, m
       indicatorDiv.selectAll(".indicator-definitions").style("display", "none");
       indicatorDiv.selectAll(".indicator-substring").style("display", "none");
       d3.selectAll('#remove').remove();
-
     }
 
     parsedDefinitions.then((data) => {
