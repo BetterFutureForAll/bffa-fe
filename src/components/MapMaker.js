@@ -23,6 +23,7 @@ const MapMaker = ({
   let localGeoData = process.env.PUBLIC_URL + '/topoMap.json';
 
   let hardData = require('../assets/2011-2020-Social-Progress-Index.csv');
+  let newData = require('../assets/SPI2011-2021-dataset.csv');
 
   let petalPath = 'M 0 0 c 100 100 80 0 100 0 C 80 0 100 -100 0 0';
 
@@ -239,6 +240,8 @@ const MapMaker = ({
       if(d.properties.spi) { 
         setClicked(d.properties.spi) 
         setCountryValue(d.properties.spi.Country);
+        console.log('mouseoverValue: ', d.properties.spi.Country);
+        console.log('countryValue: ',countryValue);
       };
 
 
@@ -535,7 +538,8 @@ const MapMaker = ({
     setLoading(true);
     // D3 parses CSV into JSON
     let mapData = d3.json(localGeoData);
-    let spiData = d3.csv(hardData).then((spi) => {
+    // CSV attached here
+    let spiData = d3.csv(newData).then((spi) => {
       let years = d3.group(spi, d => d['SPI year'])
       return years.get(yearValue);
     });
