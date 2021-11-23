@@ -3,12 +3,12 @@ import Header from '../components/Header';
 import {
   useHandleYearChange,
   useYears, useCountries,
-  useHandleCountryChange, useClicked, useMouse,
+  useClicked, useMouse,
   useClickedSubCat
 } from '../hooks/hooks';
 import MapMaker from '../components/MapMaker';
 
-function MapContainer({ toggleModal, width, height }) {
+function MapContainer({ toggleModal, width, height, countryValue, setCountryValue, handleCountryChange }) {
 
   const svgRef = useRef(null);
 
@@ -20,7 +20,6 @@ function MapContainer({ toggleModal, width, height }) {
   let [clickedSubCat, setClickedSubCat] = useClickedSubCat();
 
   let [countries] = useCountries();
-  let [countryValue, handleCountryChange, setCountryValue] = useHandleCountryChange();
 
   let selectYears = (
     <>
