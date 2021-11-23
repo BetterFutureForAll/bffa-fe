@@ -195,6 +195,7 @@ function ModalDefinitions({ countryValue, clicked, clickedSubCat, toggleModal, m
           d3.select(this).selectAll('.component-box').style("display", function () {
             return (currentTarget === clickedTarget) ? "flex" : "none";
           });
+          d3.select(this).style('width', "calc(100% - 2px)")
         });
       }
 
@@ -210,6 +211,7 @@ function ModalDefinitions({ countryValue, clicked, clickedSubCat, toggleModal, m
         d3.selectAll(".dimension").each(function () {
           d3.selectAll('.component-box').style("display", "flex");
           d3.selectAll('.dimension-title').style("writing-mode", "lr-tb");
+          d3.select(this).style('width', "calc(100% - 2px)")
         });
       }
 
