@@ -23,7 +23,6 @@ import opportunity_education from '../assets/bffa_icons/2_4_education.png';
 
 function ModalDefinitions({ countryValue, clicked, clickedSubCat, toggleModal, modalRef, width }) {
 
-  let rawDefinitions = require('../assets/GlobalDefinitions.csv');
   let currentDefinitions = require('../assets/definitions-2021.csv');
 
   let parsedDefinitions = d3.csv(currentDefinitions);
