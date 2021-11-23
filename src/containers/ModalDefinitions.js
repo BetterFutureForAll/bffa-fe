@@ -24,13 +24,14 @@ import opportunity_education from '../assets/bffa_icons/2_4_education.png';
 function ModalDefinitions({ countryValue, clicked, clickedSubCat, toggleModal, modalRef, width }) {
 
   let rawDefinitions = require('../assets/GlobalDefinitions.csv');
+  let currentDefinitions = require('../assets/definitions-2021.csv');
 
-  let parsedDefinitions = d3.csv(rawDefinitions);
+  let parsedDefinitions = d3.csv(currentDefinitions);
 
   useEffect(() => {
     function tabulateModal(data) {
 
-      // Dimension,Component,Indicator name,Definition,Source,Link
+      // Dimension,Component,Indicator name, unit ,Definition,Source,Link
       // Group data on each column, indicator will hold the unique values.
       let groupedData = d3.group(data, d => d["Dimension"], d => d["Component"], d => d['Indicator name'])
 
@@ -59,7 +60,7 @@ function ModalDefinitions({ countryValue, clicked, clickedSubCat, toggleModal, m
             })
             .attr("id", d => {
               if (d[0].length === 0) {
-                return "footer";
+                return "footer dimension";
               }
               return d[0]
             });
@@ -135,22 +136,19 @@ function ModalDefinitions({ countryValue, clicked, clickedSubCat, toggleModal, m
               .join(div => {
                 let enter = div.append("li")
                   .attr("class", "indicator")
-                  .attr("id", d => {
-                    if (d[0].length === 0) {
-                      return "remove"
-                    }
-                    return d[0]
-                  });
+                  .attr("id", d => d[0]);
                 enter.append('tspan')
                   .text(d => {
-                    let match = d[0].match(/\((.*)\)/);
-                    let subString = match ? d[0].substring(0, match.index) : d[0];
-                    return subString;
+                    // let match = d[0].match(/\((.*)\)/);
+                    // let subString = match ? d[0].substring(0, match.index) : d[0];
+                    return d[0];
                   }).attr('class', 'indicator-name');
+
                 enter.append('tspan')
                   .text(d => {
-                    let match = d[0].match(/\((.*)\)/);
-                    let subString = match ? match[0] : null;
+                    let match = d[1][0]['Unit'];
+                    // let match = d[0].match(/\((.*)\)/);
+                    let subString = match ? match : null;
                     return subString;
                   }).attr('class', 'indicator-substring')
 
