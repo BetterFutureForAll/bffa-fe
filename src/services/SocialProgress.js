@@ -2,54 +2,32 @@ import * as d3 from 'd3';
 
 let currentData = require('../assets/SPI2011-2021-dataset.csv');
 
-export const spi2020 = d3.csv(currentData, function(d) {
+export const parsedSpiData = d3.csv(currentData, function(d) {
   return d;
 });
 
-export function byYear(chosenYear) {
-  let result = [];
-  d3.csv(currentData, function(data) {
-    data.forEach((element) => {
-      if(element['SPI year'] === chosenYear) {
-        result.push(element);
-      }
-    });
-  });
-  return result;
-}
-
 export async function makeYearsArray() {
-  let years = [];
-  await spi2020.then(function(data) {
-    data.forEach((element) => {
-      if(element['SPI year']) {
-        if(!years.includes(element['SPI year'])) {
-          years.push(element['SPI year']);
-        }
-      }
-    });
+  let years;
+  await parsedSpiData.then(function(data) {
+    let yearsGroup = d3.group(data, d => d['SPI year']);
+    years = Array.from(yearsGroup).map(d=> d[0]);
   });
   return years;
 }
 export async function makeCountriesArray() {
-  let countries = [];
-  await spi2020.then(function(data) {
-    data.forEach((element) => {
-      if(element['Country']) {
-        if(!countries.includes(element['Country'])) {
-          countries.push(element['Country']);
-        }
-      }
-    });
+  let countries;
+  await parsedSpiData.then(function(data) {
+    let countryGroup = d3.group(data, d => d['Country']);
+    countries = Array.from(countryGroup).map(d=> d[0])
+    console.log(countries);
   });
   return countries;
 }
 
 export async function getSpiDataByYear(year) {
-  return spi2020.then(function(data) {
-    let result = data.filter(function(d) {
-      return d['SPI year'] === year;
-    });
+  return parsedSpiData.then(function(data) {
+    let yearsGroup = d3.group(data, d => d['SPI year'])
+    let result = yearsGroup.get(year);
     return result;
   });
 }
@@ -72,7 +50,6 @@ export async function getScore(ISO_A3, data) {
   });
   return score;
 }
-
 
 export const colorScale = d3.scaleSequential()
 .interpolator(d3.interpolateCubehelixLong("#c4c2c4", "#20c30f"))

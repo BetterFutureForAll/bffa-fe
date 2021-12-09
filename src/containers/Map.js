@@ -4,11 +4,15 @@ import {
   useHandleYearChange,
   useYears, useCountries,
   useClicked, useMouse,
-  useClickedSubCat
+  useClickedSubCat,
+  useToolTip,
+  useDataByCountry,
+  useDataByYear
 } from '../hooks/hooks';
 import MapMaker from '../components/MapMaker';
+import ToolTip from '../components/ToolTip';
 
-function MapContainer({ toggleModal, width, height, countryValue, setCountryValue, handleCountryChange }) {
+function MapContainer({ toggleModal, width, height, countryValue, setCountryValue, selectCountries }) {
 
   const svgRef = useRef(null);
 
@@ -18,12 +22,26 @@ function MapContainer({ toggleModal, width, height, countryValue, setCountryValu
   let [years] = useYears();
   let [yearValue, handleYearChange] = useHandleYearChange();
   let [clickedSubCat, setClickedSubCat] = useClickedSubCat();
+  let [tooltipContext, setToolTipContext] = useToolTip();
 
-  let [countries] = useCountries();
+  // May need Redux to control state.
+  let [spiByYear, setSpiByYear] = useDataByYear(yearValue);
+  let [spiByCountry, setSpiByCountry] = useDataByCountry(spiByYear, countryValue);
+
+  let handleSpiChange = e => setSpiByYear(e);
+  let handleSpiCountryChange = e => setSpiByCountry(e);
+
+
+  useEffect(()=>{
+    handleSpiChange(yearValue)
+    handleSpiCountryChange(countryValue)
+    console.log('year:',spiByYear);
+    console.log('country',spiByCountry);
+  },[countryValue, yearValue])
 
   let selectYears = (
     <>
-      <select onChange={handleYearChange} defaultValue={yearValue} >
+      <select onChange={handleYearChange} value={yearValue} >
         {years.map(item => (
           <option
             key={item}
@@ -37,19 +55,11 @@ function MapContainer({ toggleModal, width, height, countryValue, setCountryValu
     </>
   );
 
-  let selectCountries = (
-    <select onChange={handleCountryChange} defaultValue={countryValue}>
-      {countries.map(item => (
-        <option key={item} value={item} onSelect={handleCountryChange}>
-          {item}
-        </option>
-      ))}
-    </select>
-  );
+  // useEffect(() => {
 
-  useEffect(() => {
-      setCountryValue(countryValue)
-  }, [width, height, countryValue, setCountryValue]);
+          
+  //     // setCountryValue(countryValue)
+  // }, [width, height, countryValue, setCountryValue]);
 
 
   return (
@@ -68,10 +78,10 @@ function MapContainer({ toggleModal, width, height, countryValue, setCountryValu
           loading={loading}
           setLoading={setLoading}
           toggleModal={toggleModal}
-          countries={countries}
           countryValue={countryValue}
           setCountryValue={setCountryValue}
-          handleCountryChange={handleCountryChange}
+          tooltipContext={tooltipContext}
+          setToolTipContext={setToolTipContext}
         />
         <div className="ControlBar">
           <Header

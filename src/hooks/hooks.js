@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import {
   makeYearsArray,
   getSpiDataByYear,
@@ -61,7 +61,7 @@ export const useYears = () => {
 };
 
 export const useHandleYearChange = () => {
-  let [yearValue, setYearValue] = useState('2020');
+  let [yearValue, setYearValue] = useState('2021');
   let handleYearChange = (e) => {
     setYearValue(e.target.value);
   };
@@ -83,14 +83,14 @@ export const useCountries = () => {
 };
 
 export const useHandleCountryChange = () => {
-  let [countryValue, setCountryValue] = useState('World');
-  let handleCountryChange = (e) => {
-    setCountryValue(e.target.value);
-  };
+  let [countryValue, setCountryValue] = useState('');
+
   useEffect(() => {
     setCountryValue(countryValue);
-  }, [countryValue]);
-  return [countryValue, handleCountryChange, setCountryValue];
+    console.log('hook',countryValue);
+  }, [countryValue, setCountryValue]);
+
+  return [countryValue, setCountryValue];
 };
 
 export const useDataByYear = (yearValue) => {
@@ -100,17 +100,6 @@ export const useDataByYear = (yearValue) => {
       .then(d => setSpiByYear(d));
   }, [yearValue]);
   return [spiByYear, setSpiByYear];
-};
-
-export const useDataByCountry = (spiByYear, countryValue) => {
-  let [spiByCountry, setSpiByCountry] = useState([]);
-  useEffect(() => {
-    if (spiByYear && countryValue) {
-      getSpiDataByCountry(spiByYear, countryValue)
-        .then(d => setSpiByCountry(d));
-    }
-  }, [spiByYear, countryValue]);
-  return [spiByCountry, setSpiByCountry];
 };
 
 export function scoreToColor(score) {
@@ -152,3 +141,31 @@ export function useWindowSize() {
   return windowSize;
 };
 
+export const useDataByCountry = (spiByYear, countryValue) => {
+  let [spiByCountry, setSpiByCountry] = useState();
+  useEffect(() => {
+    if (spiByYear && countryValue) {
+      getSpiDataByCountry(spiByYear, countryValue)
+        .then(d => setSpiByCountry(d));
+    };
+  }, [spiByYear, countryValue]);
+
+  return [spiByCountry, setSpiByCountry];
+};
+
+// export const memoizedData = useMemo(()=> getSpiDataByCountry(spiByYear, countryValue), [spiByYear, countryValue]);
+
+export function useToolTip() {
+
+  let [tooltipContext, setToolTipContext] = useState({
+    svgRef: null,
+    center: [0,0],
+    name: 'World'
+  });
+  useEffect(()=>{
+    setToolTipContext(tooltipContext);
+    console.log('useToolTip',tooltipContext);
+  },[tooltipContext, setToolTipContext])
+
+  return [tooltipContext, setToolTipContext];
+}
