@@ -15,9 +15,9 @@ import ToolTip from './ToolTip';
 // let [tooltipContext, setToolTipContext] = useToolTip();
 
 const MapMaker = ({ 
-  svgRef,  width, height,
+  svgRef,  width, height, spiData,
   clicked, setClicked, clickedSubCat, setClickedSubCat,
-  yearValue, loading, setLoading, 
+  yearValue, loading, setLoading, center, setCenter,
   toggleModal, countryValue, setCountryValue, tooltipContext, setToolTipContext }) => {
 
   let loadingSpinner = require('../assets/loading.gif');
@@ -46,16 +46,16 @@ const MapMaker = ({
       .translate([width / 2, height / 2])
 
     let path = d3.geoPath().projection(projection);
-
     let spiCountryGroup = d3.group(data[1], s => s["SPI country code"]);
-    let countriesDataSet = feature(data[0], data[0].objects.countries).features;
+    let mapFeatures = feature(data[0], data[0].objects.countries).features;
 
-    function spiData(id) { return spiCountryGroup.get(id); };
-    console.log(countriesDataSet);
+    function spiMatcher(id) { return spiCountryGroup.get(id); };
+    console.log('mapFeatures', mapFeatures);
+    console.log('spiCountryGroup', data[1]);
 
 //****************************************************************************************************************/
 // ******   refactor to avoid this loop, calculate values on the fly instead ********************************/
-    // countriesDataSet.forEach(function (f) {
+    // mapFeatures.forEach(function (f) {
 
     //   //Catch for Colonies and Territories without Formal ISO names. 
     //   if (f.properties.ISO_A3_EH === "-99") {
@@ -245,8 +245,8 @@ const MapMaker = ({
       // ToolTip({svgRef, width, height, countryValue, countryData, center });
       
       toolTip.exit().remove();
-      let spiMatch = spiData(d.properties.ISO_A3_EH);
-      let gu_a3 = spiData(d.properties.GU_A3);
+      let spiMatch = spiMatcher(d.properties.ISO_A3_EH);
+      let gu_a3 = spiMatcher(d.properties.GU_A3);
       let center = path.centroid(d);
       
       if(!spiMatch) return;
@@ -260,7 +260,8 @@ const MapMaker = ({
         console.log('countryMouseOver spiMatch', spiMatch[0]["Country"], spiMatch);
         setClicked(name);
         setCountryValue(name);
-        setToolTipContext({svgRef, center, name});
+        setCenter(center);
+        // setToolTipContext({svgRef, center, name});
       };
 
       let x = path.centroid(d)[0];
@@ -509,21 +510,18 @@ const MapMaker = ({
 
     // *** Country groupings ***
     let countries = g.selectAll(".country")
-      .data(countriesDataSet.filter(d => d.properties.ISO_A3_EH !== "ATA"))
+      .data(mapFeatures.filter(d => d.properties.ISO_A3_EH !== "ATA"))
       .join("path")
       .attr("d", path)
       .attr("class", "country")
       .attr("id", d => d.properties.ISO_A3_EH)
       .attr("cursor", "pointer")
       .attr("fill", d => {
-        let spi = spiData(d.properties.ISO_A3_EH) || spiData(d.properties.GU_A3);
+        let spi = spiMatcher(d.properties.ISO_A3_EH) || spiMatcher(d.properties.GU_A3);
+        // console.log(spi);
         // SU
         if(d.properties.ISO_A3_EH==='-99') { 
-
-          console.log('99', d.properties.GU_A3, d.properties)
-          console.log('GU_A3 .get', spiData(d.properties.GU_A3));
-
-          return spi = spiData(d.properties.GU_A3);
+          return spi = spiMatcher(d.properties.GU_A3);
         }; 
        
         return spi? colorScale(spi[0]['Social Progress Index']) : "#c4c2c4" })
@@ -563,19 +561,14 @@ const MapMaker = ({
     TextTooltip.attr("pointer-events", "none");
   };
 
-  useEffect(() => {
 
+  useEffect(() => {
+    
     setLoading(true);
-    // D3 parses CSV into JSON
     let mapData = d3.json(localGeoData);
+    if(spiData.length===0)return;
 
     let remoteMapData = d3.json("https://unpkg.com/world-atlas@1/world/110m.json")
-
-    // CSV attached here
-    let spiData = d3.csv(newData).then((spi) => {
-      let years = d3.group(spi, d => d['SPI year'])
-      return years.get(yearValue);
-    });
 
     Promise.all([mapData, spiData]).then(function (values) {
       d3.selectAll(svgRef.current).exit().remove();
@@ -584,7 +577,7 @@ const MapMaker = ({
     });
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [yearValue, localGeoData, hardData, svgRef, checkedSize]);
+  }, [yearValue, localGeoData, svgRef, checkedSize, spiData]);
 
   while (loading) return (<img src={loadingSpinner} alt={'loading spinner'} id="loading-spinner" />)
 

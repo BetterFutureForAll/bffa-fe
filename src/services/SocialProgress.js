@@ -19,7 +19,6 @@ export async function makeCountriesArray() {
   await parsedSpiData.then(function(data) {
     let countryGroup = d3.group(data, d => d['Country']);
     countries = Array.from(countryGroup).map(d=> d[0])
-    console.log(countries);
   });
   return countries;
 }
