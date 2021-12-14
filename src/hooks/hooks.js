@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import {
   makeYearsArray,
   getSpiDataByYear,
@@ -25,17 +25,17 @@ export const useModal = () => {
 
 export const useClicked = () => {
   let [clicked, setClicked] = useState('World');
-  useEffect(()=>{
+  useEffect(() => {
     setClicked(clicked);
-  },[clicked])
+  }, [clicked])
   return [clicked, setClicked];
 }
 
 export const useClickedSubCat = () => {
   let [clickedSubCat, setClickedSubCat] = useState(null);
-  useEffect(()=>{
+  useEffect(() => {
     setClickedSubCat(clickedSubCat);
-  },[clickedSubCat])
+  }, [clickedSubCat])
   return [clickedSubCat, setClickedSubCat];
 }
 
@@ -47,6 +47,10 @@ export const useMouse = () => {
 export const useScore = () => {
   let [score, setScore] = useState({ name: '', score: '' });
   return [score, setScore];
+};
+export const useCenter = () => {
+  let [center, setCenter] = useState([0,0]);
+  return [center, setCenter];
 };
 
 export const useYears = () => {
@@ -87,7 +91,6 @@ export const useHandleCountryChange = () => {
 
   useEffect(() => {
     setCountryValue(countryValue);
-    console.log('hook',countryValue);
   }, [countryValue, setCountryValue]);
 
   return [countryValue, setCountryValue];
@@ -102,6 +105,34 @@ export const useDataByYear = (yearValue) => {
   return [spiByYear, setSpiByYear];
 };
 
+export const useDataByCountry = (spiByYear, countryValue) => {
+  let [spiByCountry, setSpiByCountry] = useState();
+  useEffect(() => {
+    getSpiDataByCountry(spiByYear, countryValue)
+      .then(d => setSpiByCountry(d));
+  }, [spiByYear, countryValue]);
+
+  return [spiByCountry, setSpiByCountry];
+};
+
+// export const memoizedData = useMemo(()=> getSpiDataByCountry(spiByYear, countryValue), [spiByYear, countryValue]);
+
+export function useToolTip() {
+
+  let [tooltipContext, setToolTipContext] = useState({
+    svgRef: null,
+    center: [0, 0],
+    name: 'World',
+    data: []
+  });
+  useEffect(() => {
+    setToolTipContext(tooltipContext);
+  }, [tooltipContext, setToolTipContext])
+
+  return [tooltipContext, setToolTipContext];
+};
+
+
 export function scoreToColor(score) {
   let scoreColor = d3.scaleLinear()
     .domain([0, 20, 40, 60, 80, 100])
@@ -115,7 +146,7 @@ export function scoreToColor(score) {
       '#20c30f'
     ]);
   return scoreColor(score);
-}
+};
 
 export function useWindowSize() {
   const isWindowClient = typeof window === "object";
@@ -140,32 +171,3 @@ export function useWindowSize() {
 
   return windowSize;
 };
-
-export const useDataByCountry = (spiByYear, countryValue) => {
-  let [spiByCountry, setSpiByCountry] = useState();
-  useEffect(() => {
-    if (spiByYear && countryValue) {
-      getSpiDataByCountry(spiByYear, countryValue)
-        .then(d => setSpiByCountry(d));
-    };
-  }, [spiByYear, countryValue]);
-
-  return [spiByCountry, setSpiByCountry];
-};
-
-// export const memoizedData = useMemo(()=> getSpiDataByCountry(spiByYear, countryValue), [spiByYear, countryValue]);
-
-export function useToolTip() {
-
-  let [tooltipContext, setToolTipContext] = useState({
-    svgRef: null,
-    center: [0,0],
-    name: 'World'
-  });
-  useEffect(()=>{
-    setToolTipContext(tooltipContext);
-    console.log('useToolTip',tooltipContext);
-  },[tooltipContext, setToolTipContext])
-
-  return [tooltipContext, setToolTipContext];
-}
