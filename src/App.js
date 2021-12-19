@@ -1,11 +1,13 @@
 import React, { useEffect, useRef } from 'react';
 // import './Reset.css';
 import './App.css';
+import * as d3 from 'd3'
 import MapContainer from './containers/Map';
 import { useDataByCountry, useDataByYear, useModal, useToolTip, useYears, useHandleYearChange, useClickedSubCat, useCenter } from './hooks/hooks';
 import ModalDefinitions from './containers/ModalDefinitions';
 import Portal from './containers/Portal';
 import { useWindowSize, useHandleCountryChange, useCountries } from './hooks/hooks';
+let localGeoData = process.env.PUBLIC_URL + '/topoMap.json';
 
 function App() {
   let { showModal, toggleModal } = useModal();
@@ -17,6 +19,25 @@ function App() {
   let [years] = useYears();
   let [yearValue, handleYearChange] = useHandleYearChange();
   let [tooltipContext, setToolTipContext] = useToolTip();
+  
+  let worldMap = d3.json(localGeoData);
+  let pathRef = useRef();
+    
+  let checkedSize = Math.min(height, width)
+  let projection = useRef(d3.geoEqualEarth()
+    .scale(checkedSize / 1.3 / Math.PI)
+    .translate([width / 2, height / 2]));
+    
+  let path = d3.geoPath().projection(projection);
+  //   const projRef = useRef(d3.geoMercator()
+  //  .center([-73.93, 40.72]).scale(57500));
+
+
+  useEffect(() => {
+     projection.current.translate([width  / 2, height  / 2 ]);
+     pathRef.current = d3.geoPath().projection(projection.current);
+     
+  }, [height, width])
 
   let handleCountryChange = e => setCountryValue(e.target.value);
 
@@ -104,6 +125,8 @@ function App() {
           center={center}
           setCenter={setCenter}
           spiData={spiByYear}
+          mapData={worldMap}
+          path={pathRef}
         />
       </div>
     </div>

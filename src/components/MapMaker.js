@@ -15,8 +15,7 @@ import ToolTip from './ToolTip';
 // let [tooltipContext, setToolTipContext] = useToolTip();
 
 const MapMaker = ({ 
-  svgRef,  width, height, spiData,
-  clicked, setClicked, clickedSubCat, setClickedSubCat,
+  svgRef,  width, height, spiData, mapData, path,
   yearValue, loading, setLoading, center, setCenter,
   toggleModal, countryValue, setCountryValue, tooltipContext, setToolTipContext }) => {
 
@@ -31,26 +30,29 @@ const MapMaker = ({
   let petalPath = 'M 0 0 c 100 100 80 0 100 0 C 80 0 100 -100 0 0';
 
   let subPetalPath = "M 0 0 L 85 15 A 1 1 0 0 0 85 -15 L 0 0";
-  
-  let checkedSize = Math.min(height, width)
+
 
 
   function ready(data) {
-
     let spiScale = d3.scaleLinear().domain([0, 100]).range([0, 100]);
-
+    
     //Check Height Vs Width, use the width for small screens and height for large.
-
+    let checkedSize = Math.min(height, width)
+    
+    console.log('size',checkedSize);
     let projection = d3.geoEqualEarth()
-      .scale(checkedSize / 1.3 / Math.PI)
+      .scale(checkedSize / Math.PI / 1.25)
       .translate([width / 2, height / 2])
 
     let path = d3.geoPath().projection(projection);
     let spiCountryGroup = d3.group(data[1], s => s["SPI country code"]);
     let mapFeatures = feature(data[0], data[0].objects.countries).features;
-
+    
     function spiMatcher(id) { return spiCountryGroup.get(id); };
     console.log('mapFeatures', mapFeatures);
+    
+    let mapGroup = d3.group(mapFeatures, d => d.properties.ISO_A3_EH);
+    function mapMatcher(id)  {  return mapGroup.get(id)}
     console.log('spiCountryGroup', data[1]);
 
 //****************************************************************************************************************/
@@ -258,7 +260,6 @@ const MapMaker = ({
       
       if(spiMatch) { 
         console.log('countryMouseOver spiMatch', spiMatch[0]["Country"], spiMatch);
-        setClicked(name);
         setCountryValue(name);
         setCenter(center);
         // setToolTipContext({svgRef, center, name});
@@ -477,7 +478,7 @@ const MapMaker = ({
         .join('path')
         .attr('class', 'subPetalPath')
         .attr("id", (d, i) => {
-          setClickedSubCat(d.text);
+          // setClickedSubCat(d.text);
           return d.id})
         .attr('d', d => subPetalPath)
         .attr('transform', d => `translate(${x}, ${y}) scale(${0})`)
@@ -553,7 +554,6 @@ const MapMaker = ({
       countryMouseLeave();
       svg.selectAll('.subPetalText').remove();
       d3.selectAll(".toolTipName").remove();
-      setClicked(undefined);
     }
 
     toolTip.raise();
@@ -561,23 +561,29 @@ const MapMaker = ({
     TextTooltip.attr("pointer-events", "none");
   };
 
+  // useEffect(()=>{
+  //   //get countryValue path.centroid(mapData)
+    
+
+  //   setCenter()
+  // }, [countryValue])
+
 
   useEffect(() => {
-    
     setLoading(true);
-    let mapData = d3.json(localGeoData);
+    let localData = d3.json(localGeoData);
     if(spiData.length===0)return;
 
     let remoteMapData = d3.json("https://unpkg.com/world-atlas@1/world/110m.json")
 
-    Promise.all([mapData, spiData]).then(function (values) {
+    Promise.all([localData, spiData]).then(function (values) {
       d3.selectAll(svgRef.current).exit().remove();
       setLoading(false);
       ready(values);
     });
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [yearValue, localGeoData, svgRef, checkedSize, spiData]);
+  }, [yearValue, localGeoData, svgRef, height, width, spiData]);
 
   while (loading) return (<img src={loadingSpinner} alt={'loading spinner'} id="loading-spinner" />)
 

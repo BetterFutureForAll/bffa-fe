@@ -7,11 +7,11 @@ function MapContainer({
   toggleModal, width, height, 
   selectYears, yearValue, 
   clickedSubCat, setClickedSubCat,
-  center, setCenter, spiData, 
+  center, setCenter, spiData, mapData, path, 
   countryValue, setCountryValue, selectCountries, 
   tooltipContext, setToolTipContext, svgRef }) {
 
-    let [loading, setLoading] = useState(true);
+  let [loading, setLoading] = useState(true);
   let [clicked, setClicked] = useClicked();
   let [setMouse] = useMouse();
 
@@ -21,12 +21,7 @@ function MapContainer({
       <div id="MapContainer" >
         <MapMaker
           svgRef={svgRef}
-          setClicked={setClicked}
-          clicked={clicked}
-          setClickedSubCat={setClickedSubCat}
-          clickedSubCat={clickedSubCat}
           yearValue={yearValue}
-          setMouse={setMouse}
           height={height}
           width={width}
           loading={loading}
@@ -39,6 +34,8 @@ function MapContainer({
           center={center}
           setCenter={setCenter}
           spiData={spiData}
+          mapData={mapData}
+          path={path}
         />
         <div className="ControlBar">
           <Header
