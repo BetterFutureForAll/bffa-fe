@@ -8,23 +8,18 @@ import {
 } from '../services/SocialProgress';
 
 // needs X, Y, and SPI Data set
-const ToolTip = (tooltipContext) => {
+const ToolTip = ({ tooltipContext, toggleModal }) => {
 
   let spiScale = d3.scaleLinear().domain([0, 100]).range([0, 100]);
   let petalPath = 'M 0 0 c 100 100 80 0 100 0 C 80 0 100 -100 0 0';
   let subPetalPath = "M 0 0 L 85 15 A 1 1 0 0 0 85 -15 L 0 0";
 
   function ready() {
-    let { svgRef, center, name, data } = tooltipContext.context;
+    let { svgRef, center, name, data } = tooltipContext;
 
     if (!data || data === undefined) return;
-    console.log(data);
 
     function parsedData(d) {
-      console.log('backgroundData', d);
-      // console.log('petals', petals);
-      // console.log('keys', keys[6], keys[7], keys[8]);
-      // console.log('values', values[6], values[7], values[8]);
       // returning values as is, needs Keys and Values/ 
 
       let basics = Object.assign({},
@@ -34,10 +29,10 @@ const ToolTip = (tooltipContext) => {
         {
           subPetals:
             [
-              { "Nutrition and Basic Medical Care": d["Nutrition and Basic Medical Care"], angle: 0 },
-              { 'Water and Sanitation': d['Water and Sanitation'], angle: 20 },
-              { 'Shelter': d['Shelter'], angle: 40 },
-              { 'Personal Safety': d['Personal Safety'], angle: 60 }
+              { "Nutrition and Basic Medical Care": d["Nutrition and Basic Medical Care"], colorFn: basicColorScale, angle: 0 },
+              { 'Water and Sanitation': d['Water and Sanitation'], colorFn: basicColorScale, angle: 20 },
+              { 'Shelter': d['Shelter'], colorFn: basicColorScale, angle: 40 },
+              { 'Personal Safety': d['Personal Safety'], colorFn: basicColorScale, angle: 60 }
             ]
         },
         { angle: 30 });
@@ -49,10 +44,10 @@ const ToolTip = (tooltipContext) => {
         {
           subPetals:
             [
-              { "Access to Basic Knowledge": d["Access to Basic Knowledge"], angle: 120 },
-              { 'Access to Information and Communications': d['Access to Information and Communications'], angle: 140 },
-              { 'Health and Wellness': d['Health and Wellness'], angle: 160 },
-              { 'Environmental Quality': d['Environmental Quality'], angle: 180 }
+              { "Access to Basic Knowledge": d["Access to Basic Knowledge"], colorFn: foundationsColorScale, angle: 120 },
+              { 'Access to Information and Communications': d['Access to Information and Communications'], colorFn: foundationsColorScale, angle: 140 },
+              { 'Health and Wellness': d['Health and Wellness'], colorFn: foundationsColorScale, angle: 160 },
+              { 'Environmental Quality': d['Environmental Quality'], colorFn: foundationsColorScale, angle: 180 }
             ]
         },
         { angle: 150 });
@@ -64,17 +59,16 @@ const ToolTip = (tooltipContext) => {
         {
           subPetals:
             [
-              { 'Personal Rights': d['Personal Rights'], angle: 240 },
-              { "Personal Freedom and Choice": d["Personal Freedom and Choice"], angle: 260 },
-              { 'Inclusiveness': d['Inclusiveness'], angle: 280 },
-              { 'Access to Advanced Education': d['Access to Advanced Education'], angle: 300 }
+              { 'Personal Rights': d['Personal Rights'], colorFn: opportunityColorScale, angle: 240 },
+              { "Personal Freedom and Choice": d["Personal Freedom and Choice"], colorFn: opportunityColorScale, angle: 260 },
+              { 'Inclusiveness': d['Inclusiveness'], colorFn: opportunityColorScale, angle: 280 },
+              { 'Access to Advanced Education': d['Access to Advanced Education'], colorFn: opportunityColorScale, angle: 300 }
             ]
         },
         { angle: 270 });
 
       let result = Object.assign({}, d, { petals: [basics, foundations, opportunity] })
 
-      console.log('result', result);
       return [result];
     }
 
@@ -161,9 +155,35 @@ const ToolTip = (tooltipContext) => {
       .style('fill', d => d.color)
       .attr("cursor", "pointer");
 
+
+    toolTip.selectAll(".nameText")
+      .data(d => [d])
+      .join(group => {
+        let enter = group.append('text')
+        enter
+          .append("tspan")
+          .text(d => `${d["Country"]}`)
+          .attr('x', 0)
+          .attr('y', 0)
+        enter
+          .append("tspan")
+          .text(d => {
+            let rounded = (+d["Social Progress Index"]).toFixed();
+            return `${rounded}`;
+          })
+          .attr('x', 0)
+          .attr('y', 0)
+          .attr('dy', '1em')
+        return enter;
+      })
+      .attr('class', 'nameText')
+      .attr('text-anchor', 'middle')
+      .attr('transform', `translate(${x}, ${(y + spiScale(140))})`)
+      .attr("font-weight", 700)
+
+    // ****** MouseOver Functions start here ******** ///
     var textTooltip = toolTip.selectAll(".tooltip-text-area")
       .style("opacity", d => {
-        console.log('textToolTip', d);
         return 0
       });
 
@@ -176,6 +196,9 @@ const ToolTip = (tooltipContext) => {
       toolTip.selectAll(".tooltip-text-area").remove();
       let x = event.x;
       let y = event.y;
+      let roundedNum = (+Object.values(d)[0]).toFixed();
+
+
       textTooltip
         .data(d => [d])
         .join(group => {
@@ -187,12 +210,13 @@ const ToolTip = (tooltipContext) => {
             .attr('y', 0)
           enter
             .append("tspan")
-            .text(`${Object.values(d)[0]}`)
+            .text(`${roundedNum}`)
             .attr('x', 0)
             .attr('y', 0)
             .attr('dy', '1em')
           return enter;
         })
+        .attr("pointer-events", "none")
         .attr('class', "tooltip-text-area")
         .attr("font-size", 16)
         .attr('text-anchor', 'middle')
@@ -209,7 +233,6 @@ const ToolTip = (tooltipContext) => {
     };
 
     function showSubPetals(event, d) {
-      console.log('show called', event, d);
       let x = center[0];
       let y = center[1];
 
@@ -225,11 +248,9 @@ const ToolTip = (tooltipContext) => {
         .attr('transform', d => `translate(${x}, ${y}) rotate(${d.angle}) scale(${spiScale(Object.values(d)[0]) * .01})`)
         .style('stroke', 'black')
         .style('fill', d => {
-          console.log(Object.values(d));
-          console.log(Object.keys(d));
-          return colorScale(Object.values(d)[0])
+          return d.colorFn(Object.values(d)[0])
         })
-        .attr("cursor", "pointer");
+        .attr("cursor", "crosshair");
 
       d3.selectAll('.subPetalPath')
         .on("mouseover", mouseover)
@@ -256,7 +277,7 @@ const ToolTip = (tooltipContext) => {
         .attr('d', arc)
         .attr('fill', d => d.color)
         .attr('transform', d => `translate(${center[0]}, ${center[1]}) rotate(${d.angle + 30}) scale(${1})`)
-        .attr("cursor", "pointer")
+        .attr("cursor", "alias")
 
 
       toolTip.selectAll('.petalText')
@@ -267,7 +288,6 @@ const ToolTip = (tooltipContext) => {
         .append('textPath')
         .style("text-anchor", "middle")
         .attr("xlink:href", d => {
-          console.log('text', Object.keys(d)[0]);
           return `#arc_${Object.keys(d)[0]}`
         })
         .attr("font-size", 16)
@@ -280,7 +300,6 @@ const ToolTip = (tooltipContext) => {
         // })
         .attr("pointer-events", "none")
         .attr("startOffset", function (d) {
-          console.log(d.angle);
           if (d.angle === 270) {
             return 370;
           }
@@ -288,15 +307,16 @@ const ToolTip = (tooltipContext) => {
             return 130;
           }
           else {
-            return 135;
+            return 130;
           }
         })
         .text(d => {
-          return `${Object.keys(d)[0]}-${Object.values(d)[0]}`;
+          let rounded = (+Object.values(d)[0]).toFixed();
+          return `${Object.keys(d)[0]}-${rounded}`;
         });
 
       toolTip.selectAll('.petalArc')
-      // .on('click', toggleModal)
+      .on('click', toggleModal)
     };
 
     function doItAll(event, d) {

@@ -27,7 +27,7 @@ function App() {
   let projection = useRef(d3.geoEqualEarth()
     .scale(checkedSize / 1.3 / Math.PI)
     .translate([width / 2, height / 2]));
-    
+
   let path = d3.geoPath().projection(projection);
   //   const projRef = useRef(d3.geoMercator()
   //  .center([-73.93, 40.72]).scale(57500));
@@ -87,7 +87,7 @@ function App() {
 
   useEffect(()=>{
     setCenter([width / 2, height / 2]);
-  }, [height, width]);
+  }, [height, width, setCenter]);
 
   useEffect(() => {
     setToolTipContext({
@@ -96,8 +96,7 @@ function App() {
       countryValue,
       data: spiByCountry
     });
-    console.log(spiByYear);
-  }, [countryValue, yearValue, spiByCountry])
+  }, [countryValue, yearValue, center, spiByCountry, setToolTipContext])
 
 
   return (

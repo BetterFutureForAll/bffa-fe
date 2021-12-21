@@ -589,7 +589,7 @@ const MapMaker = ({
 
   return (
     <svg ref={svgRef} height={height} width={width} id="map">
-      <ToolTip context={tooltipContext} />
+      <ToolTip tooltipContext={tooltipContext} toggleModal={toggleModal} />
       {/* <g className="tooltip-area">
         <text className="tooltip-area__text"></text>
       </g>
