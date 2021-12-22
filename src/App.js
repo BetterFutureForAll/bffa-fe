@@ -3,11 +3,12 @@ import React, { useEffect, useRef } from 'react';
 import './App.css';
 import * as d3 from 'd3'
 import MapContainer from './containers/Map';
-import { useDataByCountry, useDataByYear, useModal, useToolTip, useYears, useHandleYearChange, useClickedSubCat, useCenter } from './hooks/hooks';
+import { useDataByCountry, useDataByYear, useModal, useToolTip, useYears, useHandleYearChange, useClickedSubCat, useCenter, useZoom } from './hooks/hooks';
 import ModalDefinitions from './containers/ModalDefinitions';
 import Portal from './containers/Portal';
 import { useWindowSize, useHandleCountryChange, useCountries } from './hooks/hooks';
-let localGeoData = process.env.PUBLIC_URL + '/topoMap.json';
+
+let localGeoData = process.env.PUBLIC_URL + '/cleanedMap.json';
 
 function App() {
   let { showModal, toggleModal } = useModal();
@@ -19,8 +20,9 @@ function App() {
   let [years] = useYears();
   let [yearValue, handleYearChange] = useHandleYearChange();
   let [tooltipContext, setToolTipContext] = useToolTip();
-  
-  let worldMap = d3.json(localGeoData);
+  let [zoomState, setZoomState] = useZoom();
+
+  let mapData = d3.json(localGeoData);
   let pathRef = useRef();
     
   let checkedSize = Math.min(height, width)
@@ -36,7 +38,6 @@ function App() {
   useEffect(() => {
      projection.current.translate([width  / 2, height  / 2 ]);
      pathRef.current = d3.geoPath().projection(projection.current);
-     
   }, [height, width])
 
   let handleCountryChange = e => setCountryValue(e.target.value);
@@ -86,6 +87,13 @@ function App() {
     </>;
 
   useEffect(()=>{
+    console.log('zoomState: ',zoomState)
+  }, [zoomState]);
+
+  useEffect(()=>{
+    // Needs to listen for Zoom changes, and Country Value Changes
+    // Then Update Center value
+
     setCenter([width / 2, height / 2]);
   }, [height, width, setCenter]);
 
@@ -124,8 +132,10 @@ function App() {
           center={center}
           setCenter={setCenter}
           spiData={spiByYear}
-          mapData={worldMap}
+          mapData={mapData}
           path={pathRef}
+          zoomState={zoomState}
+          setZoomState={setZoomState}
         />
       </div>
     </div>

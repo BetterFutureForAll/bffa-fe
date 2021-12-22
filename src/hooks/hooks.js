@@ -53,6 +53,13 @@ export const useCenter = () => {
   return [center, setCenter];
 };
 
+export const useZoom = () => {
+  let [zoomState, setZoomState] = useState(
+    { x: 0, y:0, k:1}
+  );
+  return [zoomState, setZoomState];
+};
+
 export const useYears = () => {
   let [years, setYears] = useState([]);
   useEffect(() => {

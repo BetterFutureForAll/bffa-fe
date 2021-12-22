@@ -8,7 +8,7 @@ import {
 } from '../services/SocialProgress';
 
 // needs X, Y, and SPI Data set
-const ToolTip = ({ tooltipContext, toggleModal }) => {
+const ToolTip = ({ tooltipContext, toggleModal, zoomState }) => {
 
   let spiScale = d3.scaleLinear().domain([0, 100]).range([0, 100]);
   let petalPath = 'M 0 0 c 100 100 80 0 100 0 C 80 0 100 -100 0 0';
@@ -319,6 +319,8 @@ const ToolTip = ({ tooltipContext, toggleModal }) => {
       .on('click', toggleModal)
     };
 
+
+
     function doItAll(event, d) {
       toolTip.selectAll('.petalArc').remove();
       toolTip.selectAll('.petalText').remove();
@@ -329,6 +331,11 @@ const ToolTip = ({ tooltipContext, toggleModal }) => {
     d3.selectAll('.petalPath').on('mouseenter', doItAll)
     d3.selectAll('.backgroundPetalPath').on('mouseenter', doItAll)
 
+
+    //  Make a proper Zoom function
+    d3.selectAll('graphicToolTip').attr('transform', `translate(${zoomState.k * zoomState.x},${zoomState.k * zoomState.y}) scale(${zoomState.k})`)
+
+
     toolTip
       .on("mouseleave", () => toolTip.remove())
   };
@@ -336,7 +343,7 @@ const ToolTip = ({ tooltipContext, toggleModal }) => {
 
   useEffect(() => {
     ready();
-  }, [tooltipContext]);
+  }, [tooltipContext, zoomState]);
 
   return (
     <></>

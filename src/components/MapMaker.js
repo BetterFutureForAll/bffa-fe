@@ -16,15 +16,18 @@ import ToolTip from './ToolTip';
 
 const MapMaker = ({ 
   svgRef,  width, height, spiData, mapData, path,
-  yearValue, loading, setLoading, center, setCenter,
+  yearValue, loading, setLoading, center, setCenter, zoomState, setZoomState,
   toggleModal, countryValue, setCountryValue, tooltipContext, setToolTipContext }) => {
 
   let loadingSpinner = require('../assets/loading.gif');
 
+
   // import topoJSON and CSV here
-  let localGeoData = process.env.PUBLIC_URL + '/topoMap.json';
+  // let localGeoData = process.env.PUBLIC_URL + '/topoMap.json';
+  // let localGeoData = process.env.PUBLIC_URL + '/cleanedMap.json';
 
   let hardData = require('../assets/2011-2020-Social-Progress-Index.csv');
+  
   let newData = require('../assets/SPI2011-2021-dataset.csv');
 
   let petalPath = 'M 0 0 c 100 100 80 0 100 0 C 80 0 100 -100 0 0';
@@ -35,6 +38,7 @@ const MapMaker = ({
 
   function ready(data) {
     let spiScale = d3.scaleLinear().domain([0, 100]).range([0, 100]);
+    console.log(data[0]);
     
     //Check Height Vs Width, use the width for small screens and height for large.
     let checkedSize = Math.min(height, width)
@@ -158,6 +162,7 @@ const MapMaker = ({
       // Save the Current Zoom level so we can scale tooltips. 
       initialScale = transform.k;
       fontSize = 16 / initialScale;
+      setZoomState({x: transform.x, y: transform.y, k: transform.k })
 
       //If Zoomed on a Country, center the map on that country.
         let x, y;
@@ -177,7 +182,6 @@ const MapMaker = ({
       
       svg.select(".tooltip-area, .subPetalText")
       .attr('transform', `translate(${(x? x : transform.x)},${(y? y : transform.y )}) scale(${transform.k})`)
-      
     };
     
     const zoom = d3.zoom()
@@ -241,9 +245,6 @@ const MapMaker = ({
 
 
     function countryMouseOver(event, d) {
-
-      // Change the STATE of ToolTip, can not call a useEffect in an Event.
-      
       // ToolTip({svgRef, width, height, countryValue, countryData, center });
       
       toolTip.exit().remove();
@@ -253,155 +254,12 @@ const MapMaker = ({
       
       if(!spiMatch) return;
       let name = spiMatch[0]["Country"];
-
-      //tooltip should be extracted as an fn and this refactored ********
-      // console.log('countryMouseOver Data',d);
-      // countryMouseLeave();
       
       if(spiMatch) { 
-        console.log('countryMouseOver spiMatch', spiMatch[0]["Country"], spiMatch);
         setCountryValue(name);
         setCenter(center);
         // setToolTipContext({svgRef, center, name});
       };
-
-      let x = path.centroid(d)[0];
-      let y = path.centroid(d)[1];
-      let id = d.properties.ISO_A3_EH;
-      // let r = d.properties.flower.spiScale ? spiScale(100) / initialScale : null;
-      // let scaledRadius = d.properties.flower.spiScale / initialScale || null;
-      // let color = d.properties.color;
-      // let countryName = d.properties.NAME_EN;
-      // let SPI = `SPI - ${d.properties.flower.spi}`;
-      // let text = d3.select(`.graphicTooltip__text`);
-
-      // toolTip
-      //   .data([d])
-      //   .style('visibility', 'visible')
-      //   .attr('x', d=> path.centroid(d)[0])
-      //   .attr('y', y)
-      //   .append("circle")
-      //   .attr('class', 'outer')
-      //   .attr('id', id)
-      //   .attr("cx", x)
-      //   .attr("cy", y)
-      //   .attr("r", 0)
-      //   .transition().duration([750])
-      //   .attr("r", spiScale(100))
-      //   .style('fill', '#c4c2c4')
-      //   .style("opacity", "0.5")
-      //   .style('stroke', 'black')
-
-      // toolTip
-      //   .append("circle")
-      //   .attr('class', 'inner')
-      //   .attr('id', id)
-      //   .attr("cx", x)
-      //   .attr("cy", y)
-      //   .attr("r", 0)
-      //   .transition().duration([1000])
-      //   .attr("r", scaledRadius)
-      //   .style('fill', color)
-      //   .style('stroke', 'black')
-      //   .attr("cursor", "pointer")
-
-      // toolTip
-      //   .selectAll('.petalBackgroundPath')
-      //   .data(d.properties.flower.petals)
-      //   .join('path')
-      //   .attr('class', 'petalBackgroundPath')
-      //   .attr("id", (d, i) => `${d.id}${d.text}`)
-      //   .attr('d', d => d.petalPath)
-      //   .attr('transform', d => `translate(${d.center[0]}, ${d.center[1]}) rotate(${d.angle}) scale(${0})`)
-      //   .transition().duration(1250)
-      //   .attr('transform', d => {
-      //     return `translate(${d.center[0]}, ${d.center[1]}) rotate(${d.angle}) scale(${d.petSize === 0 ? 0 : spiScale(100) * .01 / initialScale})`
-      //   })
-      //   .style('stroke', 'black')
-      //   .style('fill', d => d.colorRef)
-      //   .style("opacity", "0.50")
-      //   .attr("cursor", "pointer")
-
-      // toolTip
-      //   .selectAll('.petalPath')
-      //   .data(d.properties.flower.petals)
-      //   .join('path')
-      //   .attr('class', 'petalPath')
-      //   .attr('id', d => `${d.id}_${d.text}`)
-      //   .attr('d', d => d.petalPath)
-      //   .attr('transform', d => `translate(${d.center[0]}, ${d.center[1]}) rotate(${d.angle}) scale(${0})`)
-      //   .transition().duration(1250)
-      //   .attr('transform', d => `translate(${d.center[0]}, ${d.center[1]}) rotate(${d.angle}) scale(${d.petSize * .01 / initialScale})`)
-      //   .style('stroke', 'black')
-      //   .style('fill', d => d.colorRef)
-      //   .attr("cursor", "pointer")
-
-
-      // toolTip.selectAll('.petalScoreText')
-      //   .data(d.properties.flower.petals)
-      //   .join('text')
-      //   .attr("id", d=> `${d.id}_${d.text}_txt`)
-      //   .attr('class', 'petalScoreText')
-      //   .append("tspan")
-      //   .attr("text-anchor", "middle")
-      //   .attr("font-size", fontSize)
-      //   .attr("font-weight", 700)
-      //   .attr("x", d => {
-      //     // adjust for initial scale
-      //     if (d.angle === 30) {
-      //       return x + (d.petSize / Math.sqrt(2))/initialScale + (d.petSize > 60 ? - 20 : + 20)/initialScale;
-      //     }
-      //     if (d.angle === 150) {
-      //       return x - (d.petSize / Math.sqrt(2))/initialScale + (d.petSize > 60 ? + 20 : - 20)/initialScale;
-      //     }
-      //     if (d.angle === 270) {
-      //       return x
-      //     }
-      //   })
-      //   .attr("y", d => {
-      //     if (d.angle === 30) {
-      //       return d.center[1] + (d.petSize / Math.sqrt(2))/initialScale + (d.petSize > 60 ? - 25 : + 10)/initialScale;
-      //     }
-      //     if (d.angle === 150) {
-      //       return d.center[1] + (d.petSize / Math.sqrt(2))/initialScale + (d.petSize > 60 ? - 25 : + 10)/initialScale;
-      //     }
-      //     if (d.angle === 270) {
-      //       return d.center[1] - (d.petSize / Math.sqrt(2))/initialScale + (d.petSize > 60 ? + 20 : -20)/initialScale;
-      //     }
-      //   })
-      //   .text(d => {
-      //     if (d.petSize === 0) { return null }
-      //     return `${d.petSize}`;
-      //   })
-
-      // toolTip.selectAll('.petalScoreText')
-      //   .raise();
-
-      // toolTip.selectAll('.petalPath').on("mouseenter", doItAll)
-      // // toolTip.selectAll('.petalPath').on("mouseover", showSubPetals)
-      // // toolTip.selectAll('.petalBackgroundPath').on("mouseover", showPetalArc)
-
-      // toolTip.on("mouseleave", countryMouseLeave)
-
-      // text
-      //   .attr('transform', `translate(${x}, ${(y + spiScale(140) / initialScale)})`)
-      //   .append('tspan')
-      //   .text(countryName)
-      //   .attr('text-anchor', 'middle')
-      //   .attr("font-size", fontSize)
-      //   .attr("font-weight", 700)
-      //   .attr('x', 0)
-      //   .attr('y', 0)
-      //   .attr('dy', 0)
-
-      //   .append('tspan')
-      //   .text(SPI)
-      //   .attr("font-size", fontSize)
-      //   .attr("font-weight", 700)
-      //   .attr('x', 0)
-      //   .attr('y', 0)
-      //   .attr('dy', '1em')
-      //   .attr('text-anchor', 'middle');
     };
 
     function doItAll(event, d) {
@@ -571,25 +429,26 @@ const MapMaker = ({
 
   useEffect(() => {
     setLoading(true);
-    let localData = d3.json(localGeoData);
+    // let localData = d3.json(localGeoData);
     if(spiData.length===0)return;
 
     let remoteMapData = d3.json("https://unpkg.com/world-atlas@1/world/110m.json")
 
-    Promise.all([localData, spiData]).then(function (values) {
+    Promise.all([mapData, spiData]).then(function (values) {
+      console.log(mapData);
       d3.selectAll(svgRef.current).exit().remove();
       setLoading(false);
       ready(values);
     });
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [yearValue, localGeoData, svgRef, height, width, spiData]);
+  }, [yearValue, svgRef, height, width, spiData]);
 
   while (loading) return (<img src={loadingSpinner} alt={'loading spinner'} id="loading-spinner" />)
 
   return (
     <svg ref={svgRef} height={height} width={width} id="map">
-      <ToolTip tooltipContext={tooltipContext} toggleModal={toggleModal} />
+      <ToolTip tooltipContext={tooltipContext} toggleModal={toggleModal} zoomState={zoomState} />
       {/* <g className="tooltip-area">
         <text className="tooltip-area__text"></text>
       </g>

@@ -9,7 +9,8 @@ function MapContainer({
   clickedSubCat, setClickedSubCat,
   center, setCenter, spiData, mapData, path, 
   countryValue, setCountryValue, selectCountries, 
-  tooltipContext, setToolTipContext, svgRef }) {
+  tooltipContext, setToolTipContext, svgRef,
+  zoomState, setZoomState }) {
 
   let [loading, setLoading] = useState(true);
   let [clicked, setClicked] = useClicked();
@@ -36,6 +37,8 @@ function MapContainer({
           spiData={spiData}
           mapData={mapData}
           path={path}
+          zoomState={zoomState}
+          setZoomState={setZoomState}
         />
         <div className="ControlBar">
           <Header
