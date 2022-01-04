@@ -3,7 +3,10 @@ import React, { useEffect, useRef } from 'react';
 import './App.css';
 import * as d3 from 'd3'
 import MapContainer from './containers/Map';
-import { useDataByCountry, useDataByYear, useModal, useToolTip, useYears, useHandleYearChange, useClickedSubCat, useCenter, useZoom } from './hooks/hooks';
+import { useDataByCountry, useDataByYear, useModal, 
+         useToolTip, useYears, useHandleYearChange, useClickedSubCat, 
+         useCenter, useZoom, mapMemoizer 
+        } from './hooks/hooks';
 import ModalDefinitions from './containers/ModalDefinitions';
 import Portal from './containers/Portal';
 import { useWindowSize, useHandleCountryChange, useCountries } from './hooks/hooks';
@@ -22,9 +25,11 @@ function App() {
   let [tooltipContext, setToolTipContext] = useToolTip();
   let [zoomState, setZoomState] = useZoom();
 
-  let mapData = d3.json(localGeoData);
+  let mapData = d3.json(localGeoData).then(r => {
+    return r;
+  });
   let pathRef = useRef();
-    
+
   let checkedSize = Math.min(height, width)
   let projection = useRef(d3.geoEqualEarth()
     .scale(checkedSize / 1.3 / Math.PI)
@@ -38,6 +43,7 @@ function App() {
   useEffect(() => {
      projection.current.translate([width  / 2, height  / 2 ]);
      pathRef.current = d3.geoPath().projection(projection.current);
+     console.log('pathRef',pathRef);
   }, [height, width])
 
   let handleCountryChange = e => setCountryValue(e.target.value);
