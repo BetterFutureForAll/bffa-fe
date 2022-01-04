@@ -333,7 +333,7 @@ const ToolTip = ({ tooltipContext, toggleModal, zoomState }) => {
 
 
     //  Make a proper Zoom function
-    d3.selectAll('graphicToolTip').attr('transform', `translate(${zoomState.k * zoomState.x},${zoomState.k * zoomState.y}) scale(${zoomState.k})`)
+    d3.selectAll('.graphicToolTip').attr('transform', `translate(${zoomState.k * zoomState.x},${zoomState.k * zoomState.y}) scale(${ 1 / zoomState.k})`)
 
 
     toolTip
