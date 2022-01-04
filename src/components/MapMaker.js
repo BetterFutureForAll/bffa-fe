@@ -7,12 +7,8 @@ import {
   foundationsColorScale,
   opportunityColorScale
 } from '../services/SocialProgress';
-import { useToolTip } from '../hooks/hooks';
 import ToolTip from './ToolTip';
 
-// countryMouseOver and countryValue need to be synchronized 
-// reduce looping through by just grabbing countryValue and yearValue using a D3.group data map, and change the value onHover?
-// let [tooltipContext, setToolTipContext] = useToolTip();
 
 const MapMaker = ({ 
   svgRef,  width, height, spiData, mapData, path,
@@ -20,11 +16,6 @@ const MapMaker = ({
   toggleModal, countryValue, setCountryValue, tooltipContext, setToolTipContext }) => {
 
   let loadingSpinner = require('../assets/loading.gif');
-
-
-  // import topoJSON and CSV here
-  // let localGeoData = process.env.PUBLIC_URL + '/topoMap.json';
-  // let localGeoData = process.env.PUBLIC_URL + '/cleanedMap.json';
 
   let hardData = require('../assets/2011-2020-Social-Progress-Index.csv');
   
@@ -37,8 +28,8 @@ const MapMaker = ({
 
 
   function ready(data) {
+
     let spiScale = d3.scaleLinear().domain([0, 100]).range([0, 100]);
-    console.log(data[0]);
     
     //Check Height Vs Width, use the width for small screens and height for large.
     let checkedSize = Math.min(height, width)
@@ -56,97 +47,7 @@ const MapMaker = ({
     console.log('mapFeatures', mapFeatures);
     
     let mapGroup = d3.group(mapFeatures, d => d.properties.ISO_A3_EH);
-    function mapMatcher(id)  {  return mapGroup.get(id)}
-    console.log('spiCountryGroup', data[1]);
 
-//****************************************************************************************************************/
-// ******   refactor to avoid this loop, calculate values on the fly instead ********************************/
-    // mapFeatures.forEach(function (f) {
-
-    //   //Catch for Colonies and Territories without Formal ISO names. 
-    //   if (f.properties.ISO_A3_EH === "-99") {
-    //     f.properties.ISO_A3_EH = f.properties.GU_A3;
-    //   }
-
-    //   let d = spiCountryGroup.get(f.properties.ISO_A3_EH) || null;
-
-    //   let id = f.properties.ISO_A3_EH;
-
-    //   let spi = d ? +d[0]["Social Progress Index"] : 0;
-    //   let spiSize = spi;
-    //   // d3 Group, look at ModalDef for reference
-    //   let basicNeeds = d ? +d[0]["Basic Human Needs"] : 0;
-
-    //   let basicSubCat = d ? [
-    //     d[0]["Nutrition and Basic Medical Care"],
-    //     d[0]['Water and Sanitation'],
-    //     d[0]['Shelter'],
-    //     d[0]['Personal Safety']
-    //   ] :
-    //     [0, 0, 0, 0];
-
-    //   let foundations = d ? +d[0]["Foundations of Wellbeing"] : 0;
-
-    //   let foundationsSubCat = d ? [
-    //     d[0]["Access to Basic Knowledge"],
-    //     d[0]['Access to Information and Communications'],
-    //     d[0]['Health and Wellness'],
-    //     d[0]['Environmental Quality']
-    //     ,] :
-    //     [0, 0, 0, 0];
-
-    //   let opportunity = d ? +d[0]["Opportunity"] : 0;
-
-    //   let opportunitySubCat = d ? [
-    //     d[0]["Personal Rights"],
-    //     d[0]["Personal Freedom and Choice"],
-    //     d[0]["Inclusiveness"],
-    //     d[0]["Access to Advanced Education"],
-    //   ] :
-    //     [0, 0, 0, 0];
-
-    //   // Individual Map Colors
-    //   f.properties.spi = d ? d[0] : { "Social Progress Index": null };
-    //   f.properties.color = spi ? colorScale(spi) : null;
-
-    //   // petals change to reflect 3 categories (basic needs etc)
-    //   f.properties.flower = {
-    //     petals: [
-    //       {
-    //         id, angle: 30, petalPath, center: path.centroid(f), petSize: basicNeeds, colorRef: basicColorScale(basicNeeds), text: 'Basic Human Needs',
-    //         subCat: [
-    //           { angle: 0, value: basicSubCat[0], colorValue: basicColorScale(basicSubCat[0]), text: `Nutrition and Basic Medical Care - ${basicSubCat[0]}` },
-    //           { angle: 20, value: basicSubCat[1], colorValue: basicColorScale(basicSubCat[1]), text: `Water and Sanitation - ${basicSubCat[1]}` },
-    //           { angle: 40, value: basicSubCat[2], colorValue: basicColorScale(basicSubCat[2]), text: `Shelter - ${basicSubCat[2]}` },
-    //           { angle: 60, value: basicSubCat[3], colorValue: basicColorScale(basicSubCat[3]), text: `Personal Safety - ${basicSubCat[3]}` },
-    //         ]
-    //       },
-    //       {
-    //         id, angle: 150, petalPath, center: path.centroid(f), petSize: foundations, colorRef: foundationsColorScale(foundations), text: 'Foundations of Wellbeing',
-    //         subCat: [
-    //           { angle: 120, value: foundationsSubCat[0], colorValue: foundationsColorScale(foundationsSubCat[0]), text: `Access to Basic Knowledge - ${foundationsSubCat[0]}` },
-    //           { angle: 140, value: foundationsSubCat[1], colorValue: foundationsColorScale(foundationsSubCat[1]), text: `Access to Information and Communications - ${foundationsSubCat[1]}` },
-    //           { angle: 160, value: foundationsSubCat[2], colorValue: foundationsColorScale(foundationsSubCat[2]), text: `Health and Wellness - ${foundationsSubCat[2]}` },
-    //           { angle: 180, value: foundationsSubCat[3], colorValue: foundationsColorScale(foundationsSubCat[3]), text: `Environmental Quality - ${foundationsSubCat[3]}` },
-    //         ]
-    //       },
-    //       {
-    //         id, angle: 270, petalPath, center: path.centroid(f), petSize: opportunity, colorRef: opportunityColorScale(opportunity), text: 'Opportunity',
-    //         subCat: [
-    //           { id, angle: 240, value: opportunitySubCat[0], colorValue: opportunityColorScale(opportunitySubCat[0]), text: `Personal Rights - ${opportunitySubCat[0]}` },
-    //           { id, angle: 260, value: opportunitySubCat[1], colorValue: opportunityColorScale(opportunitySubCat[1]), text: `Personal Freedom and Choice - ${opportunitySubCat[1]}` },
-    //           { id, angle: 280, value: opportunitySubCat[2], colorValue: opportunityColorScale(opportunitySubCat[2]), text: `Inclusiveness - ${opportunitySubCat[2]}` },
-    //           { id, angle: 300, value: opportunitySubCat[3], colorValue: opportunityColorScale(opportunitySubCat[3]), text: `Access to Advanced Education - ${opportunitySubCat[3]}` },
-    //         ]
-    //       }
-    //     ],
-    //     spiScale: spiSize,
-    //     spi,
-    //     center: path.centroid(f),
-    //     bounds: path.bounds(f),
-    //   };
-    // })
-//**************************************************************************************************************** */
     // initialScale tracks Zoom scale throughout transforms.
     var initialScale = 1;
     var fontSize = 16 / initialScale;
@@ -162,26 +63,32 @@ const MapMaker = ({
       // Save the Current Zoom level so we can scale tooltips. 
       initialScale = transform.k;
       fontSize = 16 / initialScale;
-      setZoomState({x: transform.x, y: transform.y, k: transform.k })
 
-      //If Zoomed on a Country, center the map on that country.
-        let x, y;
-        if (!d || centered === data) {
-          centered = null;
-        } else {
-          var centroid = path.centroid(d);
-          x = width / 2 - centroid[0];
-          y = height / 2 - centroid[1];
-          centered = data;
-        }
+      setZoomState({x: transform.x, y: transform.y, k: transform.k })
+      console.log(transform);
+      console.log('before setCenter', center);
+      // setCenter([(center[0]+transform.x), (center[1]+transform.y)]);
+      setCenter([transform.x, transform.y]);
+      console.log([transform.x, transform.y]);
+      console.log('after setCenter', center);
+      // //If Zoomed on a Country, center the map on that country.
+      //   let x, y;
+      //   if (!d || centered === data) {
+      //     centered = null;
+      //   } else {
+      //     var centroid = path.centroid(d);
+      //     x = width / 2 - centroid[0];
+      //     y = height / 2 - centroid[1];
+      //     centered = data;
+      //   }
       
-      svg.selectAll(".country, .border, .graphicTooltip")
+      svg.selectAll(".country, .border")
       .attr('transform', transform)
-      .attr('transform', `translate(${(x? x : transform.x)},${(y? y : transform.y )}) scale(${transform.k})`)
+      .attr('transform', `translate(${transform.x},${transform.y}) scale(${transform.k})`)
       .attr("stroke-width", 1 / transform.k);
       
-      svg.select(".tooltip-area, .subPetalText")
-      .attr('transform', `translate(${(x? x : transform.x)},${(y? y : transform.y )}) scale(${transform.k})`)
+      // svg.select(".graphicTooltip")
+      // .attr('transform', `translate(${transform.x},${transform.y}) scale(${1/transform.k})`)
     };
     
     const zoom = d3.zoom()
@@ -247,19 +154,22 @@ const MapMaker = ({
     function countryMouseOver(event, d) {
       // ToolTip({svgRef, width, height, countryValue, countryData, center });
       
+
+
       toolTip.exit().remove();
       let spiMatch = spiMatcher(d.properties.ISO_A3_EH);
       let gu_a3 = spiMatcher(d.properties.GU_A3);
       let center = path.centroid(d);
+
+      console.log('path.centroid', center);
       
       if(!spiMatch) return;
+
       let name = spiMatch[0]["Country"];
       
-      if(spiMatch) { 
-        setCountryValue(name);
-        setCenter(center);
-        // setToolTipContext({svgRef, center, name});
-      };
+      setCenter(center);
+      setCountryValue(name);
+      
     };
 
     function doItAll(event, d) {
@@ -419,14 +329,6 @@ const MapMaker = ({
     TextTooltip.attr("pointer-events", "none");
   };
 
-  // useEffect(()=>{
-  //   //get countryValue path.centroid(mapData)
-    
-
-  //   setCenter()
-  // }, [countryValue])
-
-
   useEffect(() => {
     setLoading(true);
     // let localData = d3.json(localGeoData);
@@ -435,7 +337,6 @@ const MapMaker = ({
     let remoteMapData = d3.json("https://unpkg.com/world-atlas@1/world/110m.json")
 
     Promise.all([mapData, spiData]).then(function (values) {
-      console.log(mapData);
       d3.selectAll(svgRef.current).exit().remove();
       setLoading(false);
       ready(values);
@@ -449,12 +350,6 @@ const MapMaker = ({
   return (
     <svg ref={svgRef} height={height} width={width} id="map">
       <ToolTip tooltipContext={tooltipContext} toggleModal={toggleModal} zoomState={zoomState} />
-      {/* <g className="tooltip-area">
-        <text className="tooltip-area__text"></text>
-      </g>
-      <g className="graphicTooltip">
-        <text className="graphicTooltip__text"></text>
-      </g> */}
     </svg>
   );
 };
