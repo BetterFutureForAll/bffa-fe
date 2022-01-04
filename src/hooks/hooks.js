@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import {
   makeYearsArray,
   getSpiDataByYear,
@@ -132,13 +132,13 @@ export function useToolTip() {
     name: 'World',
     data: []
   });
+
   useEffect(() => {
     setToolTipContext(tooltipContext);
   }, [tooltipContext, setToolTipContext])
 
   return [tooltipContext, setToolTipContext];
 };
-
 
 export function scoreToColor(score) {
   let scoreColor = d3.scaleLinear()
@@ -178,3 +178,15 @@ export function useWindowSize() {
 
   return windowSize;
 };
+
+export async function mapMemoizer() {
+  let localGeoData = process.env.PUBLIC_URL + '/cleanedMap.json';
+
+  await d3.json(localGeoData).then(r => {
+    console.log('result',r);
+    let memoizedMap = useMemo(()=>{
+      return r
+    }, [r]);
+    return memoizedMap;
+  });
+} 
