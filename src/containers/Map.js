@@ -1,55 +1,19 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Header from '../components/Header';
-import {
-  useHandleYearChange,
-  useYears, useCountries,
-  useClicked, useMouse,
-  useClickedSubCat
-} from '../hooks/hooks';
+// import { useClicked, useMouse } from '../hooks/hooks';
 import MapMaker from '../components/MapMaker';
 
-function MapContainer({ toggleModal, width, height, countryValue, setCountryValue, handleCountryChange }) {
-
-  const svgRef = useRef(null);
+function MapContainer({ 
+  toggleModal, width, height, 
+  selectYears, yearValue, 
+  center, setCenter, spiData, mapData, path, 
+  countryValue, setCountryValue, selectCountries, 
+  tooltipContext, setToolTipContext, svgRef,
+  zoomState, setZoomState }) {
 
   let [loading, setLoading] = useState(true);
-  let [clicked, setClicked] = useClicked();
-  let [setMouse] = useMouse();
-  let [years] = useYears();
-  let [yearValue, handleYearChange] = useHandleYearChange();
-  let [clickedSubCat, setClickedSubCat] = useClickedSubCat();
-
-  let [countries] = useCountries();
-
-  let selectYears = (
-    <>
-      <select onChange={handleYearChange} defaultValue={yearValue} >
-        {years.map(item => (
-          <option
-            key={item}
-            value={item}
-            onSelect={handleYearChange}
-          >
-            {item}
-          </option>
-        ))}
-      </select>
-    </>
-  );
-
-  let selectCountries = (
-    <select onChange={handleCountryChange} defaultValue={countryValue}>
-      {countries.map(item => (
-        <option key={item} value={item} onSelect={handleCountryChange}>
-          {item}
-        </option>
-      ))}
-    </select>
-  );
-
-  useEffect(() => {
-      setCountryValue(countryValue)
-  }, [width, height, countryValue, setCountryValue]);
+  // let [clicked, setClicked] = useClicked();
+  // let [setMouse] = useMouse();
 
 
   return (
@@ -57,21 +21,23 @@ function MapContainer({ toggleModal, width, height, countryValue, setCountryValu
       <div id="MapContainer" >
         <MapMaker
           svgRef={svgRef}
-          setClicked={setClicked}
-          clicked={clicked}
-          setClickedSubCat={setClickedSubCat}
-          clickedSubCat={clickedSubCat}
           yearValue={yearValue}
-          setMouse={setMouse}
           height={height}
           width={width}
           loading={loading}
           setLoading={setLoading}
           toggleModal={toggleModal}
-          countries={countries}
           countryValue={countryValue}
           setCountryValue={setCountryValue}
-          handleCountryChange={handleCountryChange}
+          tooltipContext={tooltipContext}
+          setToolTipContext={setToolTipContext}
+          center={center}
+          setCenter={setCenter}
+          spiData={spiData}
+          mapData={mapData}
+          path={path}
+          zoomState={zoomState}
+          setZoomState={setZoomState}
         />
         <div className="ControlBar">
           <Header

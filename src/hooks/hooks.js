@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import {
   makeYearsArray,
   getSpiDataByYear,
@@ -25,17 +25,17 @@ export const useModal = () => {
 
 export const useClicked = () => {
   let [clicked, setClicked] = useState('World');
-  useEffect(()=>{
+  useEffect(() => {
     setClicked(clicked);
-  },[clicked])
+  }, [clicked])
   return [clicked, setClicked];
 }
 
 export const useClickedSubCat = () => {
   let [clickedSubCat, setClickedSubCat] = useState(null);
-  useEffect(()=>{
+  useEffect(() => {
     setClickedSubCat(clickedSubCat);
-  },[clickedSubCat])
+  }, [clickedSubCat])
   return [clickedSubCat, setClickedSubCat];
 }
 
@@ -47,6 +47,17 @@ export const useMouse = () => {
 export const useScore = () => {
   let [score, setScore] = useState({ name: '', score: '' });
   return [score, setScore];
+};
+export const useCenter = () => {
+  let [center, setCenter] = useState([0,0]);
+  return [center, setCenter];
+};
+
+export const useZoom = () => {
+  let [zoomState, setZoomState] = useState(
+    { x: 0, y:0, k:1}
+  );
+  return [zoomState, setZoomState];
 };
 
 export const useYears = () => {
@@ -61,7 +72,7 @@ export const useYears = () => {
 };
 
 export const useHandleYearChange = () => {
-  let [yearValue, setYearValue] = useState('2020');
+  let [yearValue, setYearValue] = useState('2021');
   let handleYearChange = (e) => {
     setYearValue(e.target.value);
   };
@@ -83,14 +94,13 @@ export const useCountries = () => {
 };
 
 export const useHandleCountryChange = () => {
-  let [countryValue, setCountryValue] = useState('World');
-  let handleCountryChange = (e) => {
-    setCountryValue(e.target.value);
-  };
+  let [countryValue, setCountryValue] = useState('');
+
   useEffect(() => {
     setCountryValue(countryValue);
-  }, [countryValue]);
-  return [countryValue, handleCountryChange, setCountryValue];
+  }, [countryValue, setCountryValue]);
+
+  return [countryValue, setCountryValue];
 };
 
 export const useDataByYear = (yearValue) => {
@@ -103,14 +113,31 @@ export const useDataByYear = (yearValue) => {
 };
 
 export const useDataByCountry = (spiByYear, countryValue) => {
-  let [spiByCountry, setSpiByCountry] = useState([]);
+  let [spiByCountry, setSpiByCountry] = useState();
   useEffect(() => {
-    if (spiByYear && countryValue) {
-      getSpiDataByCountry(spiByYear, countryValue)
-        .then(d => setSpiByCountry(d));
-    }
+    getSpiDataByCountry(spiByYear, countryValue)
+      .then(d => setSpiByCountry(d));
   }, [spiByYear, countryValue]);
+
   return [spiByCountry, setSpiByCountry];
+};
+
+// export const memoizedData = useMemo(()=> getSpiDataByCountry(spiByYear, countryValue), [spiByYear, countryValue]);
+
+export function useToolTip() {
+
+  let [tooltipContext, setToolTipContext] = useState({
+    svgRef: null,
+    center: [0, 0],
+    name: 'World',
+    data: []
+  });
+
+  useEffect(() => {
+    setToolTipContext(tooltipContext);
+  }, [tooltipContext, setToolTipContext])
+
+  return [tooltipContext, setToolTipContext];
 };
 
 export function scoreToColor(score) {
@@ -126,7 +153,7 @@ export function scoreToColor(score) {
       '#20c30f'
     ]);
   return scoreColor(score);
-}
+};
 
 export function useWindowSize() {
   const isWindowClient = typeof window === "object";
@@ -152,3 +179,14 @@ export function useWindowSize() {
   return windowSize;
 };
 
+export async function mapMemoizer() {
+  let localGeoData = process.env.PUBLIC_URL + '/cleanedMap.json';
+
+  await d3.json(localGeoData).then(r => {
+    console.log('result',r);
+    let memoizedMap = useMemo(()=>{
+      return r
+    }, [r]);
+    return memoizedMap;
+  });
+} 
