@@ -13,8 +13,8 @@ function MapContainer({
   zoomState, setZoomState }) {
 
   let [loading, setLoading] = useState(true);
-  let [clicked, setClicked] = useClicked();
-  let [setMouse] = useMouse();
+  // let [clicked, setClicked] = useClicked();
+  // let [setMouse] = useMouse();
 
 
   return (

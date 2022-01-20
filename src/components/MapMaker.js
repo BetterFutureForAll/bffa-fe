@@ -34,7 +34,6 @@ const MapMaker = ({
     //Check Height Vs Width, use the width for small screens and height for large.
     let checkedSize = Math.min(height, width)
     
-    console.log('size',checkedSize);
     let projection = d3.geoEqualEarth()
       .scale(checkedSize / Math.PI / 1.25)
       .translate([width / 2, height / 2])
@@ -44,7 +43,6 @@ const MapMaker = ({
     let mapFeatures = feature(data[0], data[0].objects.countries).features;
     
     function spiMatcher(id) { return spiCountryGroup.get(id); };
-    console.log('mapFeatures', mapFeatures);
     
     let mapGroup = d3.group(mapFeatures, d => d.properties.ISO_A3_EH);
 
@@ -56,7 +54,6 @@ const MapMaker = ({
 
     let zoomed = (event, d) => {
       //reset the toolTip before transforming
-      countryMouseLeave();
       
       const { transform } = event;
 
@@ -64,13 +61,19 @@ const MapMaker = ({
       initialScale = transform.k;
       fontSize = 16 / initialScale;
 
-      setZoomState({x: transform.x, y: transform.y, k: transform.k })
-      console.log(transform);
-      console.log('before setCenter', center);
+      setZoomState({x: transform.x, y: transform.y, k: transform.k });
+
+      // iterate through then adjust center.current
+      // tooltip needs to either transform with map and stay, 
+      // or currently is removed and redrawn
+      
       // setCenter([(center[0]+transform.x), (center[1]+transform.y)]);
-      setCenter([transform.x, transform.y]);
-      console.log([transform.x, transform.y]);
-      console.log('after setCenter', center);
+      
+      // setCenter call does not go through. 
+      let newCenter = [center[0] + transform.x, center[0] + transform.y];
+      
+      // setCenter(newCenter);
+      
       // //If Zoomed on a Country, center the map on that country.
       //   let x, y;
       //   if (!d || centered === data) {
@@ -82,7 +85,7 @@ const MapMaker = ({
       //     centered = data;
       //   }
       
-      svg.selectAll(".country, .border")
+      svg.selectAll(".country, .border, .toolTipTarget")
       .attr('transform', transform)
       .attr('transform', `translate(${transform.x},${transform.y}) scale(${transform.k})`)
       .attr("stroke-width", 1 / transform.k);
@@ -105,7 +108,7 @@ const MapMaker = ({
       .attr("id", "viewbox")
       .attr("viewBox", [0, 0, width, height])
       .attr('preserveAspectRatio', 'xMinYMid')
-      .on("mouseleave", reset, countryMouseLeave)
+      .on("mouseleave", reset)
       .on('zoom', zoom)
       
     let g = svg.append("g").attr('class', 'countries');
@@ -115,166 +118,22 @@ const MapMaker = ({
     
     svg.exit().remove();
 
-    var TextTooltip = d3.select(".tooltip-area")
-      .style("opacity", 0);
-
-    var mouseover = function (event, d) {
-      TextTooltip
-        .style("opacity", 1)
-    };
-
-    var mousemove = function (event, d) {
-// Initial coordinates are wrong on first render. Refreshes accurate with
-      const text = d3.select('.tooltip-area__text');
-      text.text(`${d.text}`);
-
-      let x = event.x;
-      let y = event.y;
-
-      TextTooltip
-        .attr("font-size", 16)
-        .attr('text-anchor', 'middle')
-        .attr("font-weight", 700)
-        .attr('style', 'text-shadow: 2px 2px white, -2px -2px white, 2px -2px white, -2px 2px white;')
-        .attr('background-color', 'gray;')
-        .attr('transform', `translate(${x}, ${y})`)
-    };
-
-    var mouseleave = function (event, d) {
-      TextTooltip
-        .style("opacity", 0)
-        .style("stroke", "none")
-    };
-
-    let toolTip = d3.select('.graphicTooltip')
-      .style('visibility', 'hidden')
-      .on("mouseleave", countryMouseLeave)
-
 
     function countryMouseOver(event, d) {
       // ToolTip({svgRef, width, height, countryValue, countryData, center });
-      
-
-
-      toolTip.exit().remove();
+      // toolTip.exit().remove();
       let spiMatch = spiMatcher(d.properties.ISO_A3_EH);
       let gu_a3 = spiMatcher(d.properties.GU_A3);
-      let center = path.centroid(d);
+      let centroid = path.centroid(d);
 
-      console.log('path.centroid', center);
-      
       if(!spiMatch) return;
 
       let name = spiMatch[0]["Country"];
-      
-      setCenter(center);
+
+      setCenter(centroid);
       setCountryValue(name);
+
       
-    };
-
-    function doItAll(event, d) {
-      showSubPetals(event, d);
-      showPetalArc(event, d);
-    }
-
-    function showPetalArc(event, d) {
-      var arc = d3.arc()
-        .startAngle([(Math.PI * 2) / 3])
-        .endAngle([0])
-        .innerRadius([100])
-        .outerRadius([120])
-        .cornerRadius([10]);
-
-      toolTip.selectAll('.petalArc')
-        .data([d])
-        .join('path')
-        .attr('class', 'petalArc')
-        .attr('id', d => {
-          return `arc_${d.id}_${d.text}`
-        })
-        .attr('d', arc)
-        .attr('fill', d => {
-          return d.colorRef
-        })
-        .attr('transform', d => `translate(${d.center[0]}, ${d.center[1]}) rotate(${d.angle + 30}) scale(${1 / initialScale})`)
-        .attr("cursor", "pointer")
-
-
-      toolTip.selectAll('.petalText')
-        .data([d])
-        .join('text')
-        .attr('class', 'petalText')
-        .attr("dy", -5 / initialScale)
-        .append('textPath')
-        .style("text-anchor", "middle")
-        .attr("xlink:href", d => { return `#arc_${d.id}_${d.text}` })
-        .attr("font-size", fontSize)
-        .attr("fill", d => {
-          let fontColor = 'black'
-          if (d.angle === 30 && d.petSize > 85) {
-            fontColor = 'yellow'
-          }
-          return fontColor;
-        })
-        .attr("pointer-events", "none")
-        .attr("startOffset", function (d) {
-          if (d.angle === 270) {
-            return 370 / initialScale;
-          }
-          if (d.angle === 30) {
-            return 130 / initialScale;
-          }
-          else {
-            return 135 / initialScale;
-          }
-        })
-        .text(d => {
-          return `${d.text} - ${d.petSize}`;
-        });
-
-      toolTip.selectAll('.petalArc')
-      .on('click', toggleModal)
-    };
-
-    function showSubPetals(event, d) {
-      let x = d.center[0];
-      let y = d.center[1];
-
-      toolTip
-        .selectAll('.subPetalPath')
-        .data(d.subCat)
-        .join('path')
-        .attr('class', 'subPetalPath')
-        .attr("id", (d, i) => {
-          // setClickedSubCat(d.text);
-          return d.id})
-        .attr('d', d => subPetalPath)
-        .attr('transform', d => `translate(${x}, ${y}) scale(${0})`)
-        .transition().duration(750)
-        .attr('transform', d => `translate(${x}, ${y}) rotate(${d.angle}) scale(${spiScale(d.value) * .01 / initialScale})`)
-        .style('stroke', 'black')
-        .style('fill', d => d.colorValue)
-        .attr("cursor", "pointer");
-
-      d3.selectAll('.subPetalPath')
-        .on("mouseover", mouseover)
-        .on("mousemove", mousemove)
-        .on("mouseleave", mouseleave)
-        .on('click', mousemove)
-    }
-
-    function countryMouseLeave(event) {
-      toolTip.selectAll('circle').remove();
-      toolTip.selectAll('text').text(null);
-      toolTip.selectAll('.petalBackgroundPath').remove();
-      toolTip.selectAll('.petalPath').remove();
-      toolTip.selectAll('.subPetalPath').remove();
-      toolTip.selectAll('.petalArc').remove();
-      toolTip.selectAll('.petalText').remove();
-
-      // toolTip.selectAll('title').remove();
-      toolTip
-        .style('visibility', 'hidden')
     };
 
     // *** Country groupings ***
@@ -283,16 +142,14 @@ const MapMaker = ({
       .join("path")
       .attr("d", path)
       .attr("class", "country")
-      .attr("id", d => d.properties.ISO_A3_EH)
+      .attr("id", d => {
+       return d.properties.GU_A3})
       .attr("cursor", "pointer")
       .attr("fill", d => {
         let spi = spiMatcher(d.properties.ISO_A3_EH) || spiMatcher(d.properties.GU_A3);
-        // console.log(spi);
-        // SU
         if(d.properties.ISO_A3_EH==='-99') { 
           return spi = spiMatcher(d.properties.GU_A3);
         }; 
-       
         return spi? colorScale(spi[0]['Social Progress Index']) : "#c4c2c4" })
       .on("mouseover", countryMouseOver)
       .on("mouseenter", (event, d) => {
@@ -304,6 +161,18 @@ const MapMaker = ({
       .text(d => { return `${d.properties.NAME_EN}` })
 
     countries.exit().remove();
+
+      g.selectAll(`.toolTipTarget`)
+      //** Filter Country matches here  */
+        .data(mapFeatures.filter(d => d.properties.ISO_A3_EH !== "ATA"))
+        .join('circle')
+        .attr('class', 'toolTipTarget')
+        .attr('id', d=> {
+          return `${d.properties.GU_A3}_target`})
+        .attr("cx", d => path.centroid(d)[0])
+        .attr("cy", d => path.centroid(d)[1])
+        .attr("r", 0)
+
 
     // // *** borders / whitespace mesh ***
     let borders = g.append("path")
@@ -319,14 +188,11 @@ const MapMaker = ({
 
     // *** Event Listeners ***
     function reset(event) {
-      countryMouseLeave();
+      // countryMouseLeave();
       svg.selectAll('.subPetalText').remove();
       d3.selectAll(".toolTipName").remove();
     }
 
-    toolTip.raise();
-    TextTooltip.raise();
-    TextTooltip.attr("pointer-events", "none");
   };
 
   useEffect(() => {

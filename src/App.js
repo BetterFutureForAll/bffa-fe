@@ -93,14 +93,13 @@ function App() {
     </>;
 
   useEffect(()=>{
-    console.log('zoomState: ',zoomState)
-  }, [zoomState]);
+    // console.log('app level center: ', center );
+    // console.log('zoomState: ', zoomState);
+
+  }, [zoomState, center]);
 
   useEffect(()=>{
-    // Needs to listen for Zoom changes, and Country Value Changes
-    // Then Update Center value
 
-    setCenter([width / 2, height / 2]);
   }, [height, width, setCenter]);
 
   useEffect(() => {
