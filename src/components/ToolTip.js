@@ -80,11 +80,10 @@ const ToolTip = ({ tooltipContext, toggleModal, zoomState }) => {
 
       svg.selectAll('.graphicTooltip').remove();
 
-      // svg.selectAll('.toolTipTarget').attr('transform', `translate(${zoomState.x}, ${zoomState.y}) scale(${zoomState.k})`)
-      //   .attr("stroke-width", 1 / zoomState.k); 
+      // Crashes here when nodes don't assign properly ********************************************** !!!!!!!!!!!!!!!!
 
-      let x = svg.select(`#${data[0]['SPI country code']}_target`).attr('cx') || 0;
-      let y = svg.select(`#${data[0]['SPI country code']}_target`).attr('cy') || 0;
+      let x = svg.select(`#${data[0]['SPI country code']}_target`).attr('cx');
+      let y = svg.select(`#${data[0]['SPI country code']}_target`).attr('cy');
 
       let fontSize = 16 / zoomState.k;
 
@@ -248,7 +247,8 @@ const ToolTip = ({ tooltipContext, toggleModal, zoomState }) => {
           .attr("font-weight", 700)
           .attr('style', 'text-shadow: 2px 2px white, -2px -2px white, 2px -2px white, -2px 2px white;')
           .attr('background-color', 'gray;')
-
+          
+          textTooltip.raise()
 
       };
 
@@ -285,7 +285,7 @@ const ToolTip = ({ tooltipContext, toggleModal, zoomState }) => {
           .on("mousemove", mousemove)
           .on("mouseout", mouseout)
 
-        d3.selectAll('.petalBackgroundPath')
+        d3.selectAll('.petalPath, .subPetalPath')
           .on("mouseover", mouseover)
           .on("mousemove", mousemove)
           .on("mouseout", mouseout)
