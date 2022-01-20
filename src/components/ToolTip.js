@@ -280,7 +280,7 @@ const ToolTip = ({ tooltipContext, toggleModal, zoomState }) => {
           })
           .attr("cursor", "crosshair");
 
-        d3.selectAll('.subPetalPath')
+        subPetals
           .on("mouseover", mouseover)
           .on("mousemove", mousemove)
           .on("mouseout", mouseout)
@@ -372,7 +372,7 @@ const ToolTip = ({ tooltipContext, toggleModal, zoomState }) => {
 
 
     ready();
-  }, [tooltipContext, zoomState]);
+  }, [tooltipContext, zoomState, toggleModal]);
 
   return (
     <></>

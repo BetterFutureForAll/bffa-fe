@@ -4,8 +4,8 @@ import './App.css';
 import * as d3 from 'd3'
 import MapContainer from './containers/Map';
 import { useDataByCountry, useDataByYear, useModal, 
-         useToolTip, useYears, useHandleYearChange, useClickedSubCat, 
-         useCenter, useZoom, mapMemoizer 
+         useToolTip, useYears, useHandleYearChange, 
+         useCenter, useZoom, 
         } from './hooks/hooks';
 import ModalDefinitions from './containers/ModalDefinitions';
 import Portal from './containers/Portal';
@@ -30,32 +30,16 @@ function App() {
   });
   let pathRef = useRef();
 
-  let checkedSize = Math.min(height, width)
-  let projection = useRef(d3.geoEqualEarth()
-    .scale(checkedSize / 1.3 / Math.PI)
-    .translate([width / 2, height / 2]));
-
-  let path = d3.geoPath().projection(projection);
-  //   const projRef = useRef(d3.geoMercator()
-  //  .center([-73.93, 40.72]).scale(57500));
-
-
-  useEffect(() => {
-     projection.current.translate([width  / 2, height  / 2 ]);
-     pathRef.current = d3.geoPath().projection(projection.current);
-     console.log('pathRef',pathRef);
-  }, [height, width])
 
   let handleCountryChange = e => setCountryValue(e.target.value);
 
   // May need Redux to control state.
   let [spiByYear] = useDataByYear(yearValue);
-  let [spiByCountry, setSpiByCountry] = useDataByCountry(spiByYear, countryValue);
+  let [spiByCountry] = useDataByCountry(spiByYear, countryValue);
 
   // let [clickedSubCat, setClickedSubCat] = useClickedSubCat();
   let svgRef = useRef(null);
   let [center, setCenter] = useCenter();
-
 
   let selectYears = (
     <>
@@ -91,16 +75,6 @@ function App() {
         modalRef={modalRef}
       />
     </>;
-
-  useEffect(()=>{
-    // console.log('app level center: ', center );
-    // console.log('zoomState: ', zoomState);
-
-  }, [zoomState, center]);
-
-  useEffect(()=>{
-
-  }, [height, width, setCenter]);
 
   useEffect(() => {
     setToolTipContext({

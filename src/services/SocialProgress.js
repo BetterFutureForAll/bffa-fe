@@ -1,5 +1,4 @@
 import * as d3 from 'd3';
-import { useMemo } from 'react';
 
 let currentData = require('../assets/SPI2011-2021-dataset.csv');
 

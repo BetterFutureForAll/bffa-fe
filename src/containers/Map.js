@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
 import Header from '../components/Header';
-import { useClicked, useMouse } from '../hooks/hooks';
+// import { useClicked, useMouse } from '../hooks/hooks';
 import MapMaker from '../components/MapMaker';
 
 function MapContainer({ 
   toggleModal, width, height, 
   selectYears, yearValue, 
-  clickedSubCat, setClickedSubCat,
   center, setCenter, spiData, mapData, path, 
   countryValue, setCountryValue, selectCountries, 
   tooltipContext, setToolTipContext, svgRef,
