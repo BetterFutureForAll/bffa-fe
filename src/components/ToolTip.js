@@ -317,7 +317,7 @@ const ToolTip = ({ tooltipContext, toggleModal, zoomState }) => {
           .data([d])
           .join('text')
           .attr('class', 'petalText')
-          .attr("dy", -5)
+          .attr("dy", -5 /zoomState.k)
           .append('textPath')
           .style("text-anchor", "middle")
           .attr("xlink:href", d => {
