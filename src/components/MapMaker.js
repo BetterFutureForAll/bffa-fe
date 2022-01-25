@@ -56,15 +56,14 @@ const MapMaker = ({
       .attr('preserveAspectRatio', 'xMinYMid')
       .on("mouseleave", reset)
       .on('zoom', zoom)
+    
+    svg.selectAll('.countries').remove();
       
     let g = svg.append("g").attr('class', 'countries');
     // Join (enter, update) here v6 style.
 
     svg.call(zoom);
     
-    svg.exit().remove();
-
-
     function countryMouseOver(event, d) {
 
       let spiMatch = spiMatcher(d.properties.ISO_A3_EH);
