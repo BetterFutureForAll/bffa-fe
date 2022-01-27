@@ -17,8 +17,8 @@ const ToolTip = ({ tooltipContext, toggleModal, zoomState }) => {
     let subPetalPath = "M 0 0 L 85 15 A 1 1 0 0 0 85 -15 L 0 0";
 
     function ready() {
-      let { svgRef, center, data } = tooltipContext;
 
+      let { svgRef, center, data } = tooltipContext;
 
       if (!data || data === undefined) return;
 
@@ -161,12 +161,12 @@ const ToolTip = ({ tooltipContext, toggleModal, zoomState }) => {
         .attr('x', x)
         .attr('y', y)
         .attr('transform', d => {
-          return `translate(${center[0]}, ${center[1]}) rotate(${d.angle}) scale(${0})`
+          return `translate(${x}, ${y}) rotate(${d.angle}) scale(${0})`
         })
         .style('fill', colorScale(0))
         .transition().duration(1000)
         .attr('transform', d => {
-          return `translate(${center[0]}, ${center[1]}) rotate(${d.angle}) scale(${d.scale * .01 / zoomState.k})`
+          return `translate(${x}, ${y}) rotate(${d.angle}) scale(${d.scale * .01 / zoomState.k})`
         })
         .style('stroke', 'black')
         .style('fill', d => d.color)
@@ -199,13 +199,6 @@ const ToolTip = ({ tooltipContext, toggleModal, zoomState }) => {
         .attr('transform', `translate(${x}, ${(y + spiScale(140))})`)
         .attr("font-weight", 700)
         .attr("font-size", fontSize)
-
-
-
-      // toolTip.attr('transform', `translate(${zoomState.x}, ${zoomState.y}) scale(${zoomState.k})`)
-      //   .attr("stroke-width", 1 / zoomState.k)
-
-      // svg.selectAll('.outer, .inner, .petalBackgroundPath, .nameText, .petalPath').attr('transform', `scale(${1 / zoomState.k})`)
 
       // ****** MouseOver Functions start here ******** ///
       var textTooltip = toolTip.selectAll(".tooltip-text-area")
@@ -388,9 +381,8 @@ const ToolTip = ({ tooltipContext, toggleModal, zoomState }) => {
         .on("mouseleave", () => toolTip.remove())
     };
 
-
-
     ready();
+    
   }, [tooltipContext, zoomState, toggleModal]);
 
   return (
