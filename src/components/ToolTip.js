@@ -94,7 +94,9 @@ const ToolTip = ({ tooltipContext, toggleModal, zoomState }) => {
 
 
       toolTip.attr('transform', `translate(${zoomState.x}, ${zoomState.y}) scale(${zoomState.k})`)
-        .attr("stroke-width", 1 / zoomState.k)
+
+      // Stoke width needs to adjust for circles, not petals
+        // .attr("stroke-width", 1 / zoomState.k)
 
       toolTip
         .selectAll('.outer')
@@ -112,6 +114,7 @@ const ToolTip = ({ tooltipContext, toggleModal, zoomState }) => {
         .style('fill', '#c4c2c4')
         .style("opacity", "0.5")
         .style('stroke', 'black')
+        .attr("stroke-width", 1 / zoomState.k)
 
       toolTip
         .selectAll('.inner')
@@ -127,6 +130,7 @@ const ToolTip = ({ tooltipContext, toggleModal, zoomState }) => {
         .style('fill', d => colorScale(d ? +d["Social Progress Index"] : 0))
         .style('stroke', 'black')
         .attr("cursor", "pointer")
+        .attr("stroke-width", 1 / zoomState.k)
 
       // make 3 separate petals here
       let subPetals = toolTip
@@ -265,6 +269,21 @@ const ToolTip = ({ tooltipContext, toggleModal, zoomState }) => {
         let y = center[1];
 
         toolTip
+          .selectAll('.subPetalBackgroundPath')
+          .data(d.subPetals)
+          .join('path')
+          .attr('class', 'subPetalBackgroundPath')
+          .attr("id", d => `${Object.keys(d)[0]}_subPetalBackground`)
+          .attr('d', subPetalPath)
+          .attr('transform', d => `translate(${x}, ${y}) rotate(${d.angle}) scale(${spiScale(1) / zoomState.k})`)
+          .style('stroke', 'black')
+          .style('fill', d => {
+            return d.colorFn(Object.values(d)[0])
+          })
+          .style('opacity', '.10')
+          .attr("cursor", "crosshair");
+
+        toolTip
           .selectAll('.subPetalPath')
           .data(d.subPetals)
           .join('path')
@@ -285,7 +304,7 @@ const ToolTip = ({ tooltipContext, toggleModal, zoomState }) => {
           .on("mousemove", mousemove)
           .on("mouseout", mouseout)
 
-        d3.selectAll('.petalPath, .subPetalPath')
+        d3.selectAll('.petalPath, .subPetalPath, .subPetalBackgroundPath')
           .on("mouseover", mouseover)
           .on("mousemove", mousemove)
           .on("mouseout", mouseout)
