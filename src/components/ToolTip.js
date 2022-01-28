@@ -81,9 +81,18 @@ const ToolTip = ({ tooltipContext, toggleModal, zoomState }) => {
       svg.selectAll('.graphicTooltip').remove();
 
       // Crashes here when nodes don't assign properly ********************************************** !!!!!!!!!!!!!!!!
+      // World or undefined needs to set X,Y to width/2, height/2 or SVG.centroid?
+      let x, y;
 
-      let x = svg.select(`#${data[0]['SPI country code']}_target`).attr('cx');
-      let y = svg.select(`#${data[0]['SPI country code']}_target`).attr('cy');
+
+      if(data[0]['SPI country code'] === 'WWW'){
+        x = (+center[0] - +zoomState.x) / zoomState.k;
+        y = (+center[1] - +zoomState.y) / zoomState.k;
+      } else {
+        x = svg.select(`#${data[0]['SPI country code']}_target`).attr('cx');
+        y = svg.select(`#${data[0]['SPI country code']}_target`).attr('cy');
+      }
+
 
       let fontSize = 16 / zoomState.k;
 
@@ -258,8 +267,6 @@ const ToolTip = ({ tooltipContext, toggleModal, zoomState }) => {
       };
 
       function showSubPetals(event, d) {
-        let x = center[0];
-        let y = center[1];
 
         toolTip
           .selectAll('.subPetalBackgroundPath')
@@ -382,7 +389,7 @@ const ToolTip = ({ tooltipContext, toggleModal, zoomState }) => {
     };
 
     ready();
-    
+
   }, [tooltipContext, zoomState, toggleModal]);
 
   return (
