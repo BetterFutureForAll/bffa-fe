@@ -48,8 +48,13 @@ export const useScore = () => {
   let [score, setScore] = useState({ name: '', score: '' });
   return [score, setScore];
 };
-export const useCenter = () => {
+export const useCenter = (width, height) => {
   let [center, setCenter] = useState([0,0]);
+  useEffect(()=>{
+    let newCenter = [width/2, height/2]
+    setCenter(newCenter);
+  },[width, height])
+
   return [center, setCenter];
 };
 
@@ -94,7 +99,7 @@ export const useCountries = () => {
 };
 
 export const useHandleCountryChange = () => {
-  let [countryValue, setCountryValue] = useState('');
+  let [countryValue, setCountryValue] = useState('World');
 
   useEffect(() => {
     setCountryValue(countryValue);
@@ -122,7 +127,6 @@ export const useDataByCountry = (spiByYear, countryValue) => {
   return [spiByCountry, setSpiByCountry];
 };
 
-// export const memoizedData = useMemo(()=> getSpiDataByCountry(spiByYear, countryValue), [spiByYear, countryValue]);
 
 export function useToolTip() {
 
@@ -175,7 +179,6 @@ export function useWindowSize() {
       return () => window.removeEventListener("resize", setSize);
     }
   }, [isWindowClient, setWindowSize]);
-
   return windowSize;
 };
 
@@ -183,7 +186,6 @@ export async function mapMemoizer() {
   let localGeoData = process.env.PUBLIC_URL + '/cleanedMap.json';
 
   await d3.json(localGeoData).then(r => {
-    console.log('result',r);
     let memoizedMap = useMemo(()=>{
       return r
     }, [r]);

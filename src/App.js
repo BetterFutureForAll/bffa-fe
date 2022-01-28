@@ -39,7 +39,8 @@ function App() {
 
   // let [clickedSubCat, setClickedSubCat] = useClickedSubCat();
   let svgRef = useRef(null);
-  let [center, setCenter] = useCenter();
+
+  let [center, setCenter] = useCenter(width, height);
 
   let selectYears = (
     <>

@@ -24,9 +24,9 @@ const MapMaker = ({
     let path = d3.geoPath().projection(projection);
     let spiCountryGroup = d3.group(data[1], s => s["SPI country code"]);
     let mapFeatures = feature(data[0], data[0].objects.countries).features;
-    
+
     function spiMatcher(id) { return spiCountryGroup.get(id); };
-    
+
     // initialScale tracks Zoom scale throughout transforms.
 
     let zoomed = (event, d) => {
@@ -45,7 +45,7 @@ const MapMaker = ({
     };
     
     const zoom = d3.zoom()
-    .translateExtent([[-width * .25, -height * .1], [width * 1.5, height * 1.25]])
+    .translateExtent([[-.25 * width, 0], [width * 1.5, height]])
     .scaleExtent([1, 10])
     .on('zoom', zoomed)
 
@@ -66,13 +66,10 @@ const MapMaker = ({
     
     function countryMouseOver(event, d) {
 
-      let spiMatch = spiMatcher(d.properties.ISO_A3_EH);
-      let centroid = path.centroid(d);
+      let spiMatch = spiMatcher(d.properties.GU_A3);
+      // let centroid = path.centroid(d);
       if(!spiMatch) return;
-
       let name = spiMatch[0]["Country"];
-
-      setCenter(centroid);
       setCountryValue(name);
 
     };
@@ -87,11 +84,8 @@ const MapMaker = ({
        return d.properties.GU_A3})
       .attr("cursor", "pointer")
       .attr("fill", d => {
-        let spi = spiMatcher(d.properties.ISO_A3_EH) || spiMatcher(d.properties.GU_A3);
-        if(d.properties.ISO_A3_EH==='-99') { 
-          return spi = spiMatcher(d.properties.GU_A3);
-        }; 
-        return spi? colorScale(spi[0]['Social Progress Index']) : "#c4c2c4" })
+        let spi = spiMatcher(d.properties.GU_A3);
+        return spi ? colorScale(spi[0]['Social Progress Index']) : "#c4c2c4" })
       .on("mouseover", countryMouseOver)
       .on("mouseenter", (event, d) => {
         d3.select(event.path[0]).style("opacity", ".8");
@@ -142,7 +136,6 @@ const MapMaker = ({
     if(spiData.length===0)return;
 
     Promise.all([mapData, spiData]).then(function (values) {
-      d3.selectAll(svgRef.current).exit().remove();
       setLoading(false);
       ready(values);
     });
