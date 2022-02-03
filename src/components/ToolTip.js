@@ -20,7 +20,7 @@ const ToolTip = ({ tooltipContext, toggleModal, zoomState }) => {
 
       let { svgRef, center, data } = tooltipContext;
 
-      if (!data || data === undefined) return;
+      if (!data) return;
 
       function parsedData(d) {
         // returning values as is, needs Keys and Values/ 
@@ -83,8 +83,6 @@ const ToolTip = ({ tooltipContext, toggleModal, zoomState }) => {
       // Crashes here when nodes don't assign properly ********************************************** !!!!!!!!!!!!!!!!
       // World or undefined needs to set X,Y to width/2, height/2 or SVG.centroid?
       let x, y;
-
-
       if(data[0]['SPI country code'] === 'WWW'){
         x = (+center[0] - +zoomState.x) / zoomState.k;
         y = (+center[1] - +zoomState.y) / zoomState.k;
@@ -190,16 +188,19 @@ const ToolTip = ({ tooltipContext, toggleModal, zoomState }) => {
             .append("tspan")
             .text(d => `${d["Country"]}`)
             .attr('x', 0)
-            .attr('y', 120 / zoomState.k)
+            .attr('y', spiScale(120) / zoomState.k)
             .attr('dy', '1em')
           enter
             .append("tspan")
             .text(d => {
               let rounded = (+d["Social Progress Index"]).toFixed();
+              if(+rounded === 0) {
+                return `Score Unavailable`;
+              }
               return `${rounded}`;
             })
             .attr('x', 0)
-            .attr('y', 120 / zoomState.k)
+            .attr('y', spiScale(120) / zoomState.k)
             .attr('dy', '2em')
           return enter;
         })

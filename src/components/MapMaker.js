@@ -5,8 +5,8 @@ import { colorScale } from '../services/SocialProgress';
 import ToolTip from './ToolTip';
 
 
-const MapMaker = ({ 
-  svgRef,  width, height, spiData, mapData, 
+const MapMaker = ({
+  svgRef, width, height, spiData, mapData,
   yearValue, loading, setLoading, center, setCenter, zoomState, setZoomState,
   toggleModal, countryValue, setCountryValue, tooltipContext, setToolTipContext }) => {
 
@@ -16,7 +16,7 @@ const MapMaker = ({
 
     //Check Height Vs Width, use the width for small screens and height for large.
     let checkedSize = Math.min(height, width)
-    
+
     let projection = d3.geoEqualEarth()
       .scale(checkedSize / Math.PI / 1.25)
       .translate([width / 2, height / 2])
@@ -26,28 +26,37 @@ const MapMaker = ({
     let mapFeatures = feature(data[0], data[0].objects.countries).features;
 
     function spiMatcher(id) { return spiCountryGroup.get(id); };
+    function getSpiData(d) {
+      let spiMatch;
+      if (d.properties.ISO_A3_EH === '-99') {
+        spiMatch = spiMatcher(d.properties.GU_A3);
+      } else {
+        spiMatch = spiMatcher(d.properties.ISO_A3_EH);
+      }
+      return spiMatch;
+    }
 
     // initialScale tracks Zoom scale throughout transforms.
 
     let zoomed = (event, d) => {
       //reset the toolTip before transforming
-      
+
       const { transform } = event;
 
       // Save the Current Zoom level so we can scale tooltips. 
-      setZoomState({x: transform.x, y: transform.y, k: transform.k });
+      setZoomState({ x: transform.x, y: transform.y, k: transform.k });
 
       svg.selectAll(".country, .border, .toolTipTarget")
-      .attr('transform', transform)
-      .attr('transform', `translate(${transform.x},${transform.y}) scale(${transform.k})`)
-      .attr("stroke-width", 1 / transform.k);
-      
+        .attr('transform', transform)
+        .attr('transform', `translate(${transform.x},${transform.y}) scale(${transform.k})`)
+        .attr("stroke-width", 1 / transform.k);
+
     };
-    
+
     const zoom = d3.zoom()
-    .translateExtent([[-.25 * width, 0], [width * 1.5, height]])
-    .scaleExtent([1, 10])
-    .on('zoom', zoomed)
+      .translateExtent([[-.25 * width, 0], [width * 1.5, height]])
+      .scaleExtent([1, 10])
+      .on('zoom', zoomed)
 
     // *** Top Level Selector (ViewBox) ***
     let svg = d3.select(svgRef.current)
@@ -56,20 +65,20 @@ const MapMaker = ({
       .attr('preserveAspectRatio', 'xMinYMid')
       .on("mouseleave", reset)
       .on('zoom', zoom)
-    
+
     svg.selectAll('.countries').remove();
-      
+
     let g = svg.append("g").attr('class', 'countries');
     // Join (enter, update) here v6 style.
 
     svg.call(zoom);
-    
+
     function countryMouseOver(event, d) {
 
-      let spiMatch = spiMatcher(d.properties.GU_A3);
-      // let centroid = path.centroid(d);
-      if(!spiMatch) return;
+      let spiMatch = getSpiData(d);
+      if (!spiMatch) return;
       let name = spiMatch[0]["Country"];
+      // toggleToolTip fn needed here. 
       setCountryValue(name);
 
     };
@@ -80,12 +89,15 @@ const MapMaker = ({
       .join("path")
       .attr("d", path)
       .attr("class", "country")
-      .attr("id", d => {
-       return d.properties.GU_A3})
+      .attr("id", (d, i) => {
+        let match = getSpiData(d);
+        return (match? `${match[0]['SPI country code']}` : `i${i}`);
+      })
       .attr("cursor", "pointer")
       .attr("fill", d => {
-        let spi = spiMatcher(d.properties.GU_A3);
-        return spi ? colorScale(spi[0]['Social Progress Index']) : "#c4c2c4" })
+        let match = getSpiData(d);
+        return match ? colorScale(match[0]['Social Progress Index']) : "#c4c2c4"
+      })
       .on("mouseover", countryMouseOver)
       .on("mouseenter", (event, d) => {
         d3.select(event.path[0]).style("opacity", ".8");
@@ -97,16 +109,19 @@ const MapMaker = ({
 
     countries.exit().remove();
 
-      g.selectAll(`.toolTipTarget`)
+    g.selectAll(`.toolTipTarget`)
       //** Filter Country matches here  */
-        .data(mapFeatures.filter(d => d.properties.ISO_A3_EH !== "ATA"))
-        .join('circle')
-        .attr('class', 'toolTipTarget')
-        .attr('id', d=> {
-          return `${d.properties.GU_A3}_target`})
-        .attr("cx", d => path.centroid(d)[0])
-        .attr("cy", d => path.centroid(d)[1])
-        .attr("r", 0)
+      .data(mapFeatures.filter(d => d.properties.ISO_A3_EH !== "ATA"))
+      .join('circle')
+      .attr('class', 'toolTipTarget')
+      .attr('id', (d, i) => {
+        let match = getSpiData(d)
+        //ID has to adjust for the spiMatch function to find it proper target.
+        return (match? `${match[0]['SPI country code']}_target` : `i${i}_target`)
+      })
+      .attr("cx", d => path.centroid(d)[0])
+      .attr("cy", d => path.centroid(d)[1])
+      .attr("r", 0)
 
 
     // // *** borders / whitespace mesh ***
@@ -133,7 +148,7 @@ const MapMaker = ({
   useEffect(() => {
     setLoading(true);
     // let localData = d3.json(localGeoData);
-    if(spiData.length===0)return;
+    if (spiData.length === 0) return;
 
     Promise.all([mapData, spiData]).then(function (values) {
       setLoading(false);
