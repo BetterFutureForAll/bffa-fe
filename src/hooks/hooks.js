@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import {
   makeYearsArray,
   getSpiDataByYear,
@@ -126,6 +126,28 @@ export const useDataByCountry = (spiByYear, countryValue) => {
 
   return [spiByCountry, setSpiByCountry];
 };
+
+export const useToggle = (initialState) => {
+  const [isToggled, setIsToggled] = useState(initialState);
+
+  // put [setIsToggled] into the useCallback's dependencies array
+  // this value never changes so the callback is not going to be ever re-created
+  const toggle = useCallback(
+    () => setIsToggled(state => !state),
+    [setIsToggled],
+  );
+
+  return [isToggled, toggle];
+}
+
+export function useTarget() {
+  let [selectedTarget, selectTarget] =  useState(null);
+  useEffect(()=>{
+    selectTarget(selectedTarget);
+    console.log(selectedTarget);
+  }, [selectTarget, selectedTarget])
+  return [selectedTarget, selectTarget]
+}
 
 
 export function useToolTip() {
