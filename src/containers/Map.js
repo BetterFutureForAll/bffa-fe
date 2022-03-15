@@ -9,7 +9,7 @@ function MapContainer({
   center, setCenter, spiData, mapData, path, 
   countryValue, setCountryValue, selectCountries, 
   tooltipContext, setToolTipContext, svgRef,
-  zoomState, setZoomState }) {
+  zoomState, setZoomState, toggle, selectTarget }) {
 
   let [loading, setLoading] = useState(true);
   // let [clicked, setClicked] = useClicked();
@@ -38,6 +38,8 @@ function MapContainer({
           path={path}
           zoomState={zoomState}
           setZoomState={setZoomState}
+          toggle={toggle}
+          selectTarget={selectTarget}
         />
         <div className="ControlBar">
           <Header

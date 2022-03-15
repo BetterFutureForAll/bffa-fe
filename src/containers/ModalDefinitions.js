@@ -21,15 +21,18 @@ import opportunity_inclusiveness from '../assets/bffa_icons/2_3_inclusiveness.pn
 import opportunity_education from '../assets/bffa_icons/2_4_education.png';
 
 
-function ModalDefinitions({ countryValue, clicked, clickedSubCat, toggleModal, modalRef, width }) {
+function ModalDefinitions({ countryValue, clicked, clickedSubCat, toggleModal, modalRef, width, spiData }) {
 
   let currentDefinitions = require('../assets/definitions-2021.csv');
 
-  let parsedDefinitions = d3.csv(currentDefinitions);
+  let parsedDefinitions = d3.csv(currentDefinitions, function(data) {
+    //re-key the parsedDefinitions
+    return  data;
+  })
 
+  console.log(parsedDefinitions);
   useEffect(() => {
     function tabulateModal(data) {
-
       // Dimension,Component,Indicator name, unit ,Definition,Source,Link
       // Group data on each column, indicator will hold the unique values.
       let groupedData = d3.group(data, d => d["Dimension"], d => d["Component"], d => d['Indicator name'])
@@ -37,6 +40,23 @@ function ModalDefinitions({ countryValue, clicked, clickedSubCat, toggleModal, m
       let modal = d3.select(modalRef.current);
       modal.selectAll('.modal').remove();
       let dimDiv = modal.append('div').attr('class', 'modal');
+      dimDiv.selectAll('.modalTitle')
+        .data([spiData])
+        .join(div => {
+          let enter = div.append('div').attr('class', 'modalTitle')
+          enter.attr("id", d=> { 
+            return d[0]['Country']
+          })
+          .append('h2')
+          .text(d=> {
+            return `${d[0]['Country']}`
+          })
+          enter.append()
+          .text(d=>{
+            return `Social Progress Index: ${d[0]['Social Progress Index']} `
+          })
+        })
+      
       let dimensionsDiv = dimDiv.selectAll('.dimension')
         .data(groupedData, d => d[0])
         .join(div => {
@@ -52,9 +72,9 @@ function ModalDefinitions({ countryValue, clicked, clickedSubCat, toggleModal, m
           //class and ID to isolate footer
           enter
             .attr("class", (d, i) => {
-              if (d[0].length === 0) {
-                return "footer";
-              }
+              // if (d[0].length === 0) {
+              //   return "footer";
+              // }
               return `dim-${i} dimension`;
             })
             .attr("id", d => {
@@ -65,7 +85,18 @@ function ModalDefinitions({ countryValue, clicked, clickedSubCat, toggleModal, m
             });
           let divTitle = enter.append('div').attr('class', 'dimension-title')
               divTitle.append("img").attr('src', d => imgImport(d)).attr("class", "dimension_img");
-              divTitle.append('h2').text(d => d[0] === "" ? '*' : d[0]);
+              divTitle.append('h2').text(d => {
+                let target = d[0]
+                console.log('title target', d);
+                d[0] === '' ? target ='*' : target = d[0];
+                if(target === "*" || undefined ) {
+                  return "*";
+                } else {
+                  let value = +spiData[0][`${target}`];
+                  let result = `${d[0]}:  ${value.toFixed()}`;
+                  return result;
+                }
+              });
           dimDiv.exit().remove();
           return enter;
         },
@@ -114,7 +145,13 @@ function ModalDefinitions({ countryValue, clicked, clickedSubCat, toggleModal, m
                 })
                 .attr("class", "component_img");
 
-              componentTitle.append('h3').text(d => d[0]);
+              componentTitle.append('h3').text(d => { 
+                //Rounded Number
+                let target = d[0];
+                let value = +spiData[0][`${target}`];
+                let result = `${d[0]}:  ${value.toFixed()}`;
+                return result;
+              });
 
               componentTitle.append('p').text(d => {
                 let result = componentImgImport(d);
@@ -142,6 +179,19 @@ function ModalDefinitions({ countryValue, clicked, clickedSubCat, toggleModal, m
                     // let subString = match ? d[0].substring(0, match.index) : d[0];
                     return d[0];
                   }).attr('class', 'indicator-name');
+//Indicator Scores
+                enter.append('tspan')
+                  .text((d,i) => {
+                    let target = d[0];
+                    let match = spiData[0][`${target}`]
+                    if(!match) return;
+                    // //round the match value
+                    let rounded = (+match).toFixed(3);
+                    console.log(match, rounded);
+                    let result = `(${rounded})`;
+                    return result;
+                  }).style('font-weight', 600).attr('class', 'indicator-score')
+                  
 
                 enter.append('tspan')
                   .text(d => {
@@ -177,47 +227,65 @@ function ModalDefinitions({ countryValue, clicked, clickedSubCat, toggleModal, m
                   d3.select(event.target).selectAll(".indicator-definitions").style("display", "flex");
                   d3.select(event.target).selectAll(".indicator-substring").style("display", "flex");
                 });
+
                 enter.on('mouseleave', (event, d) => {
                   d3.select(event.target).selectAll(".indicator-definitions").style("display", "none");
                   d3.select(event.target).selectAll(".indicator-substring").style("display", "none");
                 });
+
               });
           });
 
-      function titleShift(event, d) {
-        //hide all dimensions components and indicators other than whats targeted.
-        d3.selectAll(".dimension").each(function () {
-          var clickedTarget = event.target;
-          var currentTarget = this;
-          d3.select(this).selectAll('.dimension-title').style("writing-mode", function () {
-            return (currentTarget === clickedTarget) ? "lr-tb" : "tb-rl";
-          });
-          d3.select(this).selectAll('.component-box').style("display", function () {
-            return (currentTarget === clickedTarget) ? "flex" : "none";
-          });
-          d3.select(this).style('width', "calc(100% - 2px)")
+      // function titleShift(event, d) {
+      //   //hide all dimensions components and indicators other than whats targeted.
+      //   d3.selectAll(".dimension").each(function () {
+      //     var clickedTarget = event.target;
+      //     var currentTarget = this;
+      //     d3.select(this).selectAll('.dimension-title').style("writing-mode", function () {
+      //       return (currentTarget === clickedTarget) ? "lr-tb" : "tb-rl";
+      //     });
+      //     d3.select(this).selectAll('.component-box').style("display", function () {
+      //       return (currentTarget === clickedTarget) ? "flex" : "none";
+      //     });
+      //     d3.select(this).style('width', function () {
+      //       return (currentTarget === clickedTarget) ? "100%" : "fit-content";
+      //     });
+      //   });
+      // }
+            // function unshiftTitle(event, d) {
+      //   d3.selectAll(".dimension").each(function () {
+      //     d3.selectAll('.component-box').style("display", "flex");
+      //     d3.selectAll('.dimension-title').style("writing-mode", "lr-tb");
+      //     d3.select(this).style('width', "calc(100% - 2px)")
+      //   });
+      // }
+
+      function hideComponents(event, d) {
+        var clickedTarget = event.target,
+            currentTarget = this;
+        d3.select(this).selectAll(".component").style("display", ()=>{
+          return (currentTarget === clickedTarget) ? "none" : "none";
         });
+      };
+
+      function hideAllComponents() {
+        d3.selectAll(".component").style("display", "none");
       }
 
-      function footerShift(event, d) {
-        d3.selectAll(".dimension").each(function () {
-          d3.select(this).selectAll('.component-box').style("display", "none")
+      function showComponents(event, d) {
+        hideAllComponents();
+        var clickedTarget = event.target;
+        var currentTarget = this;
+        // d3.select(event.target).selectAll(".component-box").style("display", "none");
+        d3.select(this).selectAll(".component").style("display", ()=>{
+          return (currentTarget === clickedTarget) ? "flex" : "none";
         });
-        d3.selectAll('.dimension').style('height', 'fit-content');
-        d3.select(this).style('height', 'fit-content');
-      }
+      };
 
-      function unshiftTitle(event, d) {
-        d3.selectAll(".dimension").each(function () {
-          d3.selectAll('.component-box').style("display", "flex");
-          d3.selectAll('.dimension-title').style("writing-mode", "lr-tb");
-          d3.select(this).style('width', "calc(100% - 2px)")
-        });
-      }
+      d3.selectAll('.dimension').on('mouseenter', showComponents)
+      d3.selectAll('.dimension').on('mouseleave', hideComponents)
+      hideAllComponents();
 
-      d3.selectAll('.dimension').on('mouseenter', titleShift);
-      d3.selectAll('.dimension').on('mouseleave', unshiftTitle);
-      d3.select('.footer').on('mouseenter', footerShift);
       indicatorDiv.selectAll(".indicator-definitions").style("display", "none");
       indicatorDiv.selectAll(".indicator-substring").style("display", "none");
       d3.selectAll('#remove').remove();
@@ -227,7 +295,7 @@ function ModalDefinitions({ countryValue, clicked, clickedSubCat, toggleModal, m
       tabulateModal(data);
     })
 
-  }, [parsedDefinitions, modalRef, toggleModal]);
+  }, [parsedDefinitions, modalRef, toggleModal, spiData]);
 
   let onClick = e => {
     if (e.target !== e.currentTarget) return;

@@ -8,7 +8,7 @@ import {
 } from '../services/SocialProgress';
 
 // needs X, Y, and SPI Data set
-const ToolTip = ({ tooltipContext, toggleModal, zoomState }) => {
+const ToolTip = ({ tooltipContext, toggleModal, zoomState, selectTarget }) => {
 
   useEffect(() => {
 
@@ -17,9 +17,7 @@ const ToolTip = ({ tooltipContext, toggleModal, zoomState }) => {
     let subPetalPath = "M 0 0 L 85 15 A 1 1 0 0 0 85 -15 L 0 0";
 
     function ready() {
-
       let { svgRef, center, data } = tooltipContext;
-
       if (!data) return;
 
       function parsedData(d) {
@@ -75,15 +73,12 @@ const ToolTip = ({ tooltipContext, toggleModal, zoomState }) => {
         return [result];
       }
 
-
       let svg = d3.select(svgRef.current);
 
       svg.selectAll('.graphicTooltip').remove();
 
-      // Crashes here when nodes don't assign properly ********************************************** !!!!!!!!!!!!!!!!
-      // World or undefined needs to set X,Y to width/2, height/2 or SVG.centroid?
       let x, y;
-      if(data[0]['SPI country code'] === 'WWW'){
+      if (data[0]['SPI country code'] === 'WWW') {
         x = (+center[0] - +zoomState.x) / zoomState.k;
         y = (+center[1] - +zoomState.y) / zoomState.k;
       } else {
@@ -103,7 +98,7 @@ const ToolTip = ({ tooltipContext, toggleModal, zoomState }) => {
       toolTip.attr('transform', `translate(${zoomState.x}, ${zoomState.y}) scale(${zoomState.k})`)
 
       // Stoke width needs to adjust for circles, not petals
-        // .attr("stroke-width", 1 / zoomState.k)
+      // .attr("stroke-width", 1 / zoomState.k)
 
       toolTip
         .selectAll('.outer')
@@ -116,7 +111,7 @@ const ToolTip = ({ tooltipContext, toggleModal, zoomState }) => {
         .attr("cx", x)
         .attr("cy", y)
         // .attr("r", 0)
-        // .transition().duration([750])
+        // .transition().duration(500)
         .attr("r", 100 / zoomState.k)
         .style('fill', '#c4c2c4')
         .style("opacity", "0.5")
@@ -131,8 +126,8 @@ const ToolTip = ({ tooltipContext, toggleModal, zoomState }) => {
         .attr('id', d => `${Object.keys(d)[0]}_inner`)
         .attr("cx", x)
         .attr("cy", y)
-        .attr("r", 0)
-        .transition().duration([750])
+        // .attr("r", 0)
+        // .transition().duration(750)
         .attr("r", d => d ? +d["Social Progress Index"] / zoomState.k : 0)
         .style('fill', d => colorScale(d ? +d["Social Progress Index"] : 0))
         .style('stroke', 'black')
@@ -150,7 +145,7 @@ const ToolTip = ({ tooltipContext, toggleModal, zoomState }) => {
           return `${Object.keys(d)[0]}_bp`
         })
         .attr('d', petalPath)
-        // .attr('transform', `translate(${center[0]}, ${center[1]}) rotate(${30}) scale(${0})`)
+        // .attr('transform', d => `translate(${x}, ${y}) rotate(${d.angle}) scale(0)`)
         // .transition().duration(750)
         .attr('transform', d => `translate(${x}, ${y}) rotate(${d.angle}) scale(${spiScale(100) * .01 / zoomState.k})`)
         .style('stroke', 'black')
@@ -194,7 +189,7 @@ const ToolTip = ({ tooltipContext, toggleModal, zoomState }) => {
             .append("tspan")
             .text(d => {
               let rounded = (+d["Social Progress Index"]).toFixed();
-              if(+rounded === 0) {
+              if (+rounded === 0) {
                 return `Score Unavailable`;
               }
               return `${rounded}`;
@@ -229,6 +224,9 @@ const ToolTip = ({ tooltipContext, toggleModal, zoomState }) => {
         let mouseZoomY = (+event.y - +zoomState.y) / zoomState.k;
         let roundedNum = (+Object.values(d)[0]).toFixed();
 
+        // let target = (Object.keys(d)[0]);
+        // selectTarget({ subPetal: target } );
+
         textTooltip
           .data(d => [d])
           .join(group => {
@@ -254,8 +252,8 @@ const ToolTip = ({ tooltipContext, toggleModal, zoomState }) => {
           .attr("font-weight", 700)
           .attr('style', 'text-shadow: 2px 2px white, -2px -2px white, 2px -2px white, -2px 2px white;')
           .attr('background-color', 'gray;')
-          
-          textTooltip.raise()
+
+        textTooltip.raise()
 
       };
 
@@ -309,7 +307,6 @@ const ToolTip = ({ tooltipContext, toggleModal, zoomState }) => {
           .on("mouseover", mouseover)
           .on("mousemove", mousemove)
           .on("mouseout", mouseout)
-        //   .on('click', mousemove)
       }
 
       function showPetalArc(event, d) {
@@ -337,7 +334,7 @@ const ToolTip = ({ tooltipContext, toggleModal, zoomState }) => {
           .data([d])
           .join('text')
           .attr('class', 'petalText')
-          .attr("dy", -5 /zoomState.k)
+          .attr("dy", -5 / zoomState.k)
           .append('textPath')
           .style("text-anchor", "middle")
           .attr("xlink:href", d => {
@@ -367,6 +364,10 @@ const ToolTip = ({ tooltipContext, toggleModal, zoomState }) => {
             let rounded = (+Object.values(d)[0]).toFixed();
             return `${Object.keys(d)[0]}-${rounded}`;
           });
+
+        // let target = Object.keys(d)[0];
+        // extract to App level
+        // selectTarget(target)
 
         toolTip.selectAll('.petalArc')
           .on('click', toggleModal)

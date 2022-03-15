@@ -35,7 +35,6 @@ function App() {
 
   let handleCountryChange = e => setCountryValue(e.target.value);
 
-  // May need Redux to control state.
   let [spiByYear] = useDataByYear(yearValue);
   let [spiByCountry] = useDataByCountry(spiByYear, countryValue);
 
@@ -87,11 +86,9 @@ function App() {
       center, 
       countryValue,
       show: isToggled,
-      data: spiByCountry,
-      targetSelection: selectedTarget
+      data: spiByCountry
     });
-    console.log(tooltipContext);
-  }, [countryValue, yearValue, center, spiByCountry, setToolTipContext, isToggled, selectedTarget])
+  }, [countryValue, yearValue, center, spiByCountry, setToolTipContext, isToggled])
 
 
   return (

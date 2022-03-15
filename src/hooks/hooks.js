@@ -49,18 +49,18 @@ export const useScore = () => {
   return [score, setScore];
 };
 export const useCenter = (width, height) => {
-  let [center, setCenter] = useState([0,0]);
-  useEffect(()=>{
-    let newCenter = [width/2, height/2]
+  let [center, setCenter] = useState([0, 0]);
+  useEffect(() => {
+    let newCenter = [width / 2, height / 2]
     setCenter(newCenter);
-  },[width, height])
+  }, [width, height])
 
   return [center, setCenter];
 };
 
 export const useZoom = () => {
   let [zoomState, setZoomState] = useState(
-    { x: 0, y:0, k:1}
+    { x: 0, y: 0, k: 1 }
   );
   return [zoomState, setZoomState];
 };
@@ -141,10 +141,9 @@ export const useToggle = (initialState) => {
 }
 
 export function useTarget() {
-  let [selectedTarget, selectTarget] =  useState(null);
-  useEffect(()=>{
+  let [selectedTarget, selectTarget] = useState(null);
+  useEffect(() => {
     selectTarget(selectedTarget);
-    console.log(selectedTarget);
   }, [selectTarget, selectedTarget])
   return [selectedTarget, selectTarget]
 }
@@ -208,9 +207,9 @@ export async function mapMemoizer() {
   let localGeoData = process.env.PUBLIC_URL + '/cleanedMap.json';
 
   await d3.json(localGeoData).then(r => {
-    let memoizedMap = useMemo(()=>{
+    let memoizedMap = useMemo(() => {
       return r
     }, [r]);
     return memoizedMap;
   });
-} 
+}

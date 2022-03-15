@@ -6,9 +6,9 @@ import ToolTip from './ToolTip';
 
 
 const MapMaker = ({
-  svgRef, width, height, spiData, mapData,
+  svgRef, width, height, spiData, mapData, selectTarget,
   yearValue, loading, setLoading, center, setCenter, zoomState, setZoomState,
-  toggleModal, countryValue, setCountryValue, tooltipContext, setToolTipContext }) => {
+  toggleModal, countryValue, setCountryValue, tooltipContext, setToolTipContext, toggle }) => {
 
   let loadingSpinner = require('../assets/loading.gif');
 
@@ -74,13 +74,12 @@ const MapMaker = ({
     svg.call(zoom);
 
     function countryMouseOver(event, d) {
-
       let spiMatch = getSpiData(d);
-      if (!spiMatch) return;
-      let name = spiMatch[0]["Country"];
+      let name = spiMatch ? spiMatch[0]["Country"] : "World";
       // toggleToolTip fn needed here. 
+      //  console.log(toggle)
+      //  toggle();
       setCountryValue(name);
-
     };
 
     // *** Country groupings ***
@@ -91,7 +90,7 @@ const MapMaker = ({
       .attr("class", "country")
       .attr("id", (d, i) => {
         let match = getSpiData(d);
-        return (match? `${match[0]['SPI country code']}` : `i${i}`);
+        return (match ? `${match[0]['SPI country code']}` : `i${i}`);
       })
       .attr("cursor", "pointer")
       .attr("fill", d => {
@@ -104,6 +103,7 @@ const MapMaker = ({
       })
       .on("mouseleave",
         d => { d3.select(d.path[0]).style("opacity", "1"); })
+      .on("mouseout", toggle)
       .append("title")
       .text(d => { return `${d.properties.NAME_EN}` })
 
@@ -117,7 +117,7 @@ const MapMaker = ({
       .attr('id', (d, i) => {
         let match = getSpiData(d)
         //ID has to adjust for the spiMatch function to find it proper target.
-        return (match? `${match[0]['SPI country code']}_target` : `i${i}_target`)
+        return (match ? `${match[0]['SPI country code']}_target` : `i${i}_target`)
       })
       .attr("cx", d => path.centroid(d)[0])
       .attr("cy", d => path.centroid(d)[1])
@@ -162,7 +162,12 @@ const MapMaker = ({
 
   return (
     <svg ref={svgRef} height={height} width={width} id="map">
-      <ToolTip tooltipContext={tooltipContext} toggleModal={toggleModal} zoomState={zoomState} />
+      <ToolTip
+        tooltipContext={tooltipContext}
+        toggleModal={toggleModal}
+        zoomState={zoomState}
+        selectTarget={selectTarget}
+      />
     </svg>
   );
 };
