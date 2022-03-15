@@ -43,8 +43,8 @@ export async function getSpiDataByCountry(data, countryValue) {
     return { ...previous, [`${keyFixer(key)}`]: input[key] };
   }, {});
 
-  console.log('input', input)
-  console.log('output', output);
+  // console.log('input', input)
+  // console.log('output', output);
 
   return [output];
 };

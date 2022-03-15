@@ -30,7 +30,6 @@ function ModalDefinitions({ countryValue, clicked, clickedSubCat, toggleModal, m
     return  data;
   })
 
-  console.log(parsedDefinitions);
   useEffect(() => {
     function tabulateModal(data) {
       // Dimension,Component,Indicator name, unit ,Definition,Source,Link
@@ -87,7 +86,6 @@ function ModalDefinitions({ countryValue, clicked, clickedSubCat, toggleModal, m
               divTitle.append("img").attr('src', d => imgImport(d)).attr("class", "dimension_img");
               divTitle.append('h2').text(d => {
                 let target = d[0]
-                console.log('title target', d);
                 d[0] === '' ? target ='*' : target = d[0];
                 if(target === "*" || undefined ) {
                   return "*";
@@ -187,7 +185,6 @@ function ModalDefinitions({ countryValue, clicked, clickedSubCat, toggleModal, m
                     if(!match) return;
                     // //round the match value
                     let rounded = (+match).toFixed(3);
-                    console.log(match, rounded);
                     let result = `(${rounded})`;
                     return result;
                   }).style('font-weight', 600).attr('class', 'indicator-score')
