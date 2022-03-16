@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Header from '../components/Header';
-// import { useClicked, useMouse } from '../hooks/hooks';
+import { useClicked, useClickedSubCat } from '../hooks/hooks';
 import MapMaker from '../components/MapMaker';
 
 function MapContainer({ 
@@ -12,8 +12,8 @@ function MapContainer({
   zoomState, setZoomState, toggle, selectTarget }) {
 
   let [loading, setLoading] = useState(true);
-  // let [clicked, setClicked] = useClicked();
-  // let [setMouse] = useMouse();
+  let [clicked, setClicked] = useClicked();
+  let [clickedSubCat, setClickedSubCat] = useClickedSubCat();
 
 
   return (

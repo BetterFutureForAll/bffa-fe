@@ -3,14 +3,16 @@ import * as d3 from 'd3';
 import { feature, mesh } from "topojson-client";
 import { colorScale } from '../services/SocialProgress';
 import ToolTip from './ToolTip';
-
+import { useClicked, useClickedSubCat } from '../hooks/hooks';
 
 const MapMaker = ({
-  svgRef, width, height, spiData, mapData, selectTarget,
-  yearValue, loading, setLoading, center, setCenter, zoomState, setZoomState,
-  toggleModal, countryValue, setCountryValue, tooltipContext, setToolTipContext, toggle }) => {
+  svgRef, width, height, spiData, mapData,
+  yearValue, loading, setLoading, zoomState, setZoomState,
+  toggleModal, setCountryValue, tooltipContext, toggle }) => {
 
   let loadingSpinner = require('../assets/loading.gif');
+  let [clicked, setClicked] = useClicked();
+  let [clickedSubCat, setClickedSubCat] = useClickedSubCat();
 
   function ready(data) {
 
@@ -166,7 +168,6 @@ const MapMaker = ({
         tooltipContext={tooltipContext}
         toggleModal={toggleModal}
         zoomState={zoomState}
-        selectTarget={selectTarget}
       />
     </svg>
   );

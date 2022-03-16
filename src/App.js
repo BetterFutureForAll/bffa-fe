@@ -5,7 +5,8 @@ import * as d3 from 'd3'
 import MapContainer from './containers/Map';
 import { useDataByCountry, useDataByYear, useModal, 
          useToolTip, useYears, useHandleYearChange, 
-         useCenter, useZoom, useToggle, useTarget
+         useCenter, useZoom, useToggle, useTarget,
+         useClickedSubCat, useClicked
         } from './hooks/hooks';
 import ModalDefinitions from './containers/ModalDefinitions';
 import Portal from './containers/Portal';
@@ -25,7 +26,8 @@ function App() {
   let [tooltipContext, setToolTipContext] = useToolTip();
   let [zoomState, setZoomState] = useZoom();
   let [isToggled, toggle] = useToggle(false);
-  let [selectedTarget, selectTarget] = useTarget();
+  let [clicked, setClicked] = useClicked();
+  let [clickedSubCat, setClickedSubCat] = useClickedSubCat();
 
   let mapData = d3.json(localGeoData).then(r => {
     return r;
@@ -76,7 +78,8 @@ function App() {
         showModal={showModal}
         modalRef={modalRef}
         spiData={spiByCountry}
-        target={selectedTarget}
+        clicked={clicked}
+        clickedSubCat={clickedSubCat}
       />
     </>;
 
@@ -121,7 +124,6 @@ function App() {
           zoomState={zoomState}
           setZoomState={setZoomState}
           toggle={toggle}
-          selectTarget={selectTarget}
         />
       </div>
     </div>

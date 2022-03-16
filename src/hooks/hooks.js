@@ -24,9 +24,10 @@ export const useModal = () => {
 }
 
 export const useClicked = () => {
-  let [clicked, setClicked] = useState('World');
+  let [clicked, setClicked] = useState(null);
   useEffect(() => {
     setClicked(clicked);
+    console.log('dimension',clicked);
   }, [clicked])
   return [clicked, setClicked];
 }
@@ -35,6 +36,7 @@ export const useClickedSubCat = () => {
   let [clickedSubCat, setClickedSubCat] = useState(null);
   useEffect(() => {
     setClickedSubCat(clickedSubCat);
+    console.log('component', clickedSubCat);
   }, [clickedSubCat])
   return [clickedSubCat, setClickedSubCat];
 }

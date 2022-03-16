@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import * as d3 from 'd3';
+import { useClicked, useClickedSubCat } from '../hooks/hooks';
 import {
   colorScale,
   basicColorScale,
@@ -9,6 +10,8 @@ import {
 
 // needs X, Y, and SPI Data set
 const ToolTip = ({ tooltipContext, toggleModal, zoomState, selectTarget }) => {
+  let [clicked, setClicked] = useClicked();
+  let [clickedSubCat, setClickedSubCat] = useClickedSubCat();
 
   useEffect(() => {
 
@@ -224,8 +227,8 @@ const ToolTip = ({ tooltipContext, toggleModal, zoomState, selectTarget }) => {
         let mouseZoomY = (+event.y - +zoomState.y) / zoomState.k;
         let roundedNum = (+Object.values(d)[0]).toFixed();
 
-        // let target = (Object.keys(d)[0]);
-        // selectTarget({ subPetal: target } );
+        let target = (Object.keys(d)[0]);
+        setClickedSubCat(target);
 
         textTooltip
           .data(d => [d])
@@ -365,9 +368,8 @@ const ToolTip = ({ tooltipContext, toggleModal, zoomState, selectTarget }) => {
             return `${Object.keys(d)[0]}-${rounded}`;
           });
 
-        // let target = Object.keys(d)[0];
-        // extract to App level
-        // selectTarget(target)
+        let target = Object.keys(d)[0];
+        setClicked(target);
 
         toolTip.selectAll('.petalArc')
           .on('click', toggleModal)

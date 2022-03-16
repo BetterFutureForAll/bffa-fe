@@ -20,17 +20,17 @@ import opportunity_freedom from '../assets/bffa_icons/2_2_freedom.png';
 import opportunity_inclusiveness from '../assets/bffa_icons/2_3_inclusiveness.png';
 import opportunity_education from '../assets/bffa_icons/2_4_education.png';
 
-
-function ModalDefinitions({ countryValue, clicked, clickedSubCat, toggleModal, modalRef, width, spiData }) {
+function ModalDefinitions({ toggleModal, modalRef, spiData, clicked, clickedSubCat }) {
 
   let currentDefinitions = require('../assets/definitions-2021.csv');
-
   let parsedDefinitions = d3.csv(currentDefinitions, function(data) {
-    //re-key the parsedDefinitions
+    //re-key the parsedDefinitions if needed
     return  data;
   })
 
   useEffect(() => {
+    console.log('Definitions:',clicked, clickedSubCat);
+    console.log('Definitions:', spiData[0]['Country']);
     function tabulateModal(data) {
       // Dimension,Component,Indicator name, unit ,Definition,Source,Link
       // Group data on each column, indicator will hold the unique values.
@@ -286,13 +286,14 @@ function ModalDefinitions({ countryValue, clicked, clickedSubCat, toggleModal, m
       indicatorDiv.selectAll(".indicator-definitions").style("display", "none");
       indicatorDiv.selectAll(".indicator-substring").style("display", "none");
       d3.selectAll('#remove').remove();
+
     }
 
     parsedDefinitions.then((data) => {
       tabulateModal(data);
     })
 
-  }, [parsedDefinitions, modalRef, toggleModal, spiData]);
+  }, [parsedDefinitions, modalRef, toggleModal, spiData, clicked, clickedSubCat]);
 
   let onClick = e => {
     if (e.target !== e.currentTarget) return;
