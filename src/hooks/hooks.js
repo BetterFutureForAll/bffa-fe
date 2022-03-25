@@ -27,7 +27,6 @@ export const useClicked = () => {
   let [clicked, setClicked] = useState(null);
   useEffect(() => {
     setClicked(clicked);
-    console.log('dimension',clicked);
   }, [clicked])
   return [clicked, setClicked];
 }
@@ -36,7 +35,6 @@ export const useClickedSubCat = () => {
   let [clickedSubCat, setClickedSubCat] = useState(null);
   useEffect(() => {
     setClickedSubCat(clickedSubCat);
-    console.log('component', clickedSubCat);
   }, [clickedSubCat])
   return [clickedSubCat, setClickedSubCat];
 }
@@ -152,7 +150,6 @@ export function useTarget() {
 
 
 export function useToolTip() {
-
   let [tooltipContext, setToolTipContext] = useState({
     svgRef: null,
     center: [0, 0],
@@ -165,6 +162,18 @@ export function useToolTip() {
   }, [tooltipContext, setToolTipContext])
 
   return [tooltipContext, setToolTipContext];
+};
+
+export function useDefinitions() {
+  let [defContext, setDefContext] = useState({
+    dimension: null,
+    component: null,
+  })
+  useEffect(() => {
+    setDefContext(defContext);
+  }, [defContext, setDefContext])
+
+  return [defContext, setDefContext];
 };
 
 export function scoreToColor(score) {

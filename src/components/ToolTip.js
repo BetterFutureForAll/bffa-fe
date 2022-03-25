@@ -9,9 +9,8 @@ import {
 } from '../services/SocialProgress';
 
 // needs X, Y, and SPI Data set
-const ToolTip = ({ tooltipContext, toggleModal, zoomState, selectTarget }) => {
-  let [clicked, setClicked] = useClicked();
-  let [clickedSubCat, setClickedSubCat] = useClickedSubCat();
+const ToolTip = ({ tooltipContext, toggleModal, zoomState, setClicked, setClickedSubCat }) => {
+
 
   useEffect(() => {
 
@@ -227,19 +226,22 @@ const ToolTip = ({ tooltipContext, toggleModal, zoomState, selectTarget }) => {
         let mouseZoomY = (+event.y - +zoomState.y) / zoomState.k;
         let roundedNum = (+Object.values(d)[0]).toFixed();
 
-        let target = (Object.keys(d)[0]);
-        setClickedSubCat(target);
 
         textTooltip
           .data(d => [d])
           .join(group => {
             let enter = group.append('text')
+            let target = (Object.keys(d)[0]);
             enter
               .append("tspan")
               .text(`${Object.keys(d)[0]}`)
               .attr('x', mouseZoomX)
               .attr('y', mouseZoomY)
               .attr('dy', '-2em')
+
+            // .call(setClickedSubCat(target));
+            // console.log('subcat', target);
+
             enter
               .append("tspan")
               .text(`${roundedNum}`)
@@ -376,7 +378,7 @@ const ToolTip = ({ tooltipContext, toggleModal, zoomState, selectTarget }) => {
       };
 
 
-
+      // set target in this chain.
       function doItAll(event, d) {
         toolTip.selectAll('.petalArc').remove();
         toolTip.selectAll('.petalText').remove();

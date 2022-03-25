@@ -20,17 +20,15 @@ import opportunity_freedom from '../assets/bffa_icons/2_2_freedom.png';
 import opportunity_inclusiveness from '../assets/bffa_icons/2_3_inclusiveness.png';
 import opportunity_education from '../assets/bffa_icons/2_4_education.png';
 
-function ModalDefinitions({ toggleModal, modalRef, spiData, clicked, clickedSubCat }) {
+function ModalDefinitions({ toggleModal, modalRef, spiData, defContext }) {
 
   let currentDefinitions = require('../assets/definitions-2021.csv');
-  let parsedDefinitions = d3.csv(currentDefinitions, function(data) {
+  let parsedDefinitions = d3.csv(currentDefinitions, function (data) {
     //re-key the parsedDefinitions if needed
-    return  data;
+    return data;
   })
 
   useEffect(() => {
-    console.log('Definitions:',clicked, clickedSubCat);
-    console.log('Definitions:', spiData[0]['Country']);
     function tabulateModal(data) {
       // Dimension,Component,Indicator name, unit ,Definition,Source,Link
       // Group data on each column, indicator will hold the unique values.
@@ -43,19 +41,19 @@ function ModalDefinitions({ toggleModal, modalRef, spiData, clicked, clickedSubC
         .data([spiData])
         .join(div => {
           let enter = div.append('div').attr('class', 'modalTitle')
-          enter.attr("id", d=> { 
+          enter.attr("id", d => {
             return d[0]['Country']
           })
-          .append('h2')
-          .text(d=> {
-            return `${d[0]['Country']}`
-          })
+            .append('h2')
+            .text(d => {
+              return `${d[0]['Country']}  ${d[0]['SPI year']}`
+            })
           enter.append()
-          .text(d=>{
-            return `Social Progress Index: ${d[0]['Social Progress Index']} `
-          })
+            .text(d => {
+              return `Social Progress Index: ${d[0]['Social Progress Index']} `
+            })
         })
-      
+
       let dimensionsDiv = dimDiv.selectAll('.dimension')
         .data(groupedData, d => d[0])
         .join(div => {
@@ -76,30 +74,32 @@ function ModalDefinitions({ toggleModal, modalRef, spiData, clicked, clickedSubC
               // }
               return `dim-${i} dimension`;
             })
+            // Clean Whitespace or find unique ID that is a valid D3.selection
             .attr("id", d => {
               if (d[0].length === 0) {
-                return "footer dimension";
+                return "footer";
               }
-              return d[0]
+              let id = (d[0]).replace(/ /g, "_");
+              return id;
             });
           let divTitle = enter.append('div').attr('class', 'dimension-title')
-              divTitle.append("img").attr('src', d => imgImport(d)).attr("class", "dimension_img");
-              divTitle.append('h2').text(d => {
-                let target = d[0]
-                d[0] === '' ? target ='*' : target = d[0];
-                if(target === "*" || undefined ) {
-                  return "*";
-                } else {
-                  let value = +spiData[0][`${target}`];
-                  let result = `${d[0]}:  ${value.toFixed()}`;
-                  return result;
-                }
-              });
+          divTitle.append("img").attr('src', d => imgImport(d)).attr("class", "dimension_img");
+          divTitle.append('h2').text(d => {
+            let target = d[0]
+            d[0] === '' ? target = '*' : target = d[0];
+            if (target === "*" || undefined) {
+              return "*";
+            } else {
+              let value = +spiData[0][`${target}`];
+              let result = `${d[0]}:  ${value.toFixed()}`;
+              return result;
+            }
+          });
           dimDiv.exit().remove();
           return enter;
         },
-        //exit statement may need to be fixed to help stop duplication of elements
-        exit => exit.remove());
+          //exit statement may need to be fixed to help stop duplication of elements
+          exit => exit.remove());
 
 
 
@@ -143,7 +143,7 @@ function ModalDefinitions({ toggleModal, modalRef, spiData, clicked, clickedSubC
                 })
                 .attr("class", "component_img");
 
-              componentTitle.append('h3').text(d => { 
+              componentTitle.append('h3').text(d => {
                 //Rounded Number
                 let target = d[0];
                 let value = +spiData[0][`${target}`];
@@ -154,7 +154,8 @@ function ModalDefinitions({ toggleModal, modalRef, spiData, clicked, clickedSubC
               componentTitle.append('p').text(d => {
                 let result = componentImgImport(d);
                 return result[1];
-              });
+              })
+                .style('fill', 'Orange');
             })
         });
 
@@ -177,18 +178,18 @@ function ModalDefinitions({ toggleModal, modalRef, spiData, clicked, clickedSubC
                     // let subString = match ? d[0].substring(0, match.index) : d[0];
                     return d[0];
                   }).attr('class', 'indicator-name');
-//Indicator Scores
+                //Indicator Scores
                 enter.append('tspan')
-                  .text((d,i) => {
+                  .text((d, i) => {
                     let target = d[0];
                     let match = spiData[0][`${target}`]
-                    if(!match) return;
+                    if (!match) return;
                     // //round the match value
                     let rounded = (+match).toFixed(3);
                     let result = `(${rounded})`;
                     return result;
                   }).style('font-weight', 600).attr('class', 'indicator-score')
-                  
+
 
                 enter.append('tspan')
                   .text(d => {
@@ -249,7 +250,7 @@ function ModalDefinitions({ toggleModal, modalRef, spiData, clicked, clickedSubC
       //     });
       //   });
       // }
-            // function unshiftTitle(event, d) {
+      // function unshiftTitle(event, d) {
       //   d3.selectAll(".dimension").each(function () {
       //     d3.selectAll('.component-box').style("display", "flex");
       //     d3.selectAll('.dimension-title').style("writing-mode", "lr-tb");
@@ -259,8 +260,8 @@ function ModalDefinitions({ toggleModal, modalRef, spiData, clicked, clickedSubC
 
       function hideComponents(event, d) {
         var clickedTarget = event.target,
-            currentTarget = this;
-        d3.select(this).selectAll(".component").style("display", ()=>{
+          currentTarget = this;
+        d3.select(this).selectAll(".component").style("display", () => {
           return (currentTarget === clickedTarget) ? "none" : "none";
         });
       };
@@ -274,7 +275,7 @@ function ModalDefinitions({ toggleModal, modalRef, spiData, clicked, clickedSubC
         var clickedTarget = event.target;
         var currentTarget = this;
         // d3.select(event.target).selectAll(".component-box").style("display", "none");
-        d3.select(this).selectAll(".component").style("display", ()=>{
+        d3.select(this).selectAll(".component").style("display", () => {
           return (currentTarget === clickedTarget) ? "flex" : "none";
         });
       };
@@ -283,17 +284,19 @@ function ModalDefinitions({ toggleModal, modalRef, spiData, clicked, clickedSubC
       d3.selectAll('.dimension').on('mouseleave', hideComponents)
       hideAllComponents();
 
+
       indicatorDiv.selectAll(".indicator-definitions").style("display", "none");
       indicatorDiv.selectAll(".indicator-substring").style("display", "none");
       d3.selectAll('#remove').remove();
-
+      d3.select(`#${defContext.dimension}`).selectAll('.component').style("display", "flex");
     }
 
     parsedDefinitions.then((data) => {
+      if (!spiData) return;
       tabulateModal(data);
     })
 
-  }, [parsedDefinitions, modalRef, toggleModal, spiData, clicked, clickedSubCat]);
+  }, [parsedDefinitions, modalRef, toggleModal, spiData, defContext]);
 
   let onClick = e => {
     if (e.target !== e.currentTarget) return;
@@ -301,7 +304,7 @@ function ModalDefinitions({ toggleModal, modalRef, spiData, clicked, clickedSubC
   }
 
   return (
-    <div className="modal-wrapper" ref={modalRef} role="button" tabIndex={0} onClick={onClick} >
+    <div className="modal-wrapper" ref={modalRef} >
     </div>
   );
 

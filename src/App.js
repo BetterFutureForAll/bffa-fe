@@ -3,47 +3,51 @@ import React, { useEffect, useRef } from 'react';
 import './App.css';
 import * as d3 from 'd3'
 import MapContainer from './containers/Map';
-import { useDataByCountry, useDataByYear, useModal, 
-         useToolTip, useYears, useHandleYearChange, 
-         useCenter, useZoom, useToggle, useTarget,
-         useClickedSubCat, useClicked
-        } from './hooks/hooks';
+import {
+  useDataByCountry, useDataByYear, useModal,
+  useToolTip, useYears, useHandleYearChange,
+  useCenter, useZoom, useToggle, useTarget,
+  useClickedSubCat, useClicked, useDefinitions
+} from './hooks/hooks';
 import ModalDefinitions from './containers/ModalDefinitions';
-import Portal from './containers/Portal';
+import Header from './components/Header';
 import { useWindowSize, useHandleCountryChange, useCountries } from './hooks/hooks';
 
 let localGeoData = process.env.PUBLIC_URL + '/cleanedMap.json';
 
 function App() {
   let { showModal, toggleModal } = useModal();
-  let target = "modal-ref";
+  // let target = "modal-ref";
   let modalRef = useRef(null);
+  // Total screen size available
   let [width, height] = useWindowSize();
+  // Map Size
+  let mapHeight = height * .4;
+  // Definitions Size
+  let defHeight = height * .6;
+
   let [countryValue, setCountryValue] = useHandleCountryChange();
   let [countries] = useCountries();
   let [years] = useYears();
   let [yearValue, handleYearChange] = useHandleYearChange();
+
   let [tooltipContext, setToolTipContext] = useToolTip();
   let [zoomState, setZoomState] = useZoom();
   let [isToggled, toggle] = useToggle(false);
   let [clicked, setClicked] = useClicked();
   let [clickedSubCat, setClickedSubCat] = useClickedSubCat();
+  let [defContext, setDefContext] = useDefinitions();
 
-  let mapData = d3.json(localGeoData).then(r => {
-    return r;
-  });
-  let pathRef = useRef();
-
-
+  let mapData = d3.json(localGeoData);
+  
   let handleCountryChange = e => setCountryValue(e.target.value);
 
   let [spiByYear] = useDataByYear(yearValue);
   let [spiByCountry] = useDataByCountry(spiByYear, countryValue);
 
-  // let [clickedSubCat, setClickedSubCat] = useClickedSubCat();
   let svgRef = useRef(null);
 
-  let [center, setCenter] = useCenter(width, height);
+  let [center, setCenter] = useCenter(width, mapHeight);
 
   let selectYears = (
     <>
@@ -71,22 +75,18 @@ function App() {
     </select>
   );
 
-  let children =
-    <>
-      <ModalDefinitions
-        toggleModal={toggleModal}
-        showModal={showModal}
-        modalRef={modalRef}
-        spiData={spiByCountry}
-        clicked={clicked}
-        clickedSubCat={clickedSubCat}
-      />
-    </>;
+  useEffect(() => {
+    let id = clicked ? clicked.replace(/ /g, "_") : null;
+    setDefContext({
+      dimension: id,
+      component: clickedSubCat
+    });
+  }, [clicked, clickedSubCat])
 
   useEffect(() => {
     setToolTipContext({
-      svgRef, 
-      center, 
+      svgRef,
+      center,
       countryValue,
       show: isToggled,
       data: spiByCountry
@@ -96,34 +96,44 @@ function App() {
 
   return (
     <div className="App">
-      <div id={target} >
-        <Portal
-          id={target}
-          children={showModal ? children : null}
-          width={width}
+      <MapContainer
+        showModal={showModal}
+        toggleModal={toggleModal}
+        svgRef={svgRef}
+        width={width}
+        height={mapHeight}
+        selectYears={selectYears}
+        yearValue={yearValue}
+        countryValue={countryValue}
+        setCountryValue={setCountryValue}
+        tooltipContext={tooltipContext}
+        setToolTipContext={setToolTipContext}
+        center={center}
+        setCenter={setCenter}
+        spiData={spiByYear}
+        mapData={mapData}
+        zoomState={zoomState}
+        setZoomState={setZoomState}
+        toggle={toggle}
+        setClicked={setClicked}
+        setClickedSubCat={setClickedSubCat}
+      />
+      <ModalDefinitions
+        toggleModal={toggleModal}
+        showModal={showModal}
+        modalRef={modalRef}
+        spiData={spiByCountry}
+        defContext={defContext}
+      />
+      <div className="ControlBar">
+        <Header
           height={height}
-        />
-        <MapContainer
-          showModal={showModal}
-          toggleModal={toggleModal}
-          svgRef={svgRef}
           width={width}
-          height={height}
           selectYears={selectYears}
           yearValue={yearValue}
           selectCountries={selectCountries}
           countryValue={countryValue}
-          setCountryValue={setCountryValue}
-          tooltipContext={tooltipContext}
-          setToolTipContext={setToolTipContext}
-          center={center}
-          setCenter={setCenter}
-          spiData={spiByYear}
-          mapData={mapData}
-          path={pathRef}
-          zoomState={zoomState}
-          setZoomState={setZoomState}
-          toggle={toggle}
+          toggleModal={toggleModal}
         />
       </div>
     </div>

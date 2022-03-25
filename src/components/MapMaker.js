@@ -3,16 +3,13 @@ import * as d3 from 'd3';
 import { feature, mesh } from "topojson-client";
 import { colorScale } from '../services/SocialProgress';
 import ToolTip from './ToolTip';
-import { useClicked, useClickedSubCat } from '../hooks/hooks';
 
 const MapMaker = ({
-  svgRef, width, height, spiData, mapData,
+  svgRef, width, height, spiData, mapData, setClicked, setClickedSubCat,
   yearValue, loading, setLoading, zoomState, setZoomState,
   toggleModal, setCountryValue, tooltipContext, toggle }) => {
 
   let loadingSpinner = require('../assets/loading.gif');
-  let [clicked, setClicked] = useClicked();
-  let [clickedSubCat, setClickedSubCat] = useClickedSubCat();
 
   function ready(data) {
 
@@ -20,7 +17,7 @@ const MapMaker = ({
     let checkedSize = Math.min(height, width)
 
     let projection = d3.geoEqualEarth()
-      .scale(checkedSize / Math.PI / 1.25)
+      .scale(checkedSize / Math.PI)
       .translate([width / 2, height / 2])
 
     let path = d3.geoPath().projection(projection);
@@ -56,7 +53,7 @@ const MapMaker = ({
     };
 
     const zoom = d3.zoom()
-      .translateExtent([[-.25 * width, 0], [width * 1.5, height]])
+      .translateExtent([[-.25 * width, -.25 * height], [width * 1.5, height * 1.25]])
       .scaleExtent([1, 10])
       .on('zoom', zoomed)
 
@@ -168,6 +165,8 @@ const MapMaker = ({
         tooltipContext={tooltipContext}
         toggleModal={toggleModal}
         zoomState={zoomState}
+        setClicked={setClicked}
+        setClickedSubCat={setClickedSubCat}
       />
     </svg>
   );
