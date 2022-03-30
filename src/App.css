@@ -1,26 +1,20 @@
 * { margin: 0; padding: 0; }
 
 .App {
-  display: grid;
-  grid-template-columns: 1fr;
-  grid-template-rows: 3fr, 4fr, 1fr;
-  grid-template-areas: 
-  "map"
-  "def"
-  "control";
-  height: 100vh;
-  width: 100vw;
+  display: flex;
+  flex-direction: column;
   text-align: center;
-  position: fixed;
   font-size: 100%;
   align-items: flex-start;
+  height: 100vh;
 }
 
-.MapContainer {
-  height: 100%;
+#MapContainer {
   width: 100%;
   display: flex;
+  flex: 0 0 auto;
   grid-area: "map";
+  height: 60vh;
 }
 
 body {
@@ -29,12 +23,6 @@ body {
 
 div {
   display: block;
-}
-
-.MapContainer {
-  top: 0;
-  position: fixed;
-  height: 40vh;
 }
 
 .petalPath {
@@ -52,7 +40,8 @@ div {
 .ControlBar {
   flex-direction: row;
   bottom: 0;
-  height: 100%;
+  margin-top: auto;
+  flex: 0 0 auto;
   width: 100%;
   padding: 2px;
   align-items: center;
@@ -61,15 +50,10 @@ div {
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
   box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.47);
-  grid-area: "control";
 }
 
 
 @media only screen and (max-width: 400px) {
-  .ControlBar {
-    flex-direction: column;
-    align-items: center;
-  }
 
 }
 
@@ -98,14 +82,16 @@ div {
 
 .modal-wrapper {
   justify-content: flex-end;
+  flex: 2;
   align-items: center;
-  height: 100%;
   width: 100%;
   margin: 0;
   padding: 0;
   background-color:rgba(255,255,255,0.5);
-  overflow: auto;
-  grid-area: "def";
+  overflow-y: auto;
+  scroll-behavior: smooth;
+  height: fit-content;
+
 }
 
 .modal div {
@@ -123,6 +109,8 @@ div {
   margin: 10px;
   padding: 1px;
   border-radius: 10px;
+  border-width: 1px;
+  border-color: rgb(0, 0, 0);
   background: rgba(255, 255, 255, 0.5);
   box-shadow: 20px 20px 30px rgba(0, 0, 0, 0.47);
   overflow: scroll;
@@ -135,19 +123,13 @@ div {
 
 }
 
-
-/* Responsive layout - makes the three columns stack on top of each other instead of next to each other */
-@media (max-width: 600px) {
-
-
-}
-
-
 .modal .dimension {
   height: max-content;
 }
 
 .modalTitle {
+  position: sticky; 
+  top: 0;
   border-radius: 10px;
   background-color: rgba(163, 206, 255, 0.35);
   border-style: solid;
@@ -155,6 +137,7 @@ div {
   border-color: rgb(0, 0, 0);
   box-shadow: 0px 20px 30px rgba(0, 0, 0, 0.47);
   text-align: center;
+
 }
 
 .dim-0 {
@@ -192,21 +175,6 @@ div {
   box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.47);
 }
 
-.footer {
-  display: flex;
-  grid-column: 1 / span 12;
-  grid-row: 2 / span 1;
-  width: auto;
-} 
-.footerFlex {
-  display: flex;
-  grid-column: 1 / span 12;
-  grid-row: 2 / span 1;
-  width: auto;
-  position: absolute;
-  bottom: 0;
-}
-
 ul.indicator-box {
   margin: .5em;
 }
@@ -233,7 +201,7 @@ ul.indicator-box {
 .dimension_img {
   grid-area: icon;
   max-width: 100%;
-  max-height: 2em;
+  max-height: 1em;
   padding: 5px;
 }
 
@@ -255,7 +223,7 @@ ul.indicator-box {
 .component_img {
   justify-self: flex-start;
   align-self: flex-start;
-  max-height: 2em;
+  max-height: 1em;
   max-width: auto;
   height: auto;
   width: auto;

@@ -60,24 +60,23 @@ const Header = ({
 
   }, [width, height, legendData, squareSize])
 
-  if (width < 376) return (
-    <>
-      <div>
-        <svg ref={legendRef} id={"legend"} className={'legend'} height={squareSize} width={squareSize * 11}></svg>
-      </div>
-      <div className={"controls"}>
-        {/* <button id="myBtn" onClick={toggleModal}>Data Definitions</button> */}
-        <form onSubmit={handleCountryChange}>
-          <label id="country_list" value={countryValue} >Country </label>
-          {selectCountries}
-        </form>
-        <form onSubmit={handleSubmit}>
-          <label id="years" value={yearValue} >Year </label>
-          {selectYears}
-        </form>
-      </div>
-    </>
-  )
+  // if (width < 376) return (
+  //   <>
+  //     <div>
+  //       <svg ref={legendRef} id={"legend"} className={'legend'} height={squareSize} width={squareSize * 11}></svg>
+  //     </div>
+  //     <div className={"controls"}>
+  //       <form onSubmit={handleCountryChange}>
+  //         <label id="country_list" value={countryValue} ></label>
+  //         {selectCountries}
+  //       </form>
+  //       <form onSubmit={handleSubmit}>
+  //         <label id="years" value={yearValue} ></label>
+  //         {selectYears}
+  //       </form>
+  //     </div>
+  //   </>
+  // )
 
   return (
     <>
@@ -85,11 +84,11 @@ const Header = ({
       {/* <button id="myBtn" onClick={toggleModal}>Data Definitions</button> */}
 
       <form onSubmit={handleSubmit}>
-        <label id="years" value={yearValue} >Year </label>
+        <label id="years" value={yearValue} ></label>
         {selectYears}
       </form>
       <form onSubmit={handleCountryChange}>
-        <label id="country_list" value={countryValue} >Country </label>
+        <label id="country_list" value={countryValue} ></label>
         {selectCountries}
       </form>
     </>

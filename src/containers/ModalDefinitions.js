@@ -44,11 +44,12 @@ function ModalDefinitions({ toggleModal, modalRef, spiData, defContext }) {
           enter.attr("id", d => {
             return d[0]['Country']
           })
-            .append('h2')
-            .text(d => {
-              return `${d[0]['Country']}  ${d[0]['SPI year']}`
-            })
+            // .append('h2')
+            // .text(d => {
+            //   return `${d[0]['Country']}  ${d[0]['SPI year']}`
+            // })
           enter.append()
+            .append('h4')
             .text(d => {
               return `Social Progress Index: ${d[0]['Social Progress Index']} `
             })
@@ -84,7 +85,7 @@ function ModalDefinitions({ toggleModal, modalRef, spiData, defContext }) {
             });
           let divTitle = enter.append('div').attr('class', 'dimension-title')
           divTitle.append("img").attr('src', d => imgImport(d)).attr("class", "dimension_img");
-          divTitle.append('h2').text(d => {
+          divTitle.append('h3').text(d => {
             let target = d[0]
             d[0] === '' ? target = '*' : target = d[0];
             if (target === "*" || undefined) {
@@ -112,7 +113,11 @@ function ModalDefinitions({ toggleModal, modalRef, spiData, defContext }) {
             .selectAll('.component')
             .data(d[1])
             .join(div => {
-              let enter = div.append('div').attr("class", "component").attr("id", d => d[0])
+              //append each individual component, and clean the whitespace for ID's
+              let enter = div.append('div').attr("class", "component").attr("id", d => {
+                let parsedId = d[0].replace(/ /g, "_");
+                return parsedId;
+              })
               let componentImgImport = (d) => {
                 switch (d[0]) {
                   case "Nutrition and Basic Medical Care": return [basic_nutrition, 'Do people have enough food to eat and are they receiving basic medical care? '];
@@ -288,7 +293,16 @@ function ModalDefinitions({ toggleModal, modalRef, spiData, defContext }) {
       indicatorDiv.selectAll(".indicator-definitions").style("display", "none");
       indicatorDiv.selectAll(".indicator-substring").style("display", "none");
       d3.selectAll('#remove').remove();
-      d3.select(`#${defContext.dimension}`).selectAll('.component').style("display", "flex");
+      hideAllComponents();
+
+      
+      // Show the entire selected dimension with all its components.
+      // d3.select(`#${defContext.dimension}`).selectAll('.component').style("display", "flex");
+
+      // Select just the single component
+      d3.select(`#${defContext.dimension}`).select(`#${defContext.component}`).style("display", "flex");
+
+      // d3.select(`#${defContext.component}`).selectAll('.component').style("display", "flex");
     }
 
     parsedDefinitions.then((data) => {
@@ -298,10 +312,10 @@ function ModalDefinitions({ toggleModal, modalRef, spiData, defContext }) {
 
   }, [parsedDefinitions, modalRef, toggleModal, spiData, defContext]);
 
-  let onClick = e => {
-    if (e.target !== e.currentTarget) return;
-    else toggleModal();
-  }
+  // let onClick = e => {
+  //   if (e.target !== e.currentTarget) return;
+  //   else toggleModal();
+  // }
 
   return (
     <div className="modal-wrapper" ref={modalRef} >

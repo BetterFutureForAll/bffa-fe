@@ -7,7 +7,7 @@ import ToolTip from './ToolTip';
 const MapMaker = ({
   svgRef, width, height, spiData, mapData, setClicked, setClickedSubCat,
   yearValue, loading, setLoading, zoomState, setZoomState,
-  toggleModal, setCountryValue, tooltipContext, toggle }) => {
+  toggleModal, setCountryValue, tooltipContext }) => {
 
   let loadingSpinner = require('../assets/loading.gif');
 
@@ -62,7 +62,6 @@ const MapMaker = ({
       .attr("id", "viewbox")
       .attr("viewBox", [0, 0, width, height])
       .attr('preserveAspectRatio', 'xMinYMid')
-      .on("mouseleave", reset)
       .on('zoom', zoom)
 
     svg.selectAll('.countries').remove();
@@ -96,13 +95,12 @@ const MapMaker = ({
         let match = getSpiData(d);
         return match ? colorScale(match[0]['Social Progress Index']) : "#c4c2c4"
       })
-      .on("mouseover", countryMouseOver)
+      .on("click", countryMouseOver)
       .on("mouseenter", (event, d) => {
         d3.select(event.path[0]).style("opacity", ".8");
       })
       .on("mouseleave",
         d => { d3.select(d.path[0]).style("opacity", "1"); })
-      .on("mouseout", toggle)
       .append("title")
       .text(d => { return `${d.properties.NAME_EN}` })
 
@@ -133,14 +131,12 @@ const MapMaker = ({
 
     borders.exit().remove();
 
-    reset();
-
-    // *** Event Listeners ***
-    function reset(event) {
-      // countryMouseLeave();
-      svg.selectAll('.subPetalText').remove();
-      d3.selectAll(".toolTipName").remove();
-    }
+    // // *** Event Listeners ***
+    // function reset(event) {
+    //   // countryMouseLeave();
+    //   svg.selectAll('.subPetalText').remove();
+    //   d3.selectAll(".toolTipName").remove();
+    // }
 
   };
 

@@ -218,6 +218,12 @@ const ToolTip = ({ tooltipContext, toggleModal, zoomState, setClicked, setClicke
           .style("opacity", 1)
       };
 
+      function setSubCategory(event, d) {
+        let target = Object.keys(d)[0];
+        console.log('subPetal',target);
+        setClickedSubCat(target);
+      }
+
       // adjust for major petals
       var mousemove = function (event, d) {
         toolTip.selectAll(".tooltip-text-area").remove();
@@ -259,7 +265,9 @@ const ToolTip = ({ tooltipContext, toggleModal, zoomState, setClicked, setClicke
           .attr('background-color', 'gray;')
 
         textTooltip.raise()
-
+        
+        let target = Object.keys(d)[0];
+        setClickedSubCat(target);
       };
 
       svg.select(`#${data[0]['SPI country code']}_target`).raise();
@@ -372,9 +380,6 @@ const ToolTip = ({ tooltipContext, toggleModal, zoomState, setClicked, setClicke
 
         let target = Object.keys(d)[0];
         setClicked(target);
-
-        toolTip.selectAll('.petalArc')
-          .on('click', toggleModal)
       };
 
 
@@ -395,8 +400,8 @@ const ToolTip = ({ tooltipContext, toggleModal, zoomState, setClicked, setClicke
     };
 
     ready();
-
-  }, [tooltipContext, zoomState, toggleModal]);
+    console.log('toolTip Re-Rendered');
+  }, [tooltipContext, zoomState]);
 
   return (
     <></>

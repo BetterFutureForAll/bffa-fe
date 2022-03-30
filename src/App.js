@@ -22,9 +22,7 @@ function App() {
   // Total screen size available
   let [width, height] = useWindowSize();
   // Map Size
-  let mapHeight = height * .4;
-  // Definitions Size
-  let defHeight = height * .6;
+  let mapHeight = height * .6;
 
   let [countryValue, setCountryValue] = useHandleCountryChange();
   let [countries] = useCountries();
@@ -52,9 +50,9 @@ function App() {
   let selectYears = (
     <>
       <select onChange={handleYearChange} value={yearValue} >
-        {years.map(item => (
+        {years.map((item, i)=> (
           <option
-            key={item}
+            key={i}
             value={item}
             onSelect={handleYearChange}
           >
@@ -66,9 +64,9 @@ function App() {
   );
 
   let selectCountries = (
-    <select onChange={handleCountryChange} value={countryValue}>
-      {countries.map(item => (
-        <option key={item} value={item} onSelect={handleCountryChange}>
+    <select  onChange={handleCountryChange} value={countryValue}>
+      {countries.map((item, i) => (
+        <option key={i} value={item} onSelect={handleCountryChange}>
           {item}
         </option>
       ))}
@@ -77,9 +75,10 @@ function App() {
 
   useEffect(() => {
     let id = clicked ? clicked.replace(/ /g, "_") : null;
+    let subId = clickedSubCat? clickedSubCat.replace(/ /g, "_") : null;
     setDefContext({
       dimension: id,
-      component: clickedSubCat
+      component: subId
     });
   }, [clicked, clickedSubCat])
 
@@ -118,13 +117,6 @@ function App() {
         setClicked={setClicked}
         setClickedSubCat={setClickedSubCat}
       />
-      <ModalDefinitions
-        toggleModal={toggleModal}
-        showModal={showModal}
-        modalRef={modalRef}
-        spiData={spiByCountry}
-        defContext={defContext}
-      />
       <div className="ControlBar">
         <Header
           height={height}
@@ -136,6 +128,13 @@ function App() {
           toggleModal={toggleModal}
         />
       </div>
+      <ModalDefinitions
+        toggleModal={toggleModal}
+        showModal={showModal}
+        modalRef={modalRef}
+        spiData={spiByCountry}
+        defContext={defContext}
+      />
     </div>
   );
 }
