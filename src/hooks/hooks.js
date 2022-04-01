@@ -48,15 +48,6 @@ export const useScore = () => {
   let [score, setScore] = useState({ name: '', score: '' });
   return [score, setScore];
 };
-export const useCenter = (width, height) => {
-  let [center, setCenter] = useState([0, 0]);
-  useEffect(() => {
-    let newCenter = [width / 2, height / 2]
-    setCenter(newCenter);
-  }, [width, height])
-
-  return [center, setCenter];
-};
 
 export const useZoom = () => {
   let [zoomState, setZoomState] = useState(

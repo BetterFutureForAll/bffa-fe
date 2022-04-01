@@ -4,10 +4,10 @@ import MapMaker from '../components/MapMaker';
 function MapContainer({
   toggleModal, width, height,
   yearValue, setClickedSubCat, setClicked,
-  center, setCenter, spiData, mapData,
+  spiData, mapData,
   countryValue, setCountryValue,
   tooltipContext, setToolTipContext, svgRef,
-  zoomState, setZoomState, toggle }) {
+  zoomState, setZoomState }) {
 
   let [loading, setLoading] = useState(true);
 
@@ -21,18 +21,14 @@ function MapContainer({
           width={width}
           loading={loading}
           setLoading={setLoading}
-          toggleModal={toggleModal}
           countryValue={countryValue}
           setCountryValue={setCountryValue}
           tooltipContext={tooltipContext}
           setToolTipContext={setToolTipContext}
-          center={center}
-          setCenter={setCenter}
           spiData={spiData}
           mapData={mapData}
           zoomState={zoomState}
           setZoomState={setZoomState}
-          toggle={toggle}
           setClicked={setClicked}
           setClickedSubCat={setClickedSubCat}
         />

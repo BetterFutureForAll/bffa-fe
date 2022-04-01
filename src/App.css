@@ -97,7 +97,7 @@ div {
 .modal div {
   flex-wrap: wrap;
   justify-content: flex-start;
-  align-items: flex-start;
+  align-items: center;
   margin: 1px;
   width: calc(100% - 4px);
   border-radius: 10px;

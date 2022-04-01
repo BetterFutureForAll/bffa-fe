@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
 import * as d3 from 'd3';
-import { useClicked, useClickedSubCat } from '../hooks/hooks';
 import {
   colorScale,
   basicColorScale,
@@ -9,7 +8,7 @@ import {
 } from '../services/SocialProgress';
 
 // needs X, Y, and SPI Data set
-const ToolTip = ({ tooltipContext, toggleModal, zoomState, setClicked, setClickedSubCat }) => {
+const ToolTip = ({ tooltipContext, zoomState, setClicked, setClickedSubCat }) => {
 
 
   useEffect(() => {
@@ -19,7 +18,7 @@ const ToolTip = ({ tooltipContext, toggleModal, zoomState, setClicked, setClicke
     let subPetalPath = "M 0 0 L 85 15 A 1 1 0 0 0 85 -15 L 0 0";
 
     function ready() {
-      let { svgRef, center, data } = tooltipContext;
+      let { svgRef, data } = tooltipContext;
       if (!data) return;
 
       function parsedData(d) {
@@ -81,13 +80,13 @@ const ToolTip = ({ tooltipContext, toggleModal, zoomState, setClicked, setClicke
 
       let x, y;
       if (data[0]['SPI country code'] === 'WWW') {
-        x = (+center[0] - +zoomState.x) / zoomState.k;
-        y = (+center[1] - +zoomState.y) / zoomState.k;
+        // world uses CPV as center
+        x = svg.select(`#CPV_target`).attr('cx');
+        y = svg.select(`#CPV_target`).attr('cy');
       } else {
         x = svg.select(`#${data[0]['SPI country code']}_target`).attr('cx');
         y = svg.select(`#${data[0]['SPI country code']}_target`).attr('cy');
       }
-
 
       let fontSize = 16 / zoomState.k;
 
@@ -183,7 +182,9 @@ const ToolTip = ({ tooltipContext, toggleModal, zoomState, setClicked, setClicke
           let enter = group.append('text')
           enter
             .append("tspan")
-            .text(d => `${d["Country"]}`)
+            .text(d => {
+              return `${d["Country"]}`
+            })
             .attr('x', 0)
             .attr('y', spiScale(120) / zoomState.k)
             .attr('dy', '1em')
@@ -197,7 +198,9 @@ const ToolTip = ({ tooltipContext, toggleModal, zoomState, setClicked, setClicke
               return `${rounded}`;
             })
             .attr('x', 0)
-            .attr('y', spiScale(120) / zoomState.k)
+            .attr('y', d => {
+              return spiScale(120) / zoomState.k
+            })
             .attr('dy', '2em')
           return enter;
         })
@@ -218,12 +221,6 @@ const ToolTip = ({ tooltipContext, toggleModal, zoomState, setClicked, setClicke
           .style("opacity", 1)
       };
 
-      function setSubCategory(event, d) {
-        let target = Object.keys(d)[0];
-        console.log('subPetal',target);
-        setClickedSubCat(target);
-      }
-
       // adjust for major petals
       var mousemove = function (event, d) {
         toolTip.selectAll(".tooltip-text-area").remove();
@@ -237,16 +234,12 @@ const ToolTip = ({ tooltipContext, toggleModal, zoomState, setClicked, setClicke
           .data(d => [d])
           .join(group => {
             let enter = group.append('text')
-            let target = (Object.keys(d)[0]);
             enter
               .append("tspan")
               .text(`${Object.keys(d)[0]}`)
               .attr('x', mouseZoomX)
               .attr('y', mouseZoomY)
               .attr('dy', '-2em')
-
-            // .call(setClickedSubCat(target));
-            // console.log('subcat', target);
 
             enter
               .append("tspan")
@@ -265,7 +258,7 @@ const ToolTip = ({ tooltipContext, toggleModal, zoomState, setClicked, setClicke
           .attr('background-color', 'gray;')
 
         textTooltip.raise()
-        
+
         let target = Object.keys(d)[0];
         setClickedSubCat(target);
       };
@@ -274,7 +267,7 @@ const ToolTip = ({ tooltipContext, toggleModal, zoomState, setClicked, setClicke
 
 
       var mouseout = function (event, d) {
-        d3.selectAll('.tooltip-text-area').remove();
+        // d3.selectAll('.tooltip-text-area').remove();
         // textTooltip.remove();
       };
 
@@ -354,13 +347,6 @@ const ToolTip = ({ tooltipContext, toggleModal, zoomState, setClicked, setClicke
             return `#arc_${Object.keys(d)[0]}`
           })
           .attr("font-size", fontSize)
-          // .attr("fill", d => {
-          //   let fontColor = 'black'
-          //   if (d.angle === 30 && d.petSize > 85) {
-          //     fontColor = 'yellow'
-          //   }
-          //   return fontColor;
-          // })
           .attr("pointer-events", "none")
           .attr("startOffset", function (d) {
             if (d.angle === 270) {
@@ -378,13 +364,12 @@ const ToolTip = ({ tooltipContext, toggleModal, zoomState, setClicked, setClicke
             return `${Object.keys(d)[0]}-${rounded}`;
           });
 
-        let target = Object.keys(d)[0];
-        setClicked(target);
+
       };
 
-
-      // set target in this chain.
       function doItAll(event, d) {
+        let target = Object.keys(d)[0];
+        setClicked(target);
         toolTip.selectAll('.petalArc').remove();
         toolTip.selectAll('.petalText').remove();
         showSubPetals(event, d);
@@ -392,16 +377,18 @@ const ToolTip = ({ tooltipContext, toggleModal, zoomState, setClicked, setClicke
       }
       // add mouseout fn's to subpetals / petals
       d3.selectAll('.petalPath').on('mouseenter', doItAll)
-
       d3.selectAll('.backgroundPetalPath').on('mouseenter', doItAll)
 
-      toolTip
-        .on("mouseleave", () => toolTip.remove())
+      toolTip.selectAll('.backgroundPetalPath').each((event, d) => {
+        showSubPetals(event, d);
+        showPetalArc(event, d);
+      })
+      // toolTip
+      //   .on("mouseleave", () => toolTip.remove())
     };
 
     ready();
-    console.log('toolTip Re-Rendered');
-  }, [tooltipContext, zoomState]);
+  }, [tooltipContext, zoomState, setClickedSubCat, setClicked]);
 
   return (
     <></>

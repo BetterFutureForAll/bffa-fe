@@ -6,7 +6,7 @@ import MapContainer from './containers/Map';
 import {
   useDataByCountry, useDataByYear, useModal,
   useToolTip, useYears, useHandleYearChange,
-  useCenter, useZoom, useToggle, useTarget,
+  useZoom,
   useClickedSubCat, useClicked, useDefinitions
 } from './hooks/hooks';
 import ModalDefinitions from './containers/ModalDefinitions';
@@ -31,7 +31,6 @@ function App() {
 
   let [tooltipContext, setToolTipContext] = useToolTip();
   let [zoomState, setZoomState] = useZoom();
-  let [isToggled, toggle] = useToggle(false);
   let [clicked, setClicked] = useClicked();
   let [clickedSubCat, setClickedSubCat] = useClickedSubCat();
   let [defContext, setDefContext] = useDefinitions();
@@ -45,7 +44,7 @@ function App() {
 
   let svgRef = useRef(null);
 
-  let [center, setCenter] = useCenter(width, mapHeight);
+  // let [center, setCenter] = useCenter(width, mapHeight);
 
   let selectYears = (
     <>
@@ -80,17 +79,15 @@ function App() {
       dimension: id,
       component: subId
     });
-  }, [clicked, clickedSubCat])
+  }, [clicked, clickedSubCat, setDefContext])
 
   useEffect(() => {
     setToolTipContext({
       svgRef,
-      center,
       countryValue,
-      show: isToggled,
       data: spiByCountry
     });
-  }, [countryValue, yearValue, center, spiByCountry, setToolTipContext, isToggled])
+  }, [countryValue, yearValue, spiByCountry, setToolTipContext])
 
 
   return (
@@ -107,13 +104,10 @@ function App() {
         setCountryValue={setCountryValue}
         tooltipContext={tooltipContext}
         setToolTipContext={setToolTipContext}
-        center={center}
-        setCenter={setCenter}
         spiData={spiByYear}
         mapData={mapData}
         zoomState={zoomState}
         setZoomState={setZoomState}
-        toggle={toggle}
         setClicked={setClicked}
         setClickedSubCat={setClickedSubCat}
       />

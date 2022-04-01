@@ -7,7 +7,7 @@ import ToolTip from './ToolTip';
 const MapMaker = ({
   svgRef, width, height, spiData, mapData, setClicked, setClickedSubCat,
   yearValue, loading, setLoading, zoomState, setZoomState,
-  toggleModal, setCountryValue, tooltipContext }) => {
+  setCountryValue, tooltipContext }) => {
 
   let loadingSpinner = require('../assets/loading.gif');
 
@@ -74,9 +74,6 @@ const MapMaker = ({
     function countryMouseOver(event, d) {
       let spiMatch = getSpiData(d);
       let name = spiMatch ? spiMatch[0]["Country"] : "World";
-      // toggleToolTip fn needed here. 
-      //  console.log(toggle)
-      //  toggle();
       setCountryValue(name);
     };
 
@@ -142,14 +139,13 @@ const MapMaker = ({
 
   useEffect(() => {
     setLoading(true);
-    // let localData = d3.json(localGeoData);
     if (spiData.length === 0) return;
 
     Promise.all([mapData, spiData]).then(function (values) {
       setLoading(false);
       ready(values);
     });
-
+    
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [yearValue, svgRef, height, width, spiData]);
 
@@ -159,7 +155,6 @@ const MapMaker = ({
     <svg ref={svgRef} height={height} width={width} id="map">
       <ToolTip
         tooltipContext={tooltipContext}
-        toggleModal={toggleModal}
         zoomState={zoomState}
         setClicked={setClicked}
         setClickedSubCat={setClickedSubCat}
