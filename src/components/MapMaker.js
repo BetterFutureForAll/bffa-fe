@@ -4,11 +4,10 @@ import { feature, mesh } from "topojson-client";
 import { colorScale } from '../services/SocialProgress';
 import ToolTip from './ToolTip';
 
-
 const MapMaker = ({
-  svgRef, width, height, spiData, mapData,
-  yearValue, loading, setLoading, center, setCenter, zoomState, setZoomState,
-  toggleModal, countryValue, setCountryValue, tooltipContext, setToolTipContext }) => {
+  svgRef, width, height, spiData, mapData, setClicked, setClickedSubCat,
+  yearValue, loading, setLoading, zoomState, setZoomState,
+  setCountryValue, tooltipContext }) => {
 
   let loadingSpinner = require('../assets/loading.gif');
 
@@ -18,7 +17,7 @@ const MapMaker = ({
     let checkedSize = Math.min(height, width)
 
     let projection = d3.geoEqualEarth()
-      .scale(checkedSize / Math.PI / 1.25)
+      .scale(checkedSize / Math.PI)
       .translate([width / 2, height / 2])
 
     let path = d3.geoPath().projection(projection);
@@ -54,7 +53,7 @@ const MapMaker = ({
     };
 
     const zoom = d3.zoom()
-      .translateExtent([[-.25 * width, 0], [width * 1.5, height]])
+      .translateExtent([[-.25 * width, -.25 * height], [width * 1.5, height * 1.25]])
       .scaleExtent([1, 10])
       .on('zoom', zoomed)
 
@@ -63,7 +62,6 @@ const MapMaker = ({
       .attr("id", "viewbox")
       .attr("viewBox", [0, 0, width, height])
       .attr('preserveAspectRatio', 'xMinYMid')
-      .on("mouseleave", reset)
       .on('zoom', zoom)
 
     svg.selectAll('.countries').remove();
@@ -74,13 +72,9 @@ const MapMaker = ({
     svg.call(zoom);
 
     function countryMouseOver(event, d) {
-
       let spiMatch = getSpiData(d);
-      if (!spiMatch) return;
-      let name = spiMatch[0]["Country"];
-      // toggleToolTip fn needed here. 
+      let name = spiMatch ? spiMatch[0]["Country"] : "World";
       setCountryValue(name);
-
     };
 
     // *** Country groupings ***
@@ -91,14 +85,14 @@ const MapMaker = ({
       .attr("class", "country")
       .attr("id", (d, i) => {
         let match = getSpiData(d);
-        return (match? `${match[0]['SPI country code']}` : `i${i}`);
+        return (match ? `${match[0]['SPI country code']}` : `i${i}`);
       })
       .attr("cursor", "pointer")
       .attr("fill", d => {
         let match = getSpiData(d);
         return match ? colorScale(match[0]['Social Progress Index']) : "#c4c2c4"
       })
-      .on("mouseover", countryMouseOver)
+      .on("click", countryMouseOver)
       .on("mouseenter", (event, d) => {
         d3.select(event.path[0]).style("opacity", ".8");
       })
@@ -117,7 +111,7 @@ const MapMaker = ({
       .attr('id', (d, i) => {
         let match = getSpiData(d)
         //ID has to adjust for the spiMatch function to find it proper target.
-        return (match? `${match[0]['SPI country code']}_target` : `i${i}_target`)
+        return (match ? `${match[0]['SPI country code']}_target` : `i${i}_target`)
       })
       .attr("cx", d => path.centroid(d)[0])
       .attr("cy", d => path.centroid(d)[1])
@@ -134,27 +128,24 @@ const MapMaker = ({
 
     borders.exit().remove();
 
-    reset();
-
-    // *** Event Listeners ***
-    function reset(event) {
-      // countryMouseLeave();
-      svg.selectAll('.subPetalText').remove();
-      d3.selectAll(".toolTipName").remove();
-    }
+    // // *** Event Listeners ***
+    // function reset(event) {
+    //   // countryMouseLeave();
+    //   svg.selectAll('.subPetalText').remove();
+    //   d3.selectAll(".toolTipName").remove();
+    // }
 
   };
 
   useEffect(() => {
     setLoading(true);
-    // let localData = d3.json(localGeoData);
     if (spiData.length === 0) return;
 
     Promise.all([mapData, spiData]).then(function (values) {
       setLoading(false);
       ready(values);
     });
-
+    
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [yearValue, svgRef, height, width, spiData]);
 
@@ -162,7 +153,12 @@ const MapMaker = ({
 
   return (
     <svg ref={svgRef} height={height} width={width} id="map">
-      <ToolTip tooltipContext={tooltipContext} toggleModal={toggleModal} zoomState={zoomState} />
+      <ToolTip
+        tooltipContext={tooltipContext}
+        zoomState={zoomState}
+        setClicked={setClicked}
+        setClickedSubCat={setClickedSubCat}
+      />
     </svg>
   );
 };

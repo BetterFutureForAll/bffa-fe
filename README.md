@@ -1,5 +1,5 @@
 # Better Future For All
-This app is for rendering data visualizations from [Social Progress Initiative](https://www.socialprogress.org)  
+This app is for rendering data visualizations from [Social Progress Imperative](https://www.socialprogress.org)  
 
 The goal of this front end up is to render visual representations of the data gathered by Social Progress Index to make it easily accessible and digestible for users. Rendering Data visualizations for the data collected will help people in leadership roles to identify needs and strengths of their community in order to help improve the quality of life for the communities in meaningful and impactful ways.  
 

@@ -20,16 +20,16 @@ import opportunity_freedom from '../assets/bffa_icons/2_2_freedom.png';
 import opportunity_inclusiveness from '../assets/bffa_icons/2_3_inclusiveness.png';
 import opportunity_education from '../assets/bffa_icons/2_4_education.png';
 
-
-function ModalDefinitions({ countryValue, clicked, clickedSubCat, toggleModal, modalRef, width }) {
+function ModalDefinitions({ toggleModal, modalRef, spiData, defContext }) {
 
   let currentDefinitions = require('../assets/definitions-2021.csv');
-
-  let parsedDefinitions = d3.csv(currentDefinitions);
+  let parsedDefinitions = d3.csv(currentDefinitions, function (data) {
+    //re-key the parsedDefinitions if needed
+    return data;
+  })
 
   useEffect(() => {
     function tabulateModal(data) {
-
       // Dimension,Component,Indicator name, unit ,Definition,Source,Link
       // Group data on each column, indicator will hold the unique values.
       let groupedData = d3.group(data, d => d["Dimension"], d => d["Component"], d => d['Indicator name'])
@@ -37,6 +37,24 @@ function ModalDefinitions({ countryValue, clicked, clickedSubCat, toggleModal, m
       let modal = d3.select(modalRef.current);
       modal.selectAll('.modal').remove();
       let dimDiv = modal.append('div').attr('class', 'modal');
+      dimDiv.selectAll('.modalTitle')
+        .data([spiData])
+        .join(div => {
+          let enter = div.append('div').attr('class', 'modalTitle')
+          enter.attr("id", d => {
+            return d[0]['Country']
+          })
+            // .append('h2')
+            // .text(d => {
+            //   return `${d[0]['Country']}  ${d[0]['SPI year']}`
+            // })
+          enter.append()
+            .append('h4')
+            .text(d => {
+              return `Social Progress Index: ${d[0]['Social Progress Index']} `
+            })
+        })
+
       let dimensionsDiv = dimDiv.selectAll('.dimension')
         .data(groupedData, d => d[0])
         .join(div => {
@@ -52,25 +70,37 @@ function ModalDefinitions({ countryValue, clicked, clickedSubCat, toggleModal, m
           //class and ID to isolate footer
           enter
             .attr("class", (d, i) => {
+              // if (d[0].length === 0) {
+              //   return "footer";
+              // }
+              return `dim-${i} dimension`;
+            })
+            // Clean Whitespace or find unique ID that is a valid D3.selection
+            .attr("id", d => {
               if (d[0].length === 0) {
                 return "footer";
               }
-              return `dim-${i} dimension`;
-            })
-            .attr("id", d => {
-              if (d[0].length === 0) {
-                return "footer dimension";
-              }
-              return d[0]
+              let id = (d[0]).replace(/ /g, "_");
+              return id;
             });
           let divTitle = enter.append('div').attr('class', 'dimension-title')
-              divTitle.append("img").attr('src', d => imgImport(d)).attr("class", "dimension_img");
-              divTitle.append('h2').text(d => d[0] === "" ? '*' : d[0]);
+          divTitle.append("img").attr('src', d => imgImport(d)).attr("class", "dimension_img");
+          divTitle.append('h3').text(d => {
+            let target = d[0]
+            d[0] === '' ? target = '*' : target = d[0];
+            if (target === "*" || undefined) {
+              return "*";
+            } else {
+              let value = +spiData[0][`${target}`];
+              let result = `${d[0]}:  ${value.toFixed()}`;
+              return result;
+            }
+          });
           dimDiv.exit().remove();
           return enter;
         },
-        //exit statement may need to be fixed to help stop duplication of elements
-        exit => exit.remove());
+          //exit statement may need to be fixed to help stop duplication of elements
+          exit => exit.remove());
 
 
 
@@ -83,7 +113,11 @@ function ModalDefinitions({ countryValue, clicked, clickedSubCat, toggleModal, m
             .selectAll('.component')
             .data(d[1])
             .join(div => {
-              let enter = div.append('div').attr("class", "component").attr("id", d => d[0])
+              //append each individual component, and clean the whitespace for ID's
+              let enter = div.append('div').attr("class", "component").attr("id", d => {
+                let parsedId = d[0].replace(/ /g, "_");
+                return parsedId;
+              })
               let componentImgImport = (d) => {
                 switch (d[0]) {
                   case "Nutrition and Basic Medical Care": return [basic_nutrition, 'Do people have enough food to eat and are they receiving basic medical care? '];
@@ -114,12 +148,19 @@ function ModalDefinitions({ countryValue, clicked, clickedSubCat, toggleModal, m
                 })
                 .attr("class", "component_img");
 
-              componentTitle.append('h3').text(d => d[0]);
+              componentTitle.append('h3').text(d => {
+                //Rounded Number
+                let target = d[0];
+                let value = +spiData[0][`${target}`];
+                let result = `${d[0]}:  ${value.toFixed()}`;
+                return result;
+              });
 
               componentTitle.append('p').text(d => {
                 let result = componentImgImport(d);
                 return result[1];
-              });
+              })
+                .style('fill', 'Orange');
             })
         });
 
@@ -142,6 +183,18 @@ function ModalDefinitions({ countryValue, clicked, clickedSubCat, toggleModal, m
                     // let subString = match ? d[0].substring(0, match.index) : d[0];
                     return d[0];
                   }).attr('class', 'indicator-name');
+                //Indicator Scores
+                enter.append('tspan')
+                  .text((d, i) => {
+                    let target = d[0];
+                    let match = spiData[0][`${target}`]
+                    if (!match) return;
+                    // //round the match value
+                    let rounded = (+match).toFixed(3);
+                    let result = `(${rounded})`;
+                    return result;
+                  }).style('font-weight', 600).attr('class', 'indicator-score')
+
 
                 enter.append('tspan')
                   .text(d => {
@@ -177,65 +230,95 @@ function ModalDefinitions({ countryValue, clicked, clickedSubCat, toggleModal, m
                   d3.select(event.target).selectAll(".indicator-definitions").style("display", "flex");
                   d3.select(event.target).selectAll(".indicator-substring").style("display", "flex");
                 });
+
                 enter.on('mouseleave', (event, d) => {
                   d3.select(event.target).selectAll(".indicator-definitions").style("display", "none");
                   d3.select(event.target).selectAll(".indicator-substring").style("display", "none");
                 });
+
               });
           });
 
-      function titleShift(event, d) {
-        //hide all dimensions components and indicators other than whats targeted.
-        d3.selectAll(".dimension").each(function () {
-          var clickedTarget = event.target;
-          var currentTarget = this;
-          d3.select(this).selectAll('.dimension-title').style("writing-mode", function () {
-            return (currentTarget === clickedTarget) ? "lr-tb" : "tb-rl";
-          });
-          d3.select(this).selectAll('.component-box').style("display", function () {
-            return (currentTarget === clickedTarget) ? "flex" : "none";
-          });
-          d3.select(this).style('width', "calc(100% - 2px)")
+      // function titleShift(event, d) {
+      //   //hide all dimensions components and indicators other than whats targeted.
+      //   d3.selectAll(".dimension").each(function () {
+      //     var clickedTarget = event.target;
+      //     var currentTarget = this;
+      //     d3.select(this).selectAll('.dimension-title').style("writing-mode", function () {
+      //       return (currentTarget === clickedTarget) ? "lr-tb" : "tb-rl";
+      //     });
+      //     d3.select(this).selectAll('.component-box').style("display", function () {
+      //       return (currentTarget === clickedTarget) ? "flex" : "none";
+      //     });
+      //     d3.select(this).style('width', function () {
+      //       return (currentTarget === clickedTarget) ? "100%" : "fit-content";
+      //     });
+      //   });
+      // }
+      // function unshiftTitle(event, d) {
+      //   d3.selectAll(".dimension").each(function () {
+      //     d3.selectAll('.component-box').style("display", "flex");
+      //     d3.selectAll('.dimension-title').style("writing-mode", "lr-tb");
+      //     d3.select(this).style('width', "calc(100% - 2px)")
+      //   });
+      // }
+
+      function hideComponents(event, d) {
+        var clickedTarget = event.target,
+          currentTarget = this;
+        d3.select(this).selectAll(".component").style("display", () => {
+          return (currentTarget === clickedTarget) ? "none" : "none";
         });
+      };
+
+      function hideAllComponents() {
+        d3.selectAll(".component").style("display", "none");
       }
 
-      function footerShift(event, d) {
-        d3.selectAll(".dimension").each(function () {
-          d3.select(this).selectAll('.component-box').style("display", "none")
+      function showComponents(event, d) {
+        hideAllComponents();
+        var clickedTarget = event.target;
+        var currentTarget = this;
+        // d3.select(event.target).selectAll(".component-box").style("display", "none");
+        d3.select(this).selectAll(".component").style("display", () => {
+          return (currentTarget === clickedTarget) ? "flex" : "none";
         });
-        d3.selectAll('.dimension').style('height', 'fit-content');
-        d3.select(this).style('height', 'fit-content');
-      }
+      };
 
-      function unshiftTitle(event, d) {
-        d3.selectAll(".dimension").each(function () {
-          d3.selectAll('.component-box').style("display", "flex");
-          d3.selectAll('.dimension-title').style("writing-mode", "lr-tb");
-          d3.select(this).style('width', "calc(100% - 2px)")
-        });
-      }
+      d3.selectAll('.dimension').on('mouseenter', showComponents)
+      d3.selectAll('.dimension').on('mouseleave', hideComponents)
+      hideAllComponents();
 
-      d3.selectAll('.dimension').on('mouseenter', titleShift);
-      d3.selectAll('.dimension').on('mouseleave', unshiftTitle);
-      d3.select('.footer').on('mouseenter', footerShift);
+
       indicatorDiv.selectAll(".indicator-definitions").style("display", "none");
       indicatorDiv.selectAll(".indicator-substring").style("display", "none");
       d3.selectAll('#remove').remove();
+      hideAllComponents();
+
+      
+      // Show the entire selected dimension with all its components.
+      // d3.select(`#${defContext.dimension}`).selectAll('.component').style("display", "flex");
+
+      // Select just the single component
+      d3.select(`#${defContext.dimension}`).select(`#${defContext.component}`).style("display", "flex");
+
+      // d3.select(`#${defContext.component}`).selectAll('.component').style("display", "flex");
     }
 
     parsedDefinitions.then((data) => {
+      if (!spiData) return;
       tabulateModal(data);
     })
 
-  }, [parsedDefinitions, modalRef, toggleModal]);
+  }, [parsedDefinitions, modalRef, toggleModal, spiData, defContext]);
 
-  let onClick = e => {
-    if (e.target !== e.currentTarget) return;
-    else toggleModal();
-  }
+  // let onClick = e => {
+  //   if (e.target !== e.currentTarget) return;
+  //   else toggleModal();
+  // }
 
   return (
-    <div className="modal-wrapper" ref={modalRef} role="button" tabIndex={0} onClick={onClick} >
+    <div className="modal-wrapper" ref={modalRef} >
     </div>
   );
 
