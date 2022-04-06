@@ -77,9 +77,10 @@ function App() {
     let subId = clickedSubCat? clickedSubCat.replace(/ /g, "_") : null;
     setDefContext({
       dimension: id,
-      component: subId
+      component: subId,
+      countryValue: countryValue
     });
-  }, [clicked, clickedSubCat, setDefContext])
+  }, [clicked, clickedSubCat, setDefContext, countryValue])
 
   useEffect(() => {
     setToolTipContext({
@@ -120,6 +121,8 @@ function App() {
           selectCountries={selectCountries}
           countryValue={countryValue}
           toggleModal={toggleModal}
+          spiData={spiByCountry}
+
         />
       </div>
       <ModalDefinitions
