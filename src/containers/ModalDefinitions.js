@@ -199,7 +199,6 @@ function ModalDefinitions({ toggleModal, modalRef, spiData, defContext }) {
                 enter.append('tspan')
                   .text(d => {
                     let match = d[1][0]['Unit'];
-                    // let match = d[0].match(/\((.*)\)/);
                     let subString = match ? match : null;
                     return subString;
                   }).attr('class', 'indicator-substring')
@@ -226,42 +225,25 @@ function ModalDefinitions({ toggleModal, modalRef, spiData, defContext }) {
                   .attr("target", "_blank")
                   .attr("rel", "noopener noreferrer");
 
+                // Open Indicator Boxes
                 enter.on('mouseenter', (event, d) => {
                   d3.select(event.target).selectAll(".indicator-definitions").style("display", "flex");
                   d3.select(event.target).selectAll(".indicator-substring").style("display", "flex");
+                  d3.select(event.target).style("list-style-type", "disclosure-open");
                 });
-
+              // Close Indicator Boxes
                 enter.on('mouseleave', (event, d) => {
                   d3.select(event.target).selectAll(".indicator-definitions").style("display", "none");
                   d3.select(event.target).selectAll(".indicator-substring").style("display", "none");
+                  d3.select(event.target).style("list-style-type", "disclosure-closed");
                 });
+
+                enter.on('click', ()=>{
+                  // toggle open/close indicators 
+                })
 
               });
           });
-
-      // function titleShift(event, d) {
-      //   //hide all dimensions components and indicators other than whats targeted.
-      //   d3.selectAll(".dimension").each(function () {
-      //     var clickedTarget = event.target;
-      //     var currentTarget = this;
-      //     d3.select(this).selectAll('.dimension-title').style("writing-mode", function () {
-      //       return (currentTarget === clickedTarget) ? "lr-tb" : "tb-rl";
-      //     });
-      //     d3.select(this).selectAll('.component-box').style("display", function () {
-      //       return (currentTarget === clickedTarget) ? "flex" : "none";
-      //     });
-      //     d3.select(this).style('width', function () {
-      //       return (currentTarget === clickedTarget) ? "100%" : "fit-content";
-      //     });
-      //   });
-      // }
-      // function unshiftTitle(event, d) {
-      //   d3.selectAll(".dimension").each(function () {
-      //     d3.selectAll('.component-box').style("display", "flex");
-      //     d3.selectAll('.dimension-title').style("writing-mode", "lr-tb");
-      //     d3.select(this).style('width', "calc(100% - 2px)")
-      //   });
-      // }
 
       function hideComponents(event, d) {
         var clickedTarget = event.target,
@@ -295,7 +277,7 @@ function ModalDefinitions({ toggleModal, modalRef, spiData, defContext }) {
       d3.selectAll('#remove').remove();
       hideAllComponents();
 
-      
+
       // Show the entire selected dimension with all its components.
       // d3.select(`#${defContext.dimension}`).selectAll('.component').style("display", "flex");
 

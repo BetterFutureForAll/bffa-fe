@@ -12,6 +12,7 @@ const Header = ({
   selectCountries,
   handleCountryChange,
   countryValue,
+  spiData
 }) => {
 
   let legendRef = useRef(null);
@@ -58,7 +59,7 @@ const Header = ({
       )
       .attr("transform", (d, i) => { return "translate(" + i * squareSize + ", 0)"; });
 
-  }, [width, height, legendData, squareSize])
+  }, [width, height, legendData, squareSize, spiData])
 
   // if (width < 376) return (
   //   <>
@@ -91,6 +92,9 @@ const Header = ({
         <label id="country_list" value={countryValue} ></label>
         {selectCountries}
       </form>
+      <div>
+        {spiData? spiData[`Social Progress Index`] : ''}
+      </div>
     </>
   );
 };

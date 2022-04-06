@@ -286,7 +286,7 @@ ul.indicator-box {
 
 
 .indicator-box {
-  list-style-type: circle;
+  list-style-type: disclosure-closed;
   margin-top: 1em;
   margin-bottom: 1 em;
   margin-left: 0;

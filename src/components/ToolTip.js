@@ -253,12 +253,13 @@ const ToolTip = ({ tooltipContext, zoomState, setClicked, setClickedSubCat }) =>
           .attr('class', "tooltip-text-area")
           .attr("font-size", fontSize)
           .attr('text-anchor', 'middle')
-          .attr("font-weight", 700)
-          .attr('style', 'text-shadow: 2px 2px white, -2px -2px white, 2px -2px white, -2px 2px white;')
+          .attr("font-weight", 600)
+          .attr('style', 'text-shadow: 1px 1px white, -1px -1px white, 1px -1px white, -1px 1px white;')
           .attr('background-color', 'gray;')
 
         textTooltip.raise()
-
+        
+      // Change the definitions On Hover
         let target = Object.keys(d)[0];
         setClickedSubCat(target);
       };
@@ -266,13 +267,12 @@ const ToolTip = ({ tooltipContext, zoomState, setClicked, setClickedSubCat }) =>
       svg.select(`#${data[0]['SPI country code']}_target`).raise();
 
 
-      var mouseout = function (event, d) {
-        // d3.selectAll('.tooltip-text-area').remove();
-        // textTooltip.remove();
+      var mouseClick = function (event, d) {
+        let target = Object.keys(d)[0];
+        setClickedSubCat(target);
       };
 
       function showSubPetals(event, d) {
-
         toolTip
           .selectAll('.subPetalBackgroundPath')
           .data(d.subPetals)
@@ -307,12 +307,13 @@ const ToolTip = ({ tooltipContext, zoomState, setClicked, setClickedSubCat }) =>
         subPetals
           .on("mouseover", mouseover)
           .on("mousemove", mousemove)
-          .on("mouseout", mouseout)
+          .on("click", mouseClick);
 
         d3.selectAll('.petalPath, .subPetalPath, .subPetalBackgroundPath')
           .on("mouseover", mouseover)
           .on("mousemove", mousemove)
-          .on("mouseout", mouseout)
+          .on("click", mouseClick);
+
       }
 
       function showPetalArc(event, d) {
