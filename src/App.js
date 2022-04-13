@@ -19,10 +19,11 @@ function App() {
   let { showModal, toggleModal } = useModal();
   // let target = "modal-ref";
   let modalRef = useRef(null);
+
   // Total screen size available
   let [width, height] = useWindowSize();
   // Map Size
-  let mapHeight = height * .6;
+  let mapHeight = height * .5;
 
   let [countryValue, setCountryValue] = useHandleCountryChange();
   let [countries] = useCountries();
