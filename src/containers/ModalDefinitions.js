@@ -239,14 +239,12 @@ function ModalDefinitions({ toggleModal, modalRef, spiData, defContext }) {
           });
 
       function showIndicators(event, d) {
-        console.log(this, event.target);
         d3.select(event.target).selectAll(".indicator-definitions").style("display", "flex");
         d3.select(event.target).selectAll(".indicator-substring").style("display", "flex");
         d3.select(event.target).style("list-style-type", "disclosure-open");
       };    
 
       function hideIndicators(event, d) {
-        console.log(this, event.target);
         d3.select(event.target).selectAll(".indicator-definitions").style("display", "none");
         d3.select(event.target).selectAll(".indicator-substring").style("display", "none");
         d3.select(event.target).style("list-style-type", "disclosure-closed");
