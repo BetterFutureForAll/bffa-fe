@@ -17,7 +17,7 @@ const MapMaker = ({
     let checkedSize = Math.min(height, width)
 
     let projection = d3.geoEqualEarth()
-      .scale(checkedSize / Math.PI)
+      .scale(checkedSize / 3)
       .translate([width / 2, height / 2])
 
     let path = d3.geoPath().projection(projection);

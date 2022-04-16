@@ -39,21 +39,21 @@ function ModalDefinitions({ toggleModal, modalRef, spiData, defContext }) {
       let dimDiv = modal.append('div').attr('class', 'modal');
       dimDiv.selectAll('.modalTitle')
         .data([spiData])
-        .join(div => {
-          let enter = div.append('div').attr('class', 'modalTitle')
-          enter.attr("id", d => {
-            return d[0]['Country']
-          })
-            // .append('h2')
-            // .text(d => {
-            //   return `${d[0]['Country']}  ${d[0]['SPI year']}`
-            // })
-          enter.append()
-            .append('h4')
-            .text(d => {
-              return `Social Progress Index: ${d[0]['Social Progress Index']} `
-            })
-        })
+      // .join(div => {
+      //   let enter = div.append('div').attr('class', 'modalTitle')
+      //   enter.attr("id", d => {
+      //     return d[0]['Country']
+      //   })
+      //     // .append('h2')
+      //     // .text(d => {
+      //     //   return `${d[0]['Country']}  ${d[0]['SPI year']}`
+      //     // })
+      //   enter.append()
+      //     .append('h4')
+      //     .text(d => {
+      //       return `Social Progress Index: ${d[0]['Social Progress Index']} `
+      //     })
+      // })
 
       let dimensionsDiv = dimDiv.selectAll('.dimension')
         .data(groupedData, d => d[0])
@@ -161,6 +161,7 @@ function ModalDefinitions({ toggleModal, modalRef, spiData, defContext }) {
                 return result[1];
               })
                 .style('fill', 'Orange');
+
             })
         });
 
@@ -226,24 +227,30 @@ function ModalDefinitions({ toggleModal, modalRef, spiData, defContext }) {
                   .attr("rel", "noopener noreferrer");
 
                 // Open Indicator Boxes
-                enter.on('mouseenter', (event, d) => {
-                  d3.select(event.target).selectAll(".indicator-definitions").style("display", "flex");
-                  d3.select(event.target).selectAll(".indicator-substring").style("display", "flex");
-                  d3.select(event.target).style("list-style-type", "disclosure-open");
-                });
-              // Close Indicator Boxes
-                enter.on('mouseleave', (event, d) => {
-                  d3.select(event.target).selectAll(".indicator-definitions").style("display", "none");
-                  d3.select(event.target).selectAll(".indicator-substring").style("display", "none");
-                  d3.select(event.target).style("list-style-type", "disclosure-closed");
-                });
+                enter.on('mouseenter', showIndicators)
+                // Close Indicator Boxes
+                enter.on('mouseleave', hideIndicators)
 
-                enter.on('click', ()=>{
+                enter.on('click', () => {
                   // toggle open/close indicators 
                 })
 
               });
           });
+
+      function showIndicators(event, d) {
+        console.log(this, event.target);
+        d3.select(event.target).selectAll(".indicator-definitions").style("display", "flex");
+        d3.select(event.target).selectAll(".indicator-substring").style("display", "flex");
+        d3.select(event.target).style("list-style-type", "disclosure-open");
+      };    
+
+      function hideIndicators(event, d) {
+        console.log(this, event.target);
+        d3.select(event.target).selectAll(".indicator-definitions").style("display", "none");
+        d3.select(event.target).selectAll(".indicator-substring").style("display", "none");
+        d3.select(event.target).style("list-style-type", "disclosure-closed");
+      };    
 
       function hideComponents(event, d) {
         var clickedTarget = event.target,
@@ -255,37 +262,42 @@ function ModalDefinitions({ toggleModal, modalRef, spiData, defContext }) {
 
       function hideAllComponents() {
         d3.selectAll(".component").style("display", "none");
+        // d3.selectAll(`.indicator`).style("display", "none");
+        // d3.selectAll(`.indicator-box`).style("display", "none");
       }
 
       function showComponents(event, d) {
         hideAllComponents();
+        // Flower "Event" Control
+        if(!event) {
+          d3.selectAll(`#${defContext.dimension}`).selectAll(`.component`).style("display", "flex");
+
+          d3.selectAll(`#${defContext.dimension}`).selectAll(".indicator-box").style("display", "none");
+          d3.selectAll(`#${defContext.dimension}`).select(`#${defContext.component}`).select(".indicator-box").style("display", "block").style("list-style-type", "disclosure-closed");;
+          return;
+        };
+        // Manual clicking on definitions 
         var clickedTarget = event.target;
         var currentTarget = this;
         // d3.select(event.target).selectAll(".component-box").style("display", "none");
         d3.select(this).selectAll(".component").style("display", () => {
           return (currentTarget === clickedTarget) ? "flex" : "none";
-        });
+        });          
+        d3.select(this).selectAll(".indicator-box").style("display", () => {
+          return (currentTarget === clickedTarget) ? "block" : "none";
+        }).style("list-style-type", "disclosure-closed");
+
       };
+
 
       d3.selectAll('.dimension').on('mouseenter', showComponents)
       d3.selectAll('.dimension').on('mouseleave', hideComponents)
-      hideAllComponents();
-
-
       indicatorDiv.selectAll(".indicator-definitions").style("display", "none");
       indicatorDiv.selectAll(".indicator-substring").style("display", "none");
       d3.selectAll('#remove').remove();
       hideAllComponents();
-
-
-      // Show the entire selected dimension with all its components.
-      // d3.select(`#${defContext.dimension}`).selectAll('.component').style("display", "flex");
-
-      // Select just the single component
-      d3.select(`#${defContext.dimension}`).select(`#${defContext.component}`).style("display", "flex");
-
-      // d3.select(`#${defContext.component}`).selectAll('.component').style("display", "flex");
-    }
+      showComponents();
+    };
 
     parsedDefinitions.then((data) => {
       if (!spiData) return;
@@ -293,11 +305,6 @@ function ModalDefinitions({ toggleModal, modalRef, spiData, defContext }) {
     })
 
   }, [parsedDefinitions, modalRef, toggleModal, spiData, defContext]);
-
-  // let onClick = e => {
-  //   if (e.target !== e.currentTarget) return;
-  //   else toggleModal();
-  // }
 
   return (
     <div className="modal-wrapper" ref={modalRef} >
