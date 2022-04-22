@@ -39,19 +39,43 @@ div {
 }
 
 .ControlBar {
+  display: flex;
+  flex-wrap: wrap;
   flex-direction: row;
   width: 100%;
   padding: 2px;
   align-items: center;
   justify-content: space-evenly;
   background-color:lightblue;
-  /*
-  border-top-left-radius: 10px;
-  border-top-right-radius: 10px;
-  box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.47);
-  */
+
+}
+/*
+.select-years {
+  padding: 0;
+  margin: 0;
+  border: 5px solid #ccc;
+  width: max-content;
+  border-radius: 3px;
+  overflow: hidden;
+  background-color: #fff;
 }
 
+.select-years select {
+  padding: 5px 8px;
+  width: 130%;
+  border: none;
+  box-shadow: none;
+  background-color: transparent;
+  background-image: none;
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none;
+}
+
+.select-years select:focus {
+  outline: none;
+}
+*/
 
 @media only screen and (max-width: 400px) {
 
