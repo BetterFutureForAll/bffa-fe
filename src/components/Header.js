@@ -21,6 +21,8 @@ const Header = ({
   if (width < 376) {
     squareSize = 26;
   };
+  
+  // let scoreText;
 
   useEffect(() => {
     let svg = d3.select(legendRef.current)
@@ -58,43 +60,26 @@ const Header = ({
         }
       )
       .attr("transform", (d, i) => { return "translate(" + i * squareSize + ", 0)"; });
-
+    
+      // scoreText = spiData? spiData[0][`Social Progress Index`] : '';
+      // console.log(scoreText, spiData);
   }, [width, height, legendData, squareSize, spiData])
-
-  // if (width < 376) return (
-  //   <>
-  //     <div>
-  //       <svg ref={legendRef} id={"legend"} className={'legend'} height={squareSize} width={squareSize * 11}></svg>
-  //     </div>
-  //     <div className={"controls"}>
-  //       <form onSubmit={handleCountryChange}>
-  //         <label id="country_list" value={countryValue} ></label>
-  //         {selectCountries}
-  //       </form>
-  //       <form onSubmit={handleSubmit}>
-  //         <label id="years" value={yearValue} ></label>
-  //         {selectYears}
-  //       </form>
-  //     </div>
-  //   </>
-  // )
 
   return (
     <>
       <svg ref={legendRef} id={"legend"} className={'legend'} height={squareSize} width={squareSize * 11}></svg>
-      {/* <button id="myBtn" onClick={toggleModal}>Data Definitions</button> */}
 
       <form onSubmit={handleSubmit}>
         <label id="years" value={yearValue} ></label>
         {selectYears}
       </form>
+      {/* <div>
+        {scoreText}
+      </div> */}
       <form onSubmit={handleCountryChange}>
         <label id="country_list" value={countryValue} ></label>
         {selectCountries}
       </form>
-      <div>
-        {spiData? spiData[`Social Progress Index`] : ''}
-      </div>
     </>
   );
 };
