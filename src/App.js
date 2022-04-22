@@ -49,7 +49,7 @@ function App() {
 
   let selectYears = (
     <>
-      <select onChange={handleYearChange} value={yearValue} >
+      <select className='select-years' onChange={handleYearChange} value={yearValue} >
         {years.map((item, i)=> (
           <option
             key={i}
@@ -64,7 +64,7 @@ function App() {
   );
 
   let selectCountries = (
-    <select  onChange={handleCountryChange} value={countryValue}>
+    <select className='select-countries' onChange={handleCountryChange} value={countryValue}>
       {countries.map((item, i) => (
         <option key={i} value={item} onSelect={handleCountryChange}>
           {item}
