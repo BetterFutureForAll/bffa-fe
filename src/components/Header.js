@@ -21,8 +21,8 @@ const Header = ({
   if (width < 376) {
     squareSize = 26;
   };
-  
-  // let scoreText;
+
+  let scoreText = useRef('');
 
   useEffect(() => {
     let svg = d3.select(legendRef.current)
@@ -60,9 +60,9 @@ const Header = ({
         }
       )
       .attr("transform", (d, i) => { return "translate(" + i * squareSize + ", 0)"; });
-    
-      // scoreText = spiData? spiData[0][`Social Progress Index`] : '';
-      // console.log(scoreText, spiData);
+
+    scoreText.current = spiData ? spiData[0][`Social Progress Index`] : '';
+
   }, [width, height, legendData, squareSize, spiData])
 
   return (
@@ -73,13 +73,13 @@ const Header = ({
         <label id="years" value={yearValue} ></label>
         {selectYears}
       </form>
-      {/* <div>
-        {scoreText}
-      </div> */}
       <form onSubmit={handleCountryChange}>
         <label id="country_list" value={countryValue} ></label>
         {selectCountries}
       </form>
+      <div>
+        <h3>{`${scoreText.current}`}</h3>
+      </div>
     </>
   );
 };
