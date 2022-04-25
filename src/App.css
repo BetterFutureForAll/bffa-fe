@@ -49,20 +49,22 @@ div {
   background-color:lightblue;
 
 }
-/*
-.select-years {
+.select {
   padding: 0;
   margin: 0;
-  border: 5px solid #ccc;
-  width: max-content;
-  border-radius: 3px;
-  overflow: hidden;
-  background-color: #fff;
+  width: min-content;
+  border: 1px solid black;
+  border-radius: 2px;
+  overflow: hidden !important;
+  align-items: center;
+  text-align: center;
+  font-size: large;
+  font-weight: bold;
 }
-
-.select-years select {
+/*
+.select select {
   padding: 5px 8px;
-  width: 130%;
+  width: fit-content;
   border: none;
   box-shadow: none;
   background-color: transparent;
@@ -72,10 +74,28 @@ div {
           appearance: none;
 }
 
-.select-years select:focus {
-  outline: none;
+.select :focus {
+  outline: none  !important; 
+  outline-color: black !important;
 }
 */
+
+
+.select-countries-div {
+  display: flex;
+  flex: 0 0 390px;
+  text-align: center;
+  align-items: center;
+  justify-content: space-around;
+}
+
+#score-text {
+  background-color: white;
+  width: min-content;
+  border: 1px solid black;
+  border-radius: 2px;
+  padding: 1px 4px 1px 4px;
+}
 
 @media only screen and (max-width: 400px) {
 
