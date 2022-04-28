@@ -35,13 +35,9 @@ const MapMaker = ({
       return spiMatch;
     }
 
-    // initialScale tracks Zoom scale throughout transforms.
-
+    
     let zoomed = (event, d) => {
-      //reset the toolTip before transforming
-
       const { transform } = event;
-
       // Save the Current Zoom level so we can scale tooltips. 
       setZoomState({ x: transform.x, y: transform.y, k: transform.k });
 
@@ -49,7 +45,6 @@ const MapMaker = ({
         .attr('transform', transform)
         .attr('transform', `translate(${transform.x},${transform.y}) scale(${transform.k})`)
         .attr("stroke-width", 1 / transform.k);
-
     };
 
     const zoom = d3.zoom()
@@ -64,10 +59,9 @@ const MapMaker = ({
       .attr('preserveAspectRatio', 'xMinYMid')
       .on('zoom', zoom)
 
-    svg.selectAll('.countries').remove();
+    svg.selectAll('*').remove();
 
     let g = svg.append("g").attr('class', 'countries');
-    // Join (enter, update) here v6 style.
 
     svg.call(zoom);
 
@@ -127,13 +121,6 @@ const MapMaker = ({
       .attr("d", path(mesh(data[0], data[0].objects.countries, (a, b) => a !== b)))
 
     borders.exit().remove();
-
-    // // *** Event Listeners ***
-    // function reset(event) {
-    //   // countryMouseLeave();
-    //   svg.selectAll('.subPetalText').remove();
-    //   d3.selectAll(".toolTipName").remove();
-    // }
 
   };
 
