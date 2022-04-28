@@ -37,23 +37,6 @@ function ModalDefinitions({ toggleModal, modalRef, spiData, defContext }) {
       let modal = d3.select(modalRef.current);
       modal.selectAll('.modal').remove();
       let dimDiv = modal.append('div').attr('class', 'modal');
-      dimDiv.selectAll('.modalTitle')
-        .data([spiData])
-      // .join(div => {
-      //   let enter = div.append('div').attr('class', 'modalTitle')
-      //   enter.attr("id", d => {
-      //     return d[0]['Country']
-      //   })
-      //     // .append('h2')
-      //     // .text(d => {
-      //     //   return `${d[0]['Country']}  ${d[0]['SPI year']}`
-      //     // })
-      //   enter.append()
-      //     .append('h4')
-      //     .text(d => {
-      //       return `Social Progress Index: ${d[0]['Social Progress Index']} `
-      //     })
-      // })
 
       let dimensionsDiv = dimDiv.selectAll('.dimension')
         .data(groupedData, d => d[0])
@@ -69,12 +52,7 @@ function ModalDefinitions({ toggleModal, modalRef, spiData, defContext }) {
           let enter = div.append("div");
           //class and ID to isolate footer
           enter
-            .attr("class", (d, i) => {
-              // if (d[0].length === 0) {
-              //   return "footer";
-              // }
-              return `dim-${i} dimension`;
-            })
+            .attr("class", (d, i) => { return `dim-${i} dimension`; })
             // Clean Whitespace or find unique ID that is a valid D3.selection
             .attr("id", d => {
               if (d[0].length === 0) {
@@ -96,6 +74,7 @@ function ModalDefinitions({ toggleModal, modalRef, spiData, defContext }) {
               return result;
             }
           });
+          // dimDiv.style("list-style-type", "disclosure-closed");
           dimDiv.exit().remove();
           return enter;
         },
@@ -226,6 +205,7 @@ function ModalDefinitions({ toggleModal, modalRef, spiData, defContext }) {
                   .attr("target", "_blank")
                   .attr("rel", "noopener noreferrer");
 
+
                 // Open Indicator Boxes
                 enter.on('mouseenter', showIndicators)
                 // Close Indicator Boxes
@@ -242,13 +222,13 @@ function ModalDefinitions({ toggleModal, modalRef, spiData, defContext }) {
         d3.select(event.target).selectAll(".indicator-definitions").style("display", "flex");
         d3.select(event.target).selectAll(".indicator-substring").style("display", "flex");
         d3.select(event.target).style("list-style-type", "disclosure-open");
-      };    
+      };
 
       function hideIndicators(event, d) {
         d3.select(event.target).selectAll(".indicator-definitions").style("display", "none");
         d3.select(event.target).selectAll(".indicator-substring").style("display", "none");
         d3.select(event.target).style("list-style-type", "disclosure-closed");
-      };    
+      };
 
       function hideComponents(event, d) {
         var clickedTarget = event.target,
@@ -267,7 +247,7 @@ function ModalDefinitions({ toggleModal, modalRef, spiData, defContext }) {
       function showComponents(event, d) {
         hideAllComponents();
         // Flower "Event" Control
-        if(!event) {
+        if (!event) {
           d3.selectAll(`#${defContext.dimension}`).selectAll(`.component`).style("display", "flex");
 
           d3.selectAll(`#${defContext.dimension}`).selectAll(".indicator-box").style("display", "none");
@@ -280,7 +260,7 @@ function ModalDefinitions({ toggleModal, modalRef, spiData, defContext }) {
         // d3.select(event.target).selectAll(".component-box").style("display", "none");
         d3.select(this).selectAll(".component").style("display", () => {
           return (currentTarget === clickedTarget) ? "flex" : "none";
-        });          
+        });
         d3.select(this).selectAll(".indicator-box").style("display", () => {
           return (currentTarget === clickedTarget) ? "block" : "none";
         }).style("list-style-type", "disclosure-closed");
@@ -288,8 +268,9 @@ function ModalDefinitions({ toggleModal, modalRef, spiData, defContext }) {
       };
 
 
-      d3.selectAll('.dimension').on('mouseenter', showComponents)
-      d3.selectAll('.dimension').on('mouseleave', hideComponents)
+      d3.selectAll('.dimension').on('mouseenter', showComponents);
+      d3.selectAll('.dimension').on('mouseleave', hideComponents);
+
       indicatorDiv.selectAll(".indicator-definitions").style("display", "none");
       indicatorDiv.selectAll(".indicator-substring").style("display", "none");
       d3.selectAll('#remove').remove();

@@ -49,7 +49,7 @@ div {
   background-color:lightblue;
 
 }
-.select {
+.select-years {
   padding: 0;
   margin: 0;
   width: min-content;
@@ -58,8 +58,23 @@ div {
   overflow: hidden !important;
   align-items: center;
   text-align: center;
+  background-color: white;
+}
+.select-countries {
+  padding: 0;
+  margin: 0;
+  width: min-content;
+  border: 1px solid black;
+  border-radius: 2px;
+  overflow: hidden !important;
+  align-items: center;
+  text-align: center;
+  font-size: large;
+  font-weight: bold;
+  background-color: white;
 
 }
+
 /*
 .select select {
   padding: 5px 8px;
@@ -94,10 +109,6 @@ div {
   border: 1px solid black;
   border-radius: 2px;
   padding: 1px 4px 1px 4px;
-}
-
-@media only screen and (max-width: 400px) {
-
 }
 
 .App-link {
@@ -141,8 +152,8 @@ div {
   flex-wrap: wrap;
   justify-content: flex-start;
   align-items: center;
-  margin: 1px;
-  width: calc(100% - 4px);
+  margin: 0 .25em 0 .25em;
+  width: 100%;
 }
 
 .modal {
@@ -169,20 +180,6 @@ div {
 
 .modal .dimension {
   height: max-content;
-}
-
-.modalTitle {
-  position: sticky; 
-  top: 0;
-  text-align: center;
-  /*
-  border-radius: 10px;
-  background-color: rgba(163, 206, 255, 0.35);
-  border-style: solid;
-  border-width: 1px;
-  border-color: rgb(0, 0, 0);
-  box-shadow: 0px 20px 30px rgba(0, 0, 0, 0.47);
- */
 }
 
 .dim-0 {
@@ -218,16 +215,8 @@ div {
   */
 }
 
-
-.button {
-  position: absolute;
-  align-self: flex-start;
-  top: 0.5em;
-  box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.47);
-}
-
 ul.indicator-box {
-  margin: .5em;
+  margin: 0 .1em 0 .5em;
 }
 
 .active, div:hover {
@@ -256,14 +245,13 @@ ul.indicator-box {
   padding: 5px;
 }
 
-.component-title h3 p {
-  padding: 5px;
+.component-title {
+  margin: 0 .1em 0 .5em;
 }
 
 .component-title {
   width: auto;
   display: grid;
-  text-align: flex-start;
   align-items: stretch;
   grid-template-areas: 
   "icon h3"
@@ -282,19 +270,10 @@ ul.indicator-box {
   padding: 5px;
 }
 
-.active, .component:hover {
-  border-radius: 10px;
-  box-shadow: 20px 20px 30px rgba(0, 0, 0, 0.47);
-}
-
 .component {
   cursor: pointer;
-  display: flex;
   flex-direction: row;
   width: 100%;
-  min-height: 5em;
-  justify-content: center;
-  align-items: baseline;
   object-fit: contain;
   /*
   border-style: solid;
@@ -312,10 +291,8 @@ ul.indicator-box {
 }
 
 .component p {
-  align-self: center;
-  justify-self: flex-start;
   text-align: left;
-
+  font-style: italic;
 }
 
 .component:hover p {
@@ -330,6 +307,7 @@ ul.indicator-box {
   grid-column: auto;
   grid-auto-flow: dense;
   flex-direction: column;
+  margin: 0 .5em 0 .5em;
 }
 
 .indicator:hover {
@@ -367,3 +345,10 @@ ul.indicator-box {
   white-space: pre-wrap;
   padding-left: 1em;
 }
+
+.active, .component:hover {
+  border-radius: 10px;
+  box-shadow: 20px 20px 30px rgba(0, 0, 0, 0.47);
+}
+
+
