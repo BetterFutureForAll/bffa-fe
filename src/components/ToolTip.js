@@ -221,14 +221,25 @@ const ToolTip = ({ tooltipContext, zoomState, setClicked, setClickedSubCat }) =>
           .style("opacity", 1)
       };
 
-      // adjust for major petals
       var mousemove = function (event, d) {
         toolTip.selectAll(".tooltip-text-area").remove();
+
+        let targetData = `${Object.keys(d)[0]}_bp`;
+
+        d3.selectAll('.subPetalBackgroundPath')
+          .style("opacity", (d, i) => {
+            let currentData = `${Object.keys(d)[0]}_bp`;
+            return (currentData === targetData) ? ".5" : ".01";
+          });
+        d3.selectAll('.subPetalBackgroundPath')
+          .style("fill", (d, i) => {
+            let currentData = `${Object.keys(d)[0]}_bp`;
+            return (currentData === targetData) ? "white" : `${d.colorFn(Object.values(d)[0])}`;
+          });
 
         let mouseZoomX = (+event.x - +zoomState.x) / zoomState.k;
         let mouseZoomY = (+event.y - +zoomState.y) / zoomState.k;
         let roundedNum = (+Object.values(d)[0]).toFixed();
-
 
         textTooltip
           .data(d => [d])
@@ -258,10 +269,10 @@ const ToolTip = ({ tooltipContext, zoomState, setClicked, setClickedSubCat }) =>
           .attr('background-color', 'gray;')
 
         textTooltip.raise()
-        
-      // Change the definitions On Hover
-        let target = Object.keys(d)[0];
-        setClickedSubCat(target);
+
+        // Change the definitions On Hover
+        // let target = Object.keys(d)[0];
+        // setClickedSubCat(target);
       };
 
       svg.select(`#${data[0]['SPI country code']}_target`).raise();
@@ -285,7 +296,7 @@ const ToolTip = ({ tooltipContext, zoomState, setClicked, setClickedSubCat }) =>
           .style('fill', d => {
             return d.colorFn(Object.values(d)[0])
           })
-          .style('opacity', '.10')
+          .style('opacity', '.1')
           .attr("cursor", "crosshair");
 
         toolTip
@@ -378,12 +389,12 @@ const ToolTip = ({ tooltipContext, zoomState, setClicked, setClickedSubCat }) =>
       }
       // add mouseout fn's to subpetals / petals
       d3.selectAll('.petalPath').on('mouseenter', doItAll)
-      d3.selectAll('.backgroundPetalPath').on('mouseenter', doItAll)
+      d3.selectAll('.petalBackgroundPath').on('mouseenter', doItAll)
 
-      toolTip.selectAll('.backgroundPetalPath').each((event, d) => {
-        showSubPetals(event, d);
-        showPetalArc(event, d);
-      })
+      // toolTip.selectAll('.backgroundPetalPath').each((event, d) => {
+      //   showSubPetals(event, d);
+      //   showPetalArc(event, d);
+      // })
       // toolTip
       //   .on("mouseleave", () => toolTip.remove())
     };
