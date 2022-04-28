@@ -87,13 +87,12 @@ function ModalDefinitions({ toggleModal, modalRef, spiData, defContext }) {
       dimensionsDiv
         .each((d, i, event) => {
           d3.select(event[i])
-            .append('div')
-            .attr('class', 'component-box')
+            .append('ul').attr('class', 'component-box')
             .selectAll('.component')
             .data(d[1])
             .join(div => {
               //append each individual component, and clean the whitespace for ID's
-              let enter = div.append('div').attr("class", "component").attr("id", d => {
+              let enter = div.append('li').attr("class", "component").attr("id", d => {
                 let parsedId = d[0].replace(/ /g, "_");
                 return parsedId;
               })
