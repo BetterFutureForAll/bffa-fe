@@ -67,6 +67,14 @@ const Header = ({
 
   return (
     <>
+      <div className="select-countries-div">
+        <form onSubmit={handleCountryChange}>
+          <label id="country_list" value={countryValue} ></label>
+          {selectCountries}
+        </form>
+        <h3 id='score-text'>{`${scoreText.current}`}</h3>
+      </div>
+
       <form onSubmit={handleSubmit}>
         <label id="years" value={yearValue} ></label>
         {selectYears}
@@ -74,14 +82,7 @@ const Header = ({
 
       <svg ref={legendRef} id={"legend"} className={'legend'} height={squareSize} width={squareSize * 11}></svg>
 
-      <div className="select-countries-div">
-      <form onSubmit={handleCountryChange}>
-        <label id="country_list" value={countryValue} ></label>
-        {selectCountries}
-      </form>
-      <h3 id='score-text'>{`${scoreText.current}`}</h3>
-      </div>
-      
+
     </>
   );
 };
