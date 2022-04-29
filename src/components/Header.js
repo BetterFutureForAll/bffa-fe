@@ -62,7 +62,6 @@ const Header = ({
       .attr("transform", (d, i) => { return "translate(" + i * squareSize + ", 0)"; });
 
     scoreText.current = spiData ? spiData[0][`Social Progress Index`] : '';
-
   }, [width, height, legendData, squareSize, spiData])
 
   return (
@@ -75,13 +74,12 @@ const Header = ({
         <h3 id='score-text'>{`${scoreText.current}`}</h3>
       </div>
 
+      <svg ref={legendRef} id={"legend"} className={'legend'} height={squareSize} width={squareSize * 11}></svg>
+
       <form onSubmit={handleSubmit}>
         <label id="years" value={yearValue} ></label>
         {selectYears}
       </form>
-
-      <svg ref={legendRef} id={"legend"} className={'legend'} height={squareSize} width={squareSize * 11}></svg>
-
 
     </>
   );
