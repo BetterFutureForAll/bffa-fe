@@ -3,7 +3,11 @@ import {
   makeYearsArray,
   getSpiDataByYear,
   makeCountriesArray,
-  getSpiDataByCountry
+  getSpiDataByCountry,
+  makeDefinitions, 
+  makeDimensions,
+  makeComponents,
+  getComponentsByDimension,
 } from '../services/SocialProgress';
 import * as d3 from 'd3';
 
@@ -11,17 +15,6 @@ export const useContent = () => {
   let [content, setContent] = useState('');
   return [content, setContent];
 };
-
-export const useModal = () => {
-  let [showModal, setModal] = useState(false);
-  function toggleModal() {
-    setModal(!showModal);
-  }
-  return {
-    showModal,
-    toggleModal
-  };
-}
 
 export const useClicked = () => {
   let [clicked, setClicked] = useState(null);
@@ -67,6 +60,28 @@ export const useYears = () => {
   return [years, setYears];
 };
 
+export const useDimensions = () => {
+  let [dimensions, setDimensions] = useState([]);
+  useEffect(() => {
+    if (dimensions.length < 1 || !dimensions) {
+      makeDimensions()
+        .then(parsedDimensions => setDimensions(parsedDimensions));
+    }
+  }, [dimensions]);
+  return [dimensions, setDimensions];
+};
+
+export const useComponents = (dimension) => {
+  let [components, setComponents] = useState([]);
+  useEffect(() => {
+    if (components.length < 1 || !components) {
+      getComponentsByDimension(dimension)
+        .then(parsedComponents => setComponents({ dimension: parsedComponents }));
+      }
+  }, [components]);
+  return [components, setComponents];
+};
+
 export const useHandleYearChange = () => {
   let [yearValue, setYearValue] = useState('2021');
   let handleYearChange = (e) => {
@@ -108,6 +123,17 @@ export const useDataByYear = (yearValue) => {
   return [spiByYear, setSpiByYear];
 };
 
+export const useDefinitionsData =()=>{
+  let [definitionsData, setDefinitionsData] = useState();
+  useEffect(()=>{
+    makeDefinitions().then((r)=>{
+      setDefinitionsData(r);
+    });
+  },[definitionsData, setDefinitionsData])
+
+  return [definitionsData, setDefinitionsData];
+};
+
 export const useDataByCountry = (spiByYear, countryValue) => {
   let [spiByCountry, setSpiByCountry] = useState();
   useEffect(() => {
@@ -138,7 +164,6 @@ export function useTarget() {
   }, [selectTarget, selectedTarget])
   return [selectedTarget, selectTarget]
 }
-
 
 export function useToolTip() {
   let [tooltipContext, setToolTipContext] = useState({
@@ -215,3 +240,5 @@ export async function mapMemoizer() {
     return memoizedMap;
   });
 }
+
+

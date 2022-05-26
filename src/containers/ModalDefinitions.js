@@ -1,6 +1,8 @@
 import React, { useEffect } from 'react';
 import * as d3 from 'd3';
-
+// ************************************************
+//  Pull Images to APP level, set behind setLoading, preCache
+// ************************************************
 import logo from '../assets/bffa_icons/BFFA_Logo.png'
 import basic_needs from '../assets/bffa_icons/0_0_basic.png';
 import basic_nutrition from '../assets/bffa_icons/0_1_nutrition.png';
@@ -20,35 +22,77 @@ import opportunity_freedom from '../assets/bffa_icons/2_2_freedom.png';
 import opportunity_inclusiveness from '../assets/bffa_icons/2_3_inclusiveness.png';
 import opportunity_education from '../assets/bffa_icons/2_4_education.png';
 
-function ModalDefinitions({ toggleModal, modalRef, spiData, defContext }) {
+function ModalDefinitions({ modalRef, spiData, defContext, imgs }) {
 
   let currentDefinitions = require('../assets/definitions-2021.csv');
-  let parsedDefinitions = d3.csv(currentDefinitions, function (data) {
-    //re-key the parsedDefinitions if needed
+  let parsedDefinitions = d3.csv(currentDefinitions).then(function (data) {
+    data.forEach(function(d) {
+      d.dimensionImage = imgImport(d["Dimension"]);
+      d.componentImage = componentImgImport(d["Component"])[0];
+      d.description = componentImgImport(d["Component"])[1];
+    });
+    // let groups = d3.groups(data, d => d["Dimension"], d => d["Component"], d => d['Indicator name']);
     return data;
-  })
+   });
+  // let groupedData = d3.group(data, d => d["Dimension"], d => d["Component"], d => d['Indicator name'])
+
+  let imgImport = (d) => {
+    switch (d) {
+      case "Basic Human Needs": return basic_needs;
+      case "Foundations of Wellbeing": return imgs[6];
+      case "Opportunity": return imgs[11];
+      default: return imgs[0];
+    };
+  };
+
+  let componentImgImport = (d) => {
+    switch (d) {
+      case "Nutrition and Basic Medical Care": return [basic_nutrition, 'Do people have enough food to eat and are they receiving basic medical care? '];
+      case "Water and Sanitation": return [basic_water, 'Can people drink water and keep themselves clean without getting sick?'];
+      case "Shelter": return [basic_shelter, 'Do people have adequate housing with basic utilities?'];
+      case "Personal Safety": return [basic_safety, 'Do people feel safe?'];
+
+      case "Access to Basic Knowledge": return [foundations_knowledge, 'Do people have access to an educational foundation?'];
+      case "Access to Information and Communications": return [foundations_communication, 'Can people freely access ideas and in formation from anywhere in the world?'];
+      case "Health and Wellness": return [foundations_health, 'Do people live long and healthy lives?'];
+      case "Environmental Quality": return [foundations_environmental, 'Is this society using its resources so they will be available for future generations?'];
+
+      case "Personal Rights": return [opportunity_rights, 'Are people’s rights as individuals protected?'];
+      case "Personal Freedom and Choice": return [opportunity_freedom, 'Are people free to make their own life choices?'];
+      case "Inclusiveness": return [opportunity_inclusiveness, 'Is no one excluded from the opportunity to be a contributing member of society?'];
+      case "Access to Advanced Education": return [opportunity_education, 'Do people have access to the world’s most advanced knowledge?'];
+
+      default: return [null, ''];
+    };
+  };
 
   useEffect(() => {
     function tabulateModal(data) {
       // Dimension,Component,Indicator name, unit ,Definition,Source,Link
       // Group data on each column, indicator will hold the unique values.
-      let groupedData = d3.group(data, d => d["Dimension"], d => d["Component"], d => d['Indicator name'])
+      let groupedData = d3.groups(data, d => d["Dimension"], d => d["Component"], d => d['Indicator name'])
+      let dimensions = d3.group(data, d => d["Dimension"], d => d["Component"], d => d['Indicator name']);
+      console.log('grouped', groupedData);
+      console.log('single dimension', dimensions);
+      Array.from(dimensions, ([key, values]) => {
+        console.log('Array.from',key, values)
+      });
+      // console.log(Object.keys(groupedData));
+      Object.values(groupedData).map((d, i, key)=> {
+        console.log(d[0], i, d[i]);
+        console.log(d[1][0][1][0][1][0])
+      })
 
+      // dimensions.map((d, i)=>{ console.log(d,  i);})
       let modal = d3.select(modalRef.current);
       modal.selectAll('.modal').remove();
       let dimDiv = modal.append('div').attr('class', 'modal');
 
       let dimensionsDiv = dimDiv.selectAll('.dimension')
-        .data(groupedData, d => d[0])
+        .data(groupedData, d => {
+          return  d[0]})
         .join(div => {
-          let imgImport = (d) => {
-            switch (d[0]) {
-              case "Basic Human Needs": return basic_needs;
-              case "Foundations of Wellbeing": return foundations;
-              case "Opportunity": return opportunity;
-              default: return logo;
-            };
-          };
+
           let enter = div.append("div");
           //class and ID to isolate footer
           enter
@@ -62,11 +106,14 @@ function ModalDefinitions({ toggleModal, modalRef, spiData, defContext }) {
               return id;
             });
           let divTitle = enter.append('div').attr('class', 'dimension-title')
-          divTitle.append("img").attr('src', d => imgImport(d)).attr("class", "dimension_img");
+          divTitle.append("img").attr('src', d => { 
+            // console.log(('dimension', d));
+            // console.log(d.dimensionImage);
+            return d.dimensionImage }).attr("class", "dimension_img");
           divTitle.append('h3').text(d => {
             let target = d[0]
-            d[0] === '' ? target = '*' : target = d[0];
-            if (target === "*" || undefined) {
+            // d[0] === '' ? target = '*' : target = d[0];
+            if (target === '' || undefined) {
               return "*";
             } else {
               let value = +spiData[0][`${target}`];
@@ -96,33 +143,14 @@ function ModalDefinitions({ toggleModal, modalRef, spiData, defContext }) {
                 let parsedId = d[0].replace(/ /g, "_");
                 return parsedId;
               })
-              let componentImgImport = (d) => {
-                switch (d[0]) {
-                  case "Nutrition and Basic Medical Care": return [basic_nutrition, 'Do people have enough food to eat and are they receiving basic medical care? '];
-                  case "Water and Sanitation": return [basic_water, 'Can people drink water and keep themselves clean without getting sick?'];
-                  case "Shelter": return [basic_shelter, 'Do people have adequate housing with basic utilities?'];
-                  case "Personal Safety": return [basic_safety, 'Do people feel safe?'];
 
-                  case "Access to Basic Knowledge": return [foundations_knowledge, 'Do people have access to an educational foundation?'];
-                  case "Access to Information and Communications": return [foundations_communication, 'Can people freely access ideas and in formation from anywhere in the world?'];
-                  case "Health and Wellness": return [foundations_health, 'Do people live long and healthy lives?'];
-                  case "Environmental Quality": return [foundations_environmental, 'Is this society using its resources so they will be available for future generations?'];
-
-                  case "Personal Rights": return [opportunity_rights, 'Are people’s rights as individuals protected?'];
-                  case "Personal Freedom and Choice": return [opportunity_freedom, 'Are people free to make their own life choices?'];
-                  case "Inclusiveness": return [opportunity_inclusiveness, 'Is no one excluded from the opportunity to be a contributing member of society?'];
-                  case "Access to Advanced Education": return [opportunity_education, 'Do people have access to the world’s most advanced knowledge?'];
-
-                  default: return [null, ''];
-                };
-              };
-
-              let componentTitle = enter.append('div').attr('class', 'component-title')
+              let componentTitle = enter.append('div').attr('class', 'component-title');
 
               componentTitle.append("img")
                 .attr('src', d => {
-                  let result = componentImgImport(d);
-                  return result[0]
+                  // let result = componentImgImport(d);
+                  // console.log('component data',d);
+                  return d.componentImage
                 })
                 .attr("class", "component_img");
 
@@ -135,8 +163,8 @@ function ModalDefinitions({ toggleModal, modalRef, spiData, defContext }) {
               });
 
               componentTitle.append('p').text(d => {
-                let result = componentImgImport(d);
-                return result[1];
+                // let result = componentImgImport(d);
+                return d.description;
               })
                 .style('fill', 'Orange');
 
@@ -239,6 +267,7 @@ function ModalDefinitions({ toggleModal, modalRef, spiData, defContext }) {
 
       function hideAllComponents() {
         d3.selectAll(".component").style("display", "none");
+        d3.selectAll(".component").style("list-style-type", "disclosure-closed");
         // d3.selectAll(`.indicator`).style("display", "none");
         // d3.selectAll(`.indicator-box`).style("display", "none");
       }
@@ -248,15 +277,23 @@ function ModalDefinitions({ toggleModal, modalRef, spiData, defContext }) {
         // Flower "Event" Control
         if (!event) {
           d3.selectAll(`#${defContext.dimension}`).selectAll(`.component`).style("display", "flex");
-
           d3.selectAll(`#${defContext.dimension}`).selectAll(".indicator-box").style("display", "none");
-          d3.selectAll(`#${defContext.dimension}`).select(`#${defContext.component}`).select(".indicator-box").style("display", "block").style("list-style-type", "disclosure-closed");;
+          d3.selectAll(`#${defContext.dimension}`).select(`#${defContext.component}`)
+            .select(".indicator-box").style("display", "block").style("list-style-type", "disclosure-closed");;
           return;
         };
+        
         // Manual clicking on definitions 
         var clickedTarget = event.target;
         var currentTarget = this;
+        console.log(event.target);
+        console.log(d3.select(event.target));
+        console.log(this);
+        console.log(d3.select(this).selectAll(".component"));
         // d3.select(event.target).selectAll(".component-box").style("display", "none");
+        d3.select(this).selectAll(".component").style("list-style-type", () => {
+          return (currentTarget === clickedTarget) ? "disclosure-open" : "disclosure-closed";
+        });
         d3.select(this).selectAll(".component").style("display", () => {
           return (currentTarget === clickedTarget) ? "flex" : "none";
         });
@@ -267,7 +304,7 @@ function ModalDefinitions({ toggleModal, modalRef, spiData, defContext }) {
       };
 
 
-      d3.selectAll('.dimension').on('mouseenter', showComponents);
+      d3.selectAll('.dimension').on('click', showComponents);
       d3.selectAll('.dimension').on('mouseleave', hideComponents);
 
       indicatorDiv.selectAll(".indicator-definitions").style("display", "none");
@@ -278,11 +315,12 @@ function ModalDefinitions({ toggleModal, modalRef, spiData, defContext }) {
     };
 
     parsedDefinitions.then((data) => {
+      console.log(data);
       if (!spiData) return;
       tabulateModal(data);
     })
 
-  }, [parsedDefinitions, modalRef, toggleModal, spiData, defContext]);
+  }, [parsedDefinitions, modalRef, spiData, defContext]);
 
   return (
     <div className="modal-wrapper" ref={modalRef} >

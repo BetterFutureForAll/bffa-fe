@@ -142,6 +142,7 @@ div {
   margin: 0;
   padding: 0;
   background-color:rgba(255,255,255,0.5);
+  box-sizing: content-box;
   overflow-y: auto;
   scroll-behavior: smooth;
   height: fit-content;
@@ -167,7 +168,6 @@ div {
 .modal {
   width: 100%;
   height: fit-content;
-  margin: 10px;
   padding: 1px;
   overflow: scroll;
   text-align: left;
@@ -253,6 +253,7 @@ ul.indicator-box {
   cursor: pointer;
   flex-direction: column;
   width: 100%;
+  padding: 0 .1em 0 .5em;
   object-fit: contain;
 }
 
@@ -280,7 +281,8 @@ ul.indicator-box {
   grid-column: auto;
   grid-auto-flow: dense;
   flex-direction: column;
-  margin: 0 .5em 0 .5em;
+  box-sizing: border-box;
+  border: solid black 0px;
 }
 
 .indicator:hover {
@@ -291,11 +293,6 @@ ul.indicator-box {
 
 .indicator-box {
   list-style-type: disclosure-closed;
-  margin-top: 1em;
-  margin-bottom: 1 em;
-  margin-left: 0;
-  margin-right: 0;
-  padding-left: 2em;
 }
 
 .indicator-box p h4 {
