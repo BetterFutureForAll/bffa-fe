@@ -9,7 +9,7 @@ const MapMaker = ({
   yearValue, loading, setLoading, zoomState, setZoomState,
   setCountryValue, tooltipContext }) => {
 
-  let loadingSpinner = require('../assets/loading.gif');
+  let loadingSpinner = require('../assets/BFFALoading-10sec.gif');
 
   function ready(data) {
 
@@ -136,7 +136,7 @@ const MapMaker = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [yearValue, svgRef, height, width, spiData]);
 
-  while (loading) return (<img src={loadingSpinner} alt={'loading spinner'} id="loading-spinner" />)
+  while (loading) return (<img src={loadingSpinner} alt={'loading spinner'} id="loading-spinner" className="loading-spinner" />)
 
   return (
     <svg ref={svgRef} height={height} width={width} id="map">
