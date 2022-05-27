@@ -63,7 +63,7 @@ function ModalDefinitions({ toggleModal, modalRef, spiData, defContext }) {
             });
           let divTitle = enter.append('div').attr('class', 'dimension-title')
           divTitle.append("img").attr('src', d => imgImport(d)).attr("class", "dimension_img");
-          divTitle.append('h3').text(d => {
+          divTitle.append('h4').text(d => {
             let target = d[0]
             d[0] === '' ? target = '*' : target = d[0];
             if (target === "*" || undefined) {
@@ -87,12 +87,12 @@ function ModalDefinitions({ toggleModal, modalRef, spiData, defContext }) {
       dimensionsDiv
         .each((d, i, event) => {
           d3.select(event[i])
-            .append('ul').attr('class', 'component-box')
+            .append('div').attr('class', 'component-box')
             .selectAll('.component')
             .data(d[1])
             .join(div => {
               //append each individual component, and clean the whitespace for ID's
-              let enter = div.append('li').attr("class", "component").attr("id", d => {
+              let enter = div.append('div').attr("class", "component").attr("id", d => {
                 let parsedId = d[0].replace(/ /g, "_");
                 return parsedId;
               })
@@ -126,7 +126,7 @@ function ModalDefinitions({ toggleModal, modalRef, spiData, defContext }) {
                 })
                 .attr("class", "component_img");
 
-              componentTitle.append('h3').text(d => {
+              componentTitle.append('h4').text(d => {
                 //Rounded Number
                 let target = d[0];
                 let value = +spiData[0][`${target}`];
@@ -218,9 +218,16 @@ function ModalDefinitions({ toggleModal, modalRef, spiData, defContext }) {
           });
 
       function showIndicators(event, d) {
-        d3.select(event.target).selectAll(".indicator-definitions").style("display", "flex");
-        d3.select(event.target).selectAll(".indicator-substring").style("display", "flex");
-        d3.select(event.target).style("list-style-type", "disclosure-open");
+        let clickedTarget = event.target;
+        event.stopPropagation();
+        // if(d3.select(clickedTarget).attr('class') === "component-title") { 
+        //   clickedTarget = event.target.parentElement;
+          
+        //   showComponents(clickedTarget, d);
+        // };
+        d3.select(clickedTarget).selectAll(".indicator-definitions").style("display", "flex");
+        d3.select(clickedTarget).selectAll(".indicator-substring").style("display", "flex");
+        d3.select(clickedTarget).style("list-style-type", "disclosure-open");
       };
 
       function hideIndicators(event, d) {
@@ -229,18 +236,16 @@ function ModalDefinitions({ toggleModal, modalRef, spiData, defContext }) {
         d3.select(event.target).style("list-style-type", "disclosure-closed");
       };
 
-      function hideComponents(event, d) {
-        var clickedTarget = event.target,
-          currentTarget = this;
-        d3.select(this).selectAll(".component").style("display", () => {
-          return (currentTarget === clickedTarget) ? "none" : "none";
-        });
-      };
+      // function hideComponents(event, d) {
+      //   var clickedTarget = event.target,
+      //     currentTarget = this;
+      //   d3.select(this).selectAll(".component").style("display", () => {
+      //     return (currentTarget === clickedTarget) ? "none" : "none";
+      //   });
+      // };
 
       function hideAllComponents() {
         d3.selectAll(".component").style("display", "none");
-        // d3.selectAll(`.indicator`).style("display", "none");
-        // d3.selectAll(`.indicator-box`).style("display", "none");
       }
 
       function showComponents(event, d) {
@@ -255,6 +260,9 @@ function ModalDefinitions({ toggleModal, modalRef, spiData, defContext }) {
         };
         // Manual clicking on definitions 
         var clickedTarget = event.target;
+        if(d3.select(clickedTarget).attr('class') === "dimension-title") { 
+          clickedTarget = event.target.parentElement;
+        };
         var currentTarget = this;
         // d3.select(event.target).selectAll(".component-box").style("display", "none");
         d3.select(this).selectAll(".component").style("display", () => {
@@ -267,8 +275,10 @@ function ModalDefinitions({ toggleModal, modalRef, spiData, defContext }) {
       };
 
 
-      d3.selectAll('.dimension').on('mouseenter', showComponents);
-      d3.selectAll('.dimension').on('mouseleave', hideComponents);
+      d3.selectAll('.dimension').on('click', showComponents);
+      d3.selectAll('.component').on('click', showIndicators);
+
+      // d3.selectAll('.dimension').on('mouseleave', hideComponents);
 
       indicatorDiv.selectAll(".indicator-definitions").style("display", "none");
       indicatorDiv.selectAll(".indicator-substring").style("display", "none");

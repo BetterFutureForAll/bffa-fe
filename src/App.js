@@ -23,7 +23,7 @@ function App() {
   // Total screen size available
   let [width, height] = useWindowSize();
   // Map Size
-  let mapHeight = height * .5;
+  let mapHeight = height * .6;
 
   let [countryValue, setCountryValue] = useHandleCountryChange();
   let [countries] = useCountries();
@@ -37,7 +37,7 @@ function App() {
   let [defContext, setDefContext] = useDefinitions();
 
   let mapData = d3.json(localGeoData);
-  
+
   let handleCountryChange = e => setCountryValue(e.target.value);
 
   let [spiByYear] = useDataByYear(yearValue);
@@ -50,7 +50,7 @@ function App() {
   let selectYears = (
     <>
       <select className='select-years' onChange={handleYearChange} value={yearValue} >
-        {years.map((item, i)=> (
+        {years.map((item, i) => (
           <option
             key={i}
             value={item}
@@ -75,7 +75,7 @@ function App() {
 
   useEffect(() => {
     let id = clicked ? clicked.replace(/ /g, "_") : null;
-    let subId = clickedSubCat? clickedSubCat.replace(/ /g, "_") : null;
+    let subId = clickedSubCat ? clickedSubCat.replace(/ /g, "_") : null;
     setDefContext({
       dimension: id,
       component: subId,
