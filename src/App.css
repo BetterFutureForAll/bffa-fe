@@ -28,13 +28,13 @@ div {
 .petalPath {
   text-align: justify;
 }
-
-.loading_spinner {
-  display: block;
+#loading-spinner {
+  display: absolute;
   margin-left: 0;
   margin-right: 0;
-  height: 50%;
-  width: 50%;
+  height: 140vh;
+  width: 100vw;
+  z-index: 1;
 }
 
 .ControlBar {
