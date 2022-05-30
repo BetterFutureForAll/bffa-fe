@@ -9,7 +9,7 @@ const MapMaker = ({
   yearValue, loading, setLoading, zoomState, setZoomState,
   setCountryValue, tooltipContext }) => {
 
-  let loadingSpinner = require('../assets/BFFALoading-10sec.gif');
+  let loadingSpinner = require('../assets/loadingMap.gif');
 
   function ready(data) {
 
@@ -35,7 +35,7 @@ const MapMaker = ({
       return spiMatch;
     }
 
-    
+
     let zoomed = (event, d) => {
       const { transform } = event;
       // Save the Current Zoom level so we can scale tooltips. 
@@ -132,7 +132,7 @@ const MapMaker = ({
       setLoading(false);
       ready(values);
     });
-    
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [yearValue, svgRef, height, width, spiData]);
 

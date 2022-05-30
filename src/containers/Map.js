@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import MapMaker from '../components/MapMaker';
 
 function MapContainer({
-  toggleModal, width, height,
+  width, height,
   yearValue, setClickedSubCat, setClicked,
   spiData, mapData,
   countryValue, setCountryValue,
@@ -32,10 +32,7 @@ function MapContainer({
           setClicked={setClicked}
           setClickedSubCat={setClickedSubCat}
         />
-
-
       </div>
-
     </>
   );
 }

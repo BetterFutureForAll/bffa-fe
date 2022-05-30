@@ -4,9 +4,8 @@ import './App.css';
 import * as d3 from 'd3'
 import MapContainer from './containers/Map';
 import {
-  useDataByCountry, useDataByYear, useModal,
-  useToolTip, useYears, useHandleYearChange,
-  useZoom,
+  useDataByCountry, useDataByYear, useYears,
+  useToolTip, useHandleYearChange, useZoom,
   useClickedSubCat, useClicked, useDefinitions
 } from './hooks/hooks';
 import ModalDefinitions from './containers/ModalDefinitions';
@@ -16,8 +15,6 @@ import { useWindowSize, useHandleCountryChange, useCountries } from './hooks/hoo
 let localGeoData = process.env.PUBLIC_URL + '/cleanedMap.json';
 
 function App() {
-  let { showModal, toggleModal } = useModal();
-  // let target = "modal-ref";
   let modalRef = useRef(null);
 
   // Total screen size available
@@ -95,8 +92,6 @@ function App() {
   return (
     <div className="App">
       <MapContainer
-        showModal={showModal}
-        toggleModal={toggleModal}
         svgRef={svgRef}
         width={width}
         height={mapHeight}
@@ -121,14 +116,11 @@ function App() {
           yearValue={yearValue}
           selectCountries={selectCountries}
           countryValue={countryValue}
-          toggleModal={toggleModal}
           spiData={spiByCountry}
 
         />
       </div>
       <ModalDefinitions
-        toggleModal={toggleModal}
-        showModal={showModal}
         modalRef={modalRef}
         spiData={spiByCountry}
         defContext={defContext}

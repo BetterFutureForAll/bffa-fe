@@ -29,10 +29,8 @@ div {
   text-align: justify;
 }
 #loading-spinner {
-  display: absolute;
-  margin-left: 0;
-  margin-right: 0;
-  height: 140vh;
+  position: absolute;
+  height: 100vh;
   width: 100vw;
   z-index: 1;
 }
@@ -222,7 +220,7 @@ div {
   display: grid;
   align-items: stretch;
   grid-template-areas: 
-  "icon h3"
+  "icon h4"
   "icon p";
   
 }
@@ -230,11 +228,11 @@ div {
 .component_img {
   justify-self: flex-start;
   align-self: flex-start;
+  grid-area: icon;
   max-height: 1em;
   max-width: auto;
   height: auto;
   width: auto;
-  grid-area: icon;
   padding: 5px;
 }
 
@@ -244,11 +242,10 @@ div {
   width: 100%;
   object-fit: contain;
   box-sizing: border-box;
-
 }
 
-.component h3 {
-  grid-area: h3;
+.component h4 {
+  grid-area: h4;
   align-self: center;
   justify-self: flex-start;
 
@@ -260,8 +257,7 @@ div {
 }
 
 .indicator {
-  width: 90%;
-
+  width: 95%;
   grid-area: i;
   grid-row: auto;
   grid-column: auto;
@@ -277,6 +273,7 @@ div {
 .indicator-box {
   list-style-type: disclosure-closed;
   padding-left: 2em;
+  background-color: rgba(255, 255, 255, 0.4);
 }
 
 .indicator-box p h4 {
@@ -285,13 +282,20 @@ div {
 
 .indicator-name {
   font-weight: 500;
-  /* clean up (indicator definitions) */
-  
+}
+
+.indicator-definitions {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+.indicator-substring {
+  display: flex;
 }
 
 .indicator-link {
   padding: 1em;
 }
+
+
 .indicator-definition {
   list-style-type: none;
   display: flex;
