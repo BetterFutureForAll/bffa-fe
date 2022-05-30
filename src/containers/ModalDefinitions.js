@@ -205,12 +205,12 @@ function ModalDefinitions({ modalRef, spiData, defContext }) {
         d3.selectAll('.indicator-definitions').remove();
       }
 
-      if(defContext.dimension) {
+      if (defContext.dimension) {
         document.querySelector(`#${defContext.dimension}_title`).click();
       }
 
-      if(defContext.component && document.querySelector(`#${defContext.component}_title`)) {
-      document.querySelector(`#${defContext.component}_title`).click();
+      if (defContext.component && document.querySelector(`#${defContext.component}_title`)) {
+        document.querySelector(`#${defContext.component}_title`).click();
       }
 
       d3.selectAll('#remove').remove();

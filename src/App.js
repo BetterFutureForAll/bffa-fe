@@ -4,7 +4,7 @@ import './App.css';
 import * as d3 from 'd3'
 import MapContainer from './containers/Map';
 import {
-  useDataByCountry, useDataByYear, useYears, 
+  useDataByCountry, useDataByYear, useYears,
   useToolTip, useHandleYearChange, useZoom,
   useClickedSubCat, useClicked, useDefinitions
 } from './hooks/hooks';
