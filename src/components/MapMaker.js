@@ -9,7 +9,7 @@ const MapMaker = ({
   yearValue, loading, setLoading, zoomState, setZoomState,
   setCountryValue, tooltipContext }) => {
 
-  let loadingSpinner = require('../assets/BFFALoading-10sec.gif');
+  let loadingSpinner = require('../assets/loadingMap.gif');
 
   function ready(data) {
 
