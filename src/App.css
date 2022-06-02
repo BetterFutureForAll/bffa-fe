@@ -154,8 +154,8 @@ div {
   width: 100%;
   height: fit-content;
   padding: 1px;
-  overflow-y: scroll;
-  overflow-x: none;
+  overflow-y: auto;
+  overflow-x: hidden;
   text-align: left;
   display: flex;
   flex-direction: column;
