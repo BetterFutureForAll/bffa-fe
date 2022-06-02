@@ -3,10 +3,6 @@ This app is for rendering data visualizations from [Social Progress Imperative](
 
 The goal of this front end up is to render visual representations of the data gathered by Social Progress Index to make it easily accessible and digestible for users. Rendering Data visualizations for the data collected will help people in leadership roles to identify needs and strengths of their community in order to help improve the quality of life for the communities in meaningful and impactful ways.  
 
-imported wire frame for Map Chart from React-Simple-Maps from [Map Chart With Tooltip](https://www.react-simple-maps.io/examples/map-chart-with-tooltip/)
-
-
-
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts

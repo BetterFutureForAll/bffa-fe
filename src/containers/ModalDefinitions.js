@@ -219,7 +219,7 @@ function ModalDefinitions({ modalRef, spiData, defContext }) {
     parsedDefinitions.then((data) => {
       if (!spiData) return;
       tabulateModal(data);
-    })
+    });
 
   }, [parsedDefinitions, modalRef, spiData, defContext]);
 
