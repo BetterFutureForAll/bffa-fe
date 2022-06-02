@@ -16,7 +16,6 @@ let localGeoData = process.env.PUBLIC_URL + '/cleanedMap.json';
 
 function App() {
   let modalRef = useRef(null);
-
   // Total screen size available
   let [width, height] = useWindowSize();
   // Map Size
@@ -41,8 +40,6 @@ function App() {
   let [spiByCountry] = useDataByCountry(spiByYear, countryValue);
 
   let svgRef = useRef(null);
-
-  // let [center, setCenter] = useCenter(width, mapHeight);
 
   let selectYears = (
     <>
