@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useMemo } from 'react';
 // import './Reset.css';
 import './App.css';
 import * as d3 from 'd3'
@@ -32,7 +32,7 @@ function App() {
   let [clickedSubCat, setClickedSubCat] = useClickedSubCat();
   let [defContext, setDefContext] = useDefinitions();
 
-  let mapData = d3.json(localGeoData);
+  let mapData = useMemo(()=> d3.json(localGeoData), []);
 
   let handleCountryChange = e => setCountryValue(e.target.value);
 
@@ -114,7 +114,6 @@ function App() {
           selectCountries={selectCountries}
           countryValue={countryValue}
           spiData={spiByCountry}
-
         />
       </div>
       <ModalDefinitions

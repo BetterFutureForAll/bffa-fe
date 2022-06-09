@@ -10,6 +10,9 @@ const MapMaker = ({
   setCountryValue, tooltipContext }) => {
 
   let loadingSpinner = require('../assets/loadingMap.gif');
+  
+
+  useEffect(() => {
 
   function ready(data) {
 
@@ -21,9 +24,10 @@ const MapMaker = ({
       .translate([width / 2, height / 2])
 
     let path = d3.geoPath().projection(projection);
-    let spiCountryGroup = d3.group(data[1], s => s["SPI country code"]);
+
     let mapFeatures = feature(data[0], data[0].objects.countries).features;
 
+    let spiCountryGroup = d3.group(data[1], s => s["SPI country code"]);
     function spiMatcher(id) { return spiCountryGroup.get(id); };
     function getSpiData(d) {
       let spiMatch;
@@ -34,7 +38,11 @@ const MapMaker = ({
       }
       return spiMatch;
     }
-
+    function countryMouseOver(event, d) {
+      let spiMatch = getSpiData(d);
+      let name = spiMatch ? spiMatch[0]["Country"] : "World";
+      setCountryValue(name);
+    };
 
     let zoomed = (event, d) => {
       const { transform } = event;
@@ -65,11 +73,6 @@ const MapMaker = ({
 
     svg.call(zoom);
 
-    function countryMouseOver(event, d) {
-      let spiMatch = getSpiData(d);
-      let name = spiMatch ? spiMatch[0]["Country"] : "World";
-      setCountryValue(name);
-    };
 
     // *** Country groupings ***
     let countries = g.selectAll(".country")
@@ -124,7 +127,6 @@ const MapMaker = ({
 
   };
 
-  useEffect(() => {
     setLoading(true);
     if (spiData.length === 0) return;
 
@@ -133,6 +135,7 @@ const MapMaker = ({
       ready(values);
     });
 
+    
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [yearValue, svgRef, height, width, spiData]);
 
