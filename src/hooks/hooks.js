@@ -179,3 +179,16 @@ export function useWindowSize() {
   }, [isWindowClient, setWindowSize]);
   return windowSize;
 };
+
+export function useMapSize(height) {
+  const [mapHeight, setMapHeight] = useState(
+    (window.matchMedia('(orientation: landscape)').matches&& window.matchMedia('(min-width: 600px)').matches) ? height : height * .4
+  );
+  useEffect(()=>{
+      setMapHeight(
+        (window.matchMedia('(orientation: landscape)').matches&& window.matchMedia('(min-width: 600px)').matches) ? height : height * .4
+      );
+  }, [height]);
+  return mapHeight;
+};
+

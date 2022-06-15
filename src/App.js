@@ -6,7 +6,7 @@ import MapContainer from './containers/Map';
 import {
   useDataByCountry, useDataByYear, useYears,
   useToolTip, useHandleYearChange, useZoom,
-  useClickedSubCat, useClicked, useDefinitions
+  useClickedSubCat, useClicked, useDefinitions, useMapSize
 } from './hooks/hooks';
 import ModalDefinitions from './containers/ModalDefinitions';
 import Header from './components/Header';
@@ -18,8 +18,9 @@ function App() {
   let modalRef = useRef(null);
   // Total screen size available
   let [width, height] = useWindowSize();
+  
   // Map Size
-  let mapHeight = height * .6;
+  let mapHeight = useMapSize(height);
 
   let [countryValue, setCountryValue] = useHandleCountryChange();
   let [countries] = useCountries();
@@ -84,7 +85,6 @@ function App() {
       data: spiByCountry
     });
   }, [countryValue, yearValue, spiByCountry, setToolTipContext])
-
 
   return (
     <div className="App">

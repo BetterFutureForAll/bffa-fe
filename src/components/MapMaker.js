@@ -16,11 +16,11 @@ const MapMaker = ({
 
   function ready(data) {
 
-    //Check Height Vs Width, use the width for small screens and height for large.
-    let checkedSize = Math.min(height, width)
-
+    //Check Width for scale.
+    
+    let checkedSize = Math.min(width);
     let projection = d3.geoEqualEarth()
-      .scale(checkedSize / 3)
+      .scale(checkedSize / 5)
       .translate([width / 2, height / 2])
 
     let path = d3.geoPath().projection(projection);
