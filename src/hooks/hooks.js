@@ -179,3 +179,18 @@ export function useWindowSize() {
   }, [isWindowClient, setWindowSize]);
   return windowSize;
 };
+
+export function useMapSize(height, width) {
+  const [mapHeight, setMapHeight] = useState([
+    (window.matchMedia('(orientation: landscape)').matches&& window.matchMedia('(min-width: 600px)').matches) ? height : height * .4,
+    (window.matchMedia('(orientation: landscape)').matches&& window.matchMedia('(min-width: 600px)').matches) ? width / 2 : width
+  ]);
+  useEffect(()=>{
+      setMapHeight([
+        (window.matchMedia('(orientation: landscape)').matches&& window.matchMedia('(min-width: 600px)').matches) ? height : height * .4,
+        (window.matchMedia('(orientation: landscape)').matches&& window.matchMedia('(min-width: 600px)').matches) ? width / 2 : width
+      ]);
+  }, [height, width]);
+  return mapHeight;
+};
+

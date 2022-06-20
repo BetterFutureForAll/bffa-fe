@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useMemo } from 'react';
 // import './Reset.css';
 import './App.css';
 import * as d3 from 'd3'
@@ -6,7 +6,7 @@ import MapContainer from './containers/Map';
 import {
   useDataByCountry, useDataByYear, useYears,
   useToolTip, useHandleYearChange, useZoom,
-  useClickedSubCat, useClicked, useDefinitions
+  useClickedSubCat, useClicked, useDefinitions, useMapSize
 } from './hooks/hooks';
 import ModalDefinitions from './containers/ModalDefinitions';
 import Header from './components/Header';
@@ -19,20 +19,21 @@ function App() {
   // Total screen size available
   let [width, height] = useWindowSize();
   // Map Size
-  let mapHeight = height * .6;
+  let [mapHeight, mapWidth] = useMapSize(height, width);
 
   let [countryValue, setCountryValue] = useHandleCountryChange();
   let [countries] = useCountries();
   let [years] = useYears();
   let [yearValue, handleYearChange] = useHandleYearChange();
-
+ 
+  //  ToolTip State
   let [tooltipContext, setToolTipContext] = useToolTip();
   let [zoomState, setZoomState] = useZoom();
   let [clicked, setClicked] = useClicked();
   let [clickedSubCat, setClickedSubCat] = useClickedSubCat();
   let [defContext, setDefContext] = useDefinitions();
 
-  let mapData = d3.json(localGeoData);
+  let mapData = useMemo(()=> d3.json(localGeoData), []);
 
   let handleCountryChange = e => setCountryValue(e.target.value);
 
@@ -85,12 +86,11 @@ function App() {
     });
   }, [countryValue, yearValue, spiByCountry, setToolTipContext])
 
-
   return (
     <div className="App">
       <MapContainer
         svgRef={svgRef}
-        width={width}
+        width={mapWidth}
         height={mapHeight}
         selectYears={selectYears}
         yearValue={yearValue}
@@ -107,14 +107,13 @@ function App() {
       />
       <div className="ControlBar">
         <Header
-          height={height}
-          width={width}
+          height={mapHeight}
+          width={mapWidth}
           selectYears={selectYears}
           yearValue={yearValue}
           selectCountries={selectCountries}
           countryValue={countryValue}
           spiData={spiByCountry}
-
         />
       </div>
       <ModalDefinitions

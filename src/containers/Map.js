@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import MapMaker from '../components/MapMaker';
 
 function MapContainer({
@@ -10,6 +10,9 @@ function MapContainer({
   zoomState, setZoomState }) {
 
   let [loading, setLoading] = useState(true);
+  const setLoadingCallback  = useCallback(()=>{
+    setLoading(t=>!t);
+  },[]);
 
   return (
     <>
@@ -20,7 +23,7 @@ function MapContainer({
           height={height}
           width={width}
           loading={loading}
-          setLoading={setLoading}
+          setLoading={setLoadingCallback}
           countryValue={countryValue}
           setCountryValue={setCountryValue}
           tooltipContext={tooltipContext}

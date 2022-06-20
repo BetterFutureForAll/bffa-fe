@@ -1,4 +1,6 @@
-* { margin: 0; padding: 0; }
+* { 
+  margin: 0; padding: 0; 
+}
 
 .App {
   display: flex;
@@ -8,13 +10,43 @@
   align-items: flex-start;
   height: 100vh;
   overflow: hidden;
+  -moz-box-sizing: border-box; 
+  -webkit-box-sizing: border-box; 
+  box-sizing: border-box; 
+}
+
+@media only screen and (min-width: 600px) and (orientation: landscape) {
+  /* landscape rules */
+  .App {
+    display: grid;
+    grid-template-columns: 50vw 50vw;
+    grid-template-rows: 85vh 15vh;
+    grid-template-areas: 
+      "map def"
+      "control def";
+  }
+  #MapContainer {
+    width: 100%;
+    height: 100% !important;
+    grid-area: map;
+  }
+  .ControlBar {
+    grid-area: control;
+    height: 100%;
+  }
+  .modal-wrapper {
+    height: 100vh !important;
+    grid-area: def;
+  }
+
+
 }
 
 #MapContainer {
   width: 100%;
   display: flex;
   flex: 0 0 auto;
-  height: 60%;
+  height: 40%;
 }
 
 body {
@@ -40,7 +72,6 @@ div {
   flex-wrap: wrap;
   flex-direction: row;
   width: 100%;
-  padding: 2px;
   align-items: center;
   justify-content: space-evenly;
   background-color:lightblue;
@@ -71,26 +102,6 @@ div {
   background-color: white;
 
 }
-
-/*
-.select select {
-  padding: 5px 8px;
-  width: fit-content;
-  border: none;
-  box-shadow: none;
-  background-color: transparent;
-  background-image: none;
-  -webkit-appearance: none;
-     -moz-appearance: none;
-          appearance: none;
-}
-
-.select :focus {
-  outline: none  !important; 
-  outline-color: black !important;
-}
-*/
-
 
 .select-countries-div {
   display: flex;
@@ -154,7 +165,7 @@ div {
   width: 100%;
   height: fit-content;
   padding: 1px;
-  overflow-y: auto;
+  overflow-y: scroll !important;
   overflow-x: hidden;
   text-align: left;
   display: flex;
@@ -268,6 +279,9 @@ div {
   list-style-type: disclosure-closed;
   padding-left: 2em;
   background-color: rgba(255, 255, 255, 0.4);
+  -moz-box-sizing: border-box; 
+  -webkit-box-sizing: border-box; 
+  box-sizing: border-box; 
 }
 
 .indicator-box p h4 {
