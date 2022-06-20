@@ -18,15 +18,15 @@ function App() {
   let modalRef = useRef(null);
   // Total screen size available
   let [width, height] = useWindowSize();
-  
   // Map Size
-  let mapHeight = useMapSize(height);
+  let [mapHeight, mapWidth] = useMapSize(height, width);
 
   let [countryValue, setCountryValue] = useHandleCountryChange();
   let [countries] = useCountries();
   let [years] = useYears();
   let [yearValue, handleYearChange] = useHandleYearChange();
-
+ 
+  //  ToolTip State
   let [tooltipContext, setToolTipContext] = useToolTip();
   let [zoomState, setZoomState] = useZoom();
   let [clicked, setClicked] = useClicked();
@@ -90,7 +90,7 @@ function App() {
     <div className="App">
       <MapContainer
         svgRef={svgRef}
-        width={width}
+        width={mapWidth}
         height={mapHeight}
         selectYears={selectYears}
         yearValue={yearValue}
@@ -107,8 +107,8 @@ function App() {
       />
       <div className="ControlBar">
         <Header
-          height={height}
-          width={width}
+          height={mapHeight}
+          width={mapWidth}
           selectYears={selectYears}
           yearValue={yearValue}
           selectCountries={selectCountries}
