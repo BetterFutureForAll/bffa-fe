@@ -9,6 +9,7 @@
   font-size: 100%;
   align-items: flex-start;
   height: 100vh;
+  line-height: 1.2em;
   overflow: hidden;
   -moz-box-sizing: border-box; 
   -webkit-box-sizing: border-box; 
@@ -117,7 +118,7 @@
   /* landscape rules */
   .App {
     display: grid;
-    grid-template-columns: 60vw 40vw;
+    grid-template-columns: 55vw 45vw;
     grid-template-rows: 85vh 15vh;
     grid-template-areas: 
       "map def"
@@ -135,7 +136,7 @@
   }
   .modal-wrapper {
     height: 100vh !important;
-    width: 40vw !important;
+    width: 45vw !important;
     grid-area: def;
   }
 }
