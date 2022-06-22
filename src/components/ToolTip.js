@@ -324,7 +324,6 @@ const ToolTip = ({ tooltipContext, zoomState, setClicked, setClickedSubCat }) =>
           .on("mouseover", mouseover)
           .on("mousemove", mousemove)
           .on("click", mouseClick);
-
       }
 
       function showPetalArc(event, d) {
@@ -346,7 +345,6 @@ const ToolTip = ({ tooltipContext, zoomState, setClicked, setClickedSubCat }) =>
           .attr('fill', d => d.color)
           .attr('transform', d => `translate(${x}, ${y}) rotate(${d.angle + 30}) scale(${1 / zoomState.k})`)
           .attr("cursor", "alias")
-
 
         toolTip.selectAll('.petalText')
           .data([d])
@@ -375,8 +373,6 @@ const ToolTip = ({ tooltipContext, zoomState, setClicked, setClickedSubCat }) =>
             let rounded = (+Object.values(d)[0]).toFixed();
             return `${Object.keys(d)[0]}-${rounded}`;
           });
-
-
       };
 
       function doItAll(event, d) {
@@ -390,13 +386,7 @@ const ToolTip = ({ tooltipContext, zoomState, setClicked, setClickedSubCat }) =>
       // add mouseout fn's to subpetals / petals
       d3.selectAll('.petalPath').on('mouseenter', doItAll)
       d3.selectAll('.petalBackgroundPath').on('mouseenter', doItAll)
-
-      // toolTip.selectAll('.backgroundPetalPath').each((event, d) => {
-      //   showSubPetals(event, d);
-      //   showPetalArc(event, d);
-      // })
-      // toolTip
-      //   .on("mouseleave", () => toolTip.remove())
+      
     };
 
     ready();

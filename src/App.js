@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useMemo } from 'react';
-// import './Reset.css';
 import './App.css';
 import * as d3 from 'd3'
 import MapContainer from './containers/Map';
@@ -9,8 +8,8 @@ import {
   useClickedSubCat, useClicked, useDefinitions, useMapSize
 } from './hooks/hooks';
 import ModalDefinitions from './containers/ModalDefinitions';
-import Header from './components/Header';
 import { useWindowSize, useHandleCountryChange, useCountries } from './hooks/hooks';
+import ControlBar from './components/ControlBar';
 
 let localGeoData = process.env.PUBLIC_URL + '/cleanedMap.json';
 
@@ -20,7 +19,6 @@ function App() {
   let [width, height] = useWindowSize();
   // Map Size
   let [mapHeight, mapWidth] = useMapSize(height, width);
-
   let [countryValue, setCountryValue] = useHandleCountryChange();
   let [countries] = useCountries();
   let [years] = useYears();
@@ -106,7 +104,7 @@ function App() {
         setClickedSubCat={setClickedSubCat}
       />
       <div className="ControlBar">
-        <Header
+        <ControlBar
           height={mapHeight}
           width={mapWidth}
           selectYears={selectYears}

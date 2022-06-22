@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import * as d3 from 'd3';
 import { colorScale } from '../services/SocialProgress';
 
-const Header = ({
+const ControlBar = ({
   width,
   height,
   selectYears,
@@ -85,7 +85,7 @@ const Header = ({
   );
 };
 
-Header.propTypes = {
+ControlBar.propTypes = {
   width: PropTypes.number,
   height: PropTypes.number,
   selectYears: PropTypes.object,
@@ -94,4 +94,4 @@ Header.propTypes = {
   toggleModal: PropTypes.func
 };
 
-export default Header;
+export default ControlBar;
