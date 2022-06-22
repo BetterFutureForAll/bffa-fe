@@ -181,16 +181,12 @@ export function useWindowSize() {
 };
 
 export function useMapSize(height, width) {
-  const [mapHeight, setMapHeight] = useState([
-    (window.matchMedia('(orientation: landscape)').matches&& window.matchMedia('(min-width: 600px)').matches) ? height : height * .4,
-    (window.matchMedia('(orientation: landscape)').matches&& window.matchMedia('(min-width: 600px)').matches) ? width / 2 : width
-  ]);
+  let heightCalc = (window.matchMedia('(orientation: landscape)').matches&& window.matchMedia('(min-width: 600px)').matches) ? height : height * .4;
+  let widthCalc = (window.matchMedia('(orientation: landscape)').matches&& window.matchMedia('(min-width: 600px)').matches) ? width * .6 : width;
+  const [mapHeight, setMapHeight] = useState([ heightCalc, widthCalc]);
   useEffect(()=>{
-      setMapHeight([
-        (window.matchMedia('(orientation: landscape)').matches&& window.matchMedia('(min-width: 600px)').matches) ? height : height * .4,
-        (window.matchMedia('(orientation: landscape)').matches&& window.matchMedia('(min-width: 600px)').matches) ? width / 2 : width
-      ]);
-  }, [height, width]);
+    setMapHeight([heightCalc, widthCalc]);
+  }, [heightCalc, widthCalc]);
   return mapHeight;
 };
 
