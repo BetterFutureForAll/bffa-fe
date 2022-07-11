@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import {
   makeYearsArray,
   getSpiDataByYear,
@@ -11,17 +11,6 @@ export const useContent = () => {
   let [content, setContent] = useState('');
   return [content, setContent];
 };
-
-export const useModal = () => {
-  let [showModal, setModal] = useState(false);
-  function toggleModal() {
-    setModal(!showModal);
-  }
-  return {
-    showModal,
-    toggleModal
-  };
-}
 
 export const useClicked = () => {
   let [clicked, setClicked] = useState(null);
@@ -118,19 +107,6 @@ export const useDataByCountry = (spiByYear, countryValue) => {
   return [spiByCountry, setSpiByCountry];
 };
 
-export const useToggle = (initialState) => {
-  const [isToggled, setIsToggled] = useState(initialState);
-
-  // put [setIsToggled] into the useCallback's dependencies array
-  // this value never changes so the callback is not going to be ever re-created
-  const toggle = useCallback(
-    () => setIsToggled(state => !state),
-    [setIsToggled],
-  );
-
-  return [isToggled, toggle];
-}
-
 export function useTarget() {
   let [selectedTarget, selectTarget] = useState(null);
   useEffect(() => {
@@ -138,7 +114,6 @@ export function useTarget() {
   }, [selectTarget, selectedTarget])
   return [selectedTarget, selectTarget]
 }
-
 
 export function useToolTip() {
   let [tooltipContext, setToolTipContext] = useState({
@@ -205,13 +180,13 @@ export function useWindowSize() {
   return windowSize;
 };
 
-export async function mapMemoizer() {
-  let localGeoData = process.env.PUBLIC_URL + '/cleanedMap.json';
+export function useMapSize(height, width) {
+  let heightCalc = (window.matchMedia('(orientation: landscape)').matches&& window.matchMedia('(min-width: 600px)').matches) ? height : height * .4;
+  let widthCalc = (window.matchMedia('(orientation: landscape)').matches&& window.matchMedia('(min-width: 600px)').matches) ? width * .55 : width;
+  const [mapHeight, setMapHeight] = useState([ heightCalc, widthCalc]);
+  useEffect(()=>{
+    setMapHeight([heightCalc, widthCalc]);
+  }, [heightCalc, widthCalc]);
+  return mapHeight;
+};
 
-  await d3.json(localGeoData).then(r => {
-    let memoizedMap = useMemo(() => {
-      return r
-    }, [r]);
-    return memoizedMap;
-  });
-}

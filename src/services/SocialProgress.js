@@ -6,7 +6,6 @@ export const parsedSpiData = d3.csv(currentData).then((data) => {
   return data;
 });
 
-
 export async function makeYearsArray() {
   let years;
   await parsedSpiData.then(function (data) {
@@ -42,9 +41,6 @@ export async function getSpiDataByCountry(data, countryValue) {
   const output = Object.keys(input).reduce((previous, key) => {
     return { ...previous, [`${keyFixer(key)}`]: input[key] };
   }, {});
-
-  // console.log('input', input)
-  // console.log('output', output);
 
   return [output];
 };

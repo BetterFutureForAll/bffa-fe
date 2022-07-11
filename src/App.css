@@ -1,4 +1,6 @@
-* { margin: 0; padding: 0; }
+* { 
+  margin: 0; padding: 0; 
+}
 
 .App {
   display: flex;
@@ -7,34 +9,29 @@
   font-size: 100%;
   align-items: flex-start;
   height: 100vh;
+  line-height: 1.2em;
   overflow: hidden;
+  -moz-box-sizing: border-box; 
+  -webkit-box-sizing: border-box; 
+  box-sizing: border-box; 
 }
 
 #MapContainer {
   width: 100%;
   display: flex;
   flex: 0 0 auto;
-  height: 60%;
-}
-
-body {
-	line-height: 1;
-}
-
-div {
-  display: block;
+  height: 40%;
 }
 
 .petalPath {
   text-align: justify;
 }
 
-.loading_spinner {
-  display: block;
-  margin-left: 0;
-  margin-right: 0;
-  height: 50%;
-  width: 50%;
+#loading-spinner {
+  position: absolute;
+  height: 100vh;
+  width: 100vw;
+  z-index: 1;
 }
 
 .ControlBar {
@@ -42,12 +39,11 @@ div {
   flex-wrap: wrap;
   flex-direction: row;
   width: 100%;
-  padding: 2px;
   align-items: center;
   justify-content: space-evenly;
   background-color:lightblue;
-
 }
+
 .select-years {
   padding: 0;
   margin: 0;
@@ -71,32 +67,12 @@ div {
   font-size: large;
   font-weight: bold;
   background-color: white;
-
+  
 }
-
-/*
-.select select {
-  padding: 5px 8px;
-  width: fit-content;
-  border: none;
-  box-shadow: none;
-  background-color: transparent;
-  background-image: none;
-  -webkit-appearance: none;
-     -moz-appearance: none;
-          appearance: none;
-}
-
-.select :focus {
-  outline: none  !important; 
-  outline-color: black !important;
-}
-*/
-
 
 .select-countries-div {
   display: flex;
-  flex: 0 0 390px;
+  flex: 0 0 auto;
   text-align: center;
   align-items: center;
   justify-content: space-around;
@@ -125,14 +101,6 @@ div {
   }
 }
 
-.Tool-Tip {
-  display: hidden;
-}
-
-.Tool-Tip:hover {
-  display: block;
-}
-
 .modal-wrapper {
   justify-content: flex-end;
   flex: 2;
@@ -141,10 +109,37 @@ div {
   margin: 0;
   padding: 0;
   background-color:rgba(255,255,255,0.5);
-  overflow-y: auto;
-  scroll-behavior: smooth;
+  overflow-y: scroll;
+  overflow-x: hidden;
   height: fit-content;
+}
 
+@media only screen and (min-width: 600px) and (orientation: landscape) {
+  /* landscape rules */
+  .App {
+    display: grid;
+    grid-template-columns: 55vw 45vw;
+    grid-template-rows: 85vh 15vh;
+    grid-template-areas: 
+      "map def"
+      "control def";
+  }
+  #MapContainer {
+    width: 100%;
+    height: 100% !important;
+    grid-area: map;
+  }
+  .ControlBar {
+    grid-area: control;
+    height: 4em;
+    width: 100%;
+    align-self: end;
+  }
+  .modal-wrapper {
+    height: 100vh !important;
+    width: 45vw !important;
+    grid-area: def;
+  }
 }
 
 .modal div {
@@ -165,8 +160,8 @@ div {
   width: 100%;
   height: fit-content;
   padding: 1px;
-  overflow-y: scroll;
-  overflow-x: none;
+  overflow-y: scroll !important;
+  overflow-x: hidden;
   text-align: left;
   display: flex;
   flex-direction: column;
@@ -222,7 +217,7 @@ div {
   display: grid;
   align-items: stretch;
   grid-template-areas: 
-  "icon h3"
+  "icon h4"
   "icon p";
   
 }
@@ -230,11 +225,11 @@ div {
 .component_img {
   justify-self: flex-start;
   align-self: flex-start;
+  grid-area: icon;
   max-height: 1em;
   max-width: auto;
   height: auto;
   width: auto;
-  grid-area: icon;
   padding: 5px;
 }
 
@@ -244,11 +239,10 @@ div {
   width: 100%;
   object-fit: contain;
   box-sizing: border-box;
-
 }
 
-.component h3 {
-  grid-area: h3;
+.component h4 {
+  grid-area: h4;
   align-self: center;
   justify-self: flex-start;
 
@@ -258,10 +252,12 @@ div {
   text-align: left;
   font-style: italic;
 }
+::marker {
+  font-size: 1.2em;
+}
 
 .indicator {
-  width: 90%;
-
+  width: 95%;
   grid-area: i;
   grid-row: auto;
   grid-column: auto;
@@ -277,6 +273,10 @@ div {
 .indicator-box {
   list-style-type: disclosure-closed;
   padding-left: 2em;
+  background-color: rgba(255, 255, 255, 0.4);
+  -moz-box-sizing: border-box; 
+  -webkit-box-sizing: border-box; 
+  box-sizing: border-box; 
 }
 
 .indicator-box p h4 {
@@ -285,13 +285,20 @@ div {
 
 .indicator-name {
   font-weight: 500;
-  /* clean up (indicator definitions) */
-  
+}
+
+.indicator-definitions {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+.indicator-substring {
+  display: flex;
 }
 
 .indicator-link {
   padding: 1em;
 }
+
+
 .indicator-definition {
   list-style-type: none;
   display: flex;

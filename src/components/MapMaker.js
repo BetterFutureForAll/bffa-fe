@@ -9,21 +9,25 @@ const MapMaker = ({
   yearValue, loading, setLoading, zoomState, setZoomState,
   setCountryValue, tooltipContext }) => {
 
-  let loadingSpinner = require('../assets/loading.gif');
+  let loadingSpinner = require('../assets/loadingMap.gif');
+  
+
+  useEffect(() => {
 
   function ready(data) {
 
-    //Check Height Vs Width, use the width for small screens and height for large.
-    let checkedSize = Math.min(height, width)
-
+    //Check Width for scale.
+    
+    let checkedSize = Math.min(width);
     let projection = d3.geoEqualEarth()
-      .scale(checkedSize / 3)
+      .scale(checkedSize / 5)
       .translate([width / 2, height / 2])
 
     let path = d3.geoPath().projection(projection);
-    let spiCountryGroup = d3.group(data[1], s => s["SPI country code"]);
+
     let mapFeatures = feature(data[0], data[0].objects.countries).features;
 
+    let spiCountryGroup = d3.group(data[1], s => s["SPI country code"]);
     function spiMatcher(id) { return spiCountryGroup.get(id); };
     function getSpiData(d) {
       let spiMatch;
@@ -34,8 +38,12 @@ const MapMaker = ({
       }
       return spiMatch;
     }
+    function countryMouseOver(event, d) {
+      let spiMatch = getSpiData(d);
+      let name = spiMatch ? spiMatch[0]["Country"] : "World";
+      setCountryValue(name);
+    };
 
-    
     let zoomed = (event, d) => {
       const { transform } = event;
       // Save the Current Zoom level so we can scale tooltips. 
@@ -65,11 +73,6 @@ const MapMaker = ({
 
     svg.call(zoom);
 
-    function countryMouseOver(event, d) {
-      let spiMatch = getSpiData(d);
-      let name = spiMatch ? spiMatch[0]["Country"] : "World";
-      setCountryValue(name);
-    };
 
     // *** Country groupings ***
     let countries = g.selectAll(".country")
@@ -124,7 +127,6 @@ const MapMaker = ({
 
   };
 
-  useEffect(() => {
     setLoading(true);
     if (spiData.length === 0) return;
 
@@ -132,11 +134,12 @@ const MapMaker = ({
       setLoading(false);
       ready(values);
     });
+
     
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [yearValue, svgRef, height, width, spiData]);
 
-  while (loading) return (<img src={loadingSpinner} alt={'loading spinner'} id="loading-spinner" />)
+  while (loading) return (<img src={loadingSpinner} alt={'loading spinner'} id="loading-spinner" className="loading-spinner" />)
 
   return (
     <svg ref={svgRef} height={height} width={width} id="map">
