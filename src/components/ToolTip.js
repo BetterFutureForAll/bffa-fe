@@ -143,7 +143,7 @@ const ToolTip = ({ tooltipContext, zoomState, setClicked, setClickedSubCat }) =>
         // append 3 petals.
         .attr('class', 'petalBackgroundPath')
         .attr("id", (d, i) => {
-          return `${Object.keys(d)[0]}_bp`
+          return `${Object.keys(d)[0].replace(/ /g, "_")}_bp`
         })
         .attr('d', petalPath)
         // .attr('transform', d => `translate(${x}, ${y}) rotate(${d.angle}) scale(0)`)
@@ -289,7 +289,7 @@ const ToolTip = ({ tooltipContext, zoomState, setClicked, setClickedSubCat }) =>
           .data(d.subPetals)
           .join('path')
           .attr('class', 'subPetalBackgroundPath')
-          .attr("id", d => `${Object.keys(d)[0]}_subPetalBackground`)
+          .attr("id", d => `${Object.keys(d)[0].replace(/ /g, "_")}_subPetalBackground`)
           .attr('d', subPetalPath)
           .attr('transform', d => `translate(${x}, ${y}) rotate(${d.angle}) scale(${spiScale(1) / zoomState.k})`)
           .style('stroke', 'black')
@@ -377,6 +377,7 @@ const ToolTip = ({ tooltipContext, zoomState, setClicked, setClickedSubCat }) =>
 
       function doItAll(event, d) {
         let target = Object.keys(d)[0];
+        console.log(target);
         setClicked(target);
         toolTip.selectAll('.petalArc').remove();
         toolTip.selectAll('.petalText').remove();
@@ -390,6 +391,7 @@ const ToolTip = ({ tooltipContext, zoomState, setClicked, setClickedSubCat }) =>
     };
 
     ready();
+    console.log('ToolTip Rerendered');
   }, [tooltipContext, zoomState, setClickedSubCat, setClicked]);
 
   return (

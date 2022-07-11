@@ -1,7 +1,7 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useLayoutEffect } from 'react';
 import * as d3 from 'd3';
 
-function ModalDefinitions({ modalRef, spiData, defContext }) {
+function ModalDefinitions({ modalRef, spiData, defContext, updateToolTipDimension, updateToolTipComponent }) {
 
   let currentDefinitions = require('../assets/definitions-2021.csv');
   let parsedDefinitions = d3.csv(currentDefinitions, function (data) {
@@ -30,7 +30,7 @@ function ModalDefinitions({ modalRef, spiData, defContext }) {
     };
   };
 
-  useEffect(() => {
+  useLayoutEffect(() => {
 
     function tabulateModal(data) {
       // Dimension,Component,Indicator name, unit ,Definition,Source,Link
@@ -80,9 +80,24 @@ function ModalDefinitions({ modalRef, spiData, defContext }) {
 
       // Components
       function addComponents(event, d) {
+        // Make a change to selected Category / Subcategory 
+        console.log('addComponents', d[0]);
+        console.log(defContext);
+        let id = d[0].replace(/ /g, "_");
+        updateToolTipDimension(id)
+        // d3.select(`#${id}_bp`).dispatch('mouseenter');
+        // let clickEvent = new Event('click');
+        // document.querySelector(`#${id}_bp`).dispatchEvent(clickEvent);
+
+        // updateToolTipDimension(d[0]);
+
+
+        //Reset the dimensions
         d3.selectAll('.component-box').remove();
         d3.selectAll('.dimension_img').text('+');
         d3.selectAll('.dimension-title').on('click', addComponents);
+
+        //expand the selected dimension
         d3.select(this).on('click', collapseDimension);
         d3.select(this).select('.dimension_img').text('-');
         let component = d3.select(this.parentNode)
@@ -97,6 +112,7 @@ function ModalDefinitions({ modalRef, spiData, defContext }) {
             exit => exit.remove()
           );
         d3.select(this).each(() => d3.select(this).exit());
+
         //Title Bar
         let componentTitle = component.append('div').attr("id", d => {
           let parsedId = d[0].replace(/ /g, "_");
@@ -124,6 +140,12 @@ function ModalDefinitions({ modalRef, spiData, defContext }) {
       }
 
       function addIndicators(event, d) {
+        // Select Component Here
+        console.log('Add Indicator', d);
+        let id = d[0].replace(/ /g, "_");
+        console.log(d3.select(`#${id}_subPetalBackground`));
+        // d3.select(`#${id}_subPetalBackground`).dispatch('mouseenter');
+
         d3.selectAll('.indicator-box').remove();
         d3.selectAll('.component_img').text('+');
         d3.selectAll('.component-title').on('click', addIndicators);
@@ -166,9 +188,8 @@ function ModalDefinitions({ modalRef, spiData, defContext }) {
             let subString = match ? match : null;
             return `    ${subString}`;
           }).attr('class', 'indicator-substring')
-
-
       }
+
       function collapseComponent() {
         d3.select(this).select('.component_img').text('+');
         d3.select(this).on('click', addIndicators);
@@ -204,13 +225,22 @@ function ModalDefinitions({ modalRef, spiData, defContext }) {
         d3.select(this).on('click', expandIndicators);
         d3.selectAll('.indicator-definitions').remove();
       }
+      console.log(defContext);
 
       if (defContext.dimension) {
-        document.querySelector(`#${defContext.dimension}_title`).click();
+        // conditional if the window is already open. . . 
+        // console.log(document.querySelector(`#${defContext.dimension}`));
+        // console.log(d3.selectAll(`#${defContext.dimension}`));
+        // console.log(d3.selectAll(`#${defContext.dimension}`).selectAll('.component-box'));
+        // console.log('dimension auto click');
+        // d3.select(`#${defContext.dimension}_title`).dispatch('click');
+        // document.querySelector(`#${defContext.dimension}_title`).click();
       }
 
       if (defContext.component && document.querySelector(`#${defContext.component}_title`)) {
-        document.querySelector(`#${defContext.component}_title`).click();
+        console.log('component auto click');
+
+        // document.querySelector(`#${defContext.component}_title`).click();
       }
 
       d3.selectAll('#remove').remove();
@@ -220,7 +250,7 @@ function ModalDefinitions({ modalRef, spiData, defContext }) {
       if (!spiData) return;
       tabulateModal(data);
     });
-
+    console.log('Definitions Rendered');
   }, [parsedDefinitions, modalRef, spiData, defContext]);
 
   return (

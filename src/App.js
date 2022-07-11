@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useMemo } from 'react';
+import React, { useEffect, useRef, useMemo, useCallback } from 'react';
 import './App.css';
 import * as d3 from 'd3'
 import MapContainer from './containers/Map';
@@ -66,6 +66,17 @@ function App() {
     </select>
   );
 
+const updateToolTipDimension = useCallback((t)=>{
+  console.log(t);
+  setClicked(t);
+},[])
+
+const updateToolTipComponent = useCallback((t)=>{
+  console.log(t);
+  setClickedSubCat(t);
+}, [])
+
+// Set Clicked manager, needs to control both targets, ToolTip && Definitions 
   useEffect(() => {
     let id = clicked ? clicked.replace(/ /g, "_") : null;
     let subId = clickedSubCat ? clickedSubCat.replace(/ /g, "_") : null;
@@ -74,6 +85,7 @@ function App() {
       component: subId,
       countryValue: countryValue
     });
+    console.log(defContext);
   }, [clicked, clickedSubCat, setDefContext, countryValue])
 
   useEffect(() => {
@@ -118,6 +130,8 @@ function App() {
         modalRef={modalRef}
         spiData={spiByCountry}
         defContext={defContext}
+        updateToolTipDimension={updateToolTipDimension}
+        updateToolTipComponent={updateToolTipComponent}
       />
     </div>
   );
