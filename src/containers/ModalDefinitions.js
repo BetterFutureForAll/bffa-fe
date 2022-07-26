@@ -207,13 +207,13 @@ function ModalDefinitions({ modalRef, spiData, defContext }) {
       }
 
       if (defContext.dimension) {
-        document.querySelector(`#${defContext.dimension}_title`).click();
+        d3.select(`#${defContext.dimension}_title`).dispatch('click');
       }
 
-      if (defContext.component && document.querySelector(`#${defContext.component}_title`)) {
-        document.querySelector(`#${defContext.component}_title`).click();
+      if (defContext.component && d3.select(`#${defContext.component}_title`)) {
+        d3.select(`#${defContext.component}_title`).dispatch('click');
       }
-
+      
       d3.selectAll('#remove').remove();
     };
 
