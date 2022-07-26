@@ -103,7 +103,6 @@
 
 .modal-wrapper {
   justify-content: flex-end;
-  flex: 2;
   align-items: center;
   width: 100vw;
   margin: 0;
@@ -186,10 +185,6 @@
   background-color: rgba(156,193,109, 0.47);
 }
 
-.active, div:hover {
-  border-width: 1px;
-}
-
 .dimension-title {
   display: grid;
   text-align: center;
@@ -202,7 +197,6 @@
 .dimension-title h2 {
   grid-area: h2;
   padding: 5px;
-
 }
 
 .dimension_img {
@@ -219,18 +213,21 @@
   grid-template-areas: 
   "icon h4"
   "icon p";
-  
 }
 
 .component_img {
-  justify-self: flex-start;
-  align-self: flex-start;
   grid-area: icon;
-  max-height: 1em;
-  max-width: auto;
-  height: auto;
-  width: auto;
-  padding: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 1.2em;
+  box-sizing: border-box;
+}
+
+.component-box {
+  border-left: .5em solid rgba(255, 255, 255, 0.6);
+  box-sizing: border-box;
 }
 
 .component {
@@ -272,7 +269,7 @@
 
 .indicator-box {
   list-style-type: disclosure-closed;
-  padding-left: 2em;
+  border-left: 1.5em solid rgba(255, 255, 255, 0.4);
   background-color: rgba(255, 255, 255, 0.4);
   -moz-box-sizing: border-box; 
   -webkit-box-sizing: border-box; 
@@ -298,18 +295,12 @@
   padding: 1em;
 }
 
-
 .indicator-definition {
   list-style-type: none;
   display: flex;
   font-style: italic;
   white-space: pre-wrap;
   padding-left: 1em;
-}
-
-.active, .component:hover {
-  border-radius: 10px;
-  box-shadow: 20px 20px 30px rgba(0, 0, 0, 0.47);
 }
 
 
