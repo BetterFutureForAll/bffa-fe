@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useLayoutEffect } from 'react';
 import * as d3 from 'd3';
 
 function ModalDefinitions({ modalRef, spiData, defContext }) {
@@ -30,7 +30,7 @@ function ModalDefinitions({ modalRef, spiData, defContext }) {
     };
   };
 
-  useEffect(() => {
+  useLayoutEffect(() => {
 
     function tabulateModal(data) {
       // Dimension,Component,Indicator name, unit ,Definition,Source,Link
