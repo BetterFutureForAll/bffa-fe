@@ -250,7 +250,7 @@
   font-style: italic;
 }
 ::marker {
-  font-size: 1.2em;
+  font-size: 1em;
 }
 
 .indicator {
@@ -262,14 +262,10 @@
   flex-direction: column;
 }
 
-.indicator:hover {
-  background-color: rgba(255, 255, 255, 0.5);
-}
-
-
 .indicator-box {
   list-style-type: disclosure-closed;
-  border-left: 1.5em solid rgba(255, 255, 255, 0.4);
+  padding-left: 2.5em;
+  
   background-color: rgba(255, 255, 255, 0.4);
   -moz-box-sizing: border-box; 
   -webkit-box-sizing: border-box; 
@@ -285,7 +281,7 @@
 }
 
 .indicator-definitions {
-  background-color: rgba(255, 255, 255, 0.2);
+  background-color: rgba(255, 255, 255, 0.4);
 }
 .indicator-substring {
   display: flex;
