@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useMemo } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useMemo } from 'react';
 import './App.css';
 import * as d3 from 'd3'
 import MapContainer from './containers/Map';
@@ -66,7 +66,7 @@ function App() {
     </select>
   );
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     let id = clicked ? clicked.replace(/ /g, "_") : null;
     let subId = clickedSubCat ? clickedSubCat.replace(/ /g, "_") : null;
     setDefContext({
