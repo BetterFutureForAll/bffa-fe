@@ -126,10 +126,7 @@ function ModalDefinitions({ modalRef, spiData, defContext }) {
       function addIndicators(event, d) {
         d3.selectAll('.indicator-box').remove();
         d3.selectAll('.component_img').text('+');
-        d3.selectAll('.component_img').style('background-color', 'transparent');
-
         d3.selectAll('.component-title').on('click', addIndicators);
-        d3.select(this).select('.component_img').style('background-color', 'rgba(255, 255, 255, 0.6)');
         d3.select(this).on('click', collapseComponent);
         d3.select(this).select('.component_img').text('-');
 
