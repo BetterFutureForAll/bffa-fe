@@ -49,7 +49,7 @@ function ModalDefinitions({ modalRef, spiData, defContext }) {
             .attr("class", (d, i) => { return `dim-${i} dimension`; })
             .attr("id", d => {
               if (d[0].length === 0) {
-                return "footer";
+                return "remove";
               }
               //class and ID to isolate footer
               let id = (d[0]).replace(/ /g, "_");
@@ -70,7 +70,7 @@ function ModalDefinitions({ modalRef, spiData, defContext }) {
         let target = d[0]
         d[0] === '' ? target = '*' : target = d[0];
         if (target === "*" || undefined) {
-          return "*";
+          return "GDP is Not Destiny";
         } else {
           let value = +spiData[0][`${target}`];
           let result = `${d[0]}:  ${value.toFixed()}`;
