@@ -49,7 +49,7 @@ function ModalDefinitions({ modalRef, spiData, defContext }) {
             .attr("class", (d, i) => { return `dim-${i} dimension`; })
             .attr("id", d => {
               if (d[0].length === 0) {
-                return "footer";
+                return "remove";
               }
               //class and ID to isolate footer
               let id = (d[0]).replace(/ /g, "_");
@@ -70,7 +70,7 @@ function ModalDefinitions({ modalRef, spiData, defContext }) {
         let target = d[0]
         d[0] === '' ? target = '*' : target = d[0];
         if (target === "*" || undefined) {
-          return "*";
+          return "GDP is Not Destiny";
         } else {
           let value = +spiData[0][`${target}`];
           let result = `${d[0]}:  ${value.toFixed()}`;
@@ -127,7 +127,7 @@ function ModalDefinitions({ modalRef, spiData, defContext }) {
         d3.selectAll('.indicator-box').remove();
         d3.selectAll('.component_img').text('+');
         d3.selectAll('.component-title').on('click', addIndicators);
-        d3.select(this).on('click', collapseComponent)
+        d3.select(this).on('click', collapseComponent);
         d3.select(this).select('.component_img').text('-');
 
         let indicator = d3.select(this.parentNode).append('ul')
@@ -171,6 +171,7 @@ function ModalDefinitions({ modalRef, spiData, defContext }) {
       }
       function collapseComponent() {
         d3.select(this).select('.component_img').text('+');
+        d3.select(this).select('.component_img').style('background-color', 'transparent');;
         d3.select(this).on('click', addIndicators);
         d3.selectAll('.indicator-box').remove();
       }
