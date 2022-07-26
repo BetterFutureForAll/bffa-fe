@@ -378,6 +378,7 @@ const ToolTip = ({ tooltipContext, zoomState, setClicked, setClickedSubCat }) =>
       function doItAll(event, d) {
         let target = Object.keys(d)[0];
         setClicked(target);
+        // d3.select(`#${target.replace(/ /g, "_")}_title`).dispatch('click');
         toolTip.selectAll('.petalArc').remove();
         toolTip.selectAll('.petalText').remove();
         showSubPetals(event, d);
