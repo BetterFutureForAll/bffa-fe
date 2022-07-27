@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useLayoutEffect } from 'react';
 import * as d3 from 'd3';
 
 function ModalDefinitions({ modalRef, spiData, defContext }) {
@@ -30,7 +30,7 @@ function ModalDefinitions({ modalRef, spiData, defContext }) {
     };
   };
 
-  useEffect(() => {
+  useLayoutEffect(() => {
 
     function tabulateModal(data) {
       // Dimension,Component,Indicator name, unit ,Definition,Source,Link
@@ -207,13 +207,13 @@ function ModalDefinitions({ modalRef, spiData, defContext }) {
       }
 
       if (defContext.dimension) {
-        document.querySelector(`#${defContext.dimension}_title`).click();
+        d3.select(`#${defContext.dimension}_title`).dispatch('click');
       }
 
-      if (defContext.component && document.querySelector(`#${defContext.component}_title`)) {
-        document.querySelector(`#${defContext.component}_title`).click();
+      if (defContext.component && d3.select(`#${defContext.component}_title`)) {
+        d3.select(`#${defContext.component}_title`).dispatch('click');
       }
-
+      
       d3.selectAll('#remove').remove();
     };
 

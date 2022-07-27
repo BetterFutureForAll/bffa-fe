@@ -306,8 +306,6 @@ const ToolTip = ({ tooltipContext, zoomState, setClicked, setClickedSubCat }) =>
           .attr('class', 'subPetalPath')
           .attr("id", d => `${Object.keys(d)[0]}_subPetal`)
           .attr('d', subPetalPath)
-          .attr('transform', d => `translate(${x}, ${y}) scale(${0})`)
-          .transition().duration(750)
           .attr('transform', d => `translate(${x}, ${y}) rotate(${d.angle}) scale(${spiScale(Object.values(d)[0]) * .01 / zoomState.k})`)
           .style('stroke', 'black')
           .style('fill', d => {
@@ -378,6 +376,7 @@ const ToolTip = ({ tooltipContext, zoomState, setClicked, setClickedSubCat }) =>
       function doItAll(event, d) {
         let target = Object.keys(d)[0];
         setClicked(target);
+        // d3.select(`#${target.replace(/ /g, "_")}_title`).dispatch('click');
         toolTip.selectAll('.petalArc').remove();
         toolTip.selectAll('.petalText').remove();
         showSubPetals(event, d);
@@ -386,7 +385,7 @@ const ToolTip = ({ tooltipContext, zoomState, setClicked, setClickedSubCat }) =>
       // add mouseout fn's to subpetals / petals
       d3.selectAll('.petalPath').on('mouseenter', doItAll)
       d3.selectAll('.petalBackgroundPath').on('mouseenter', doItAll)
-      
+
     };
 
     ready();

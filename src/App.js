@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useMemo } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useMemo } from 'react';
 import './App.css';
 import * as d3 from 'd3'
 import MapContainer from './containers/Map';
@@ -23,7 +23,7 @@ function App() {
   let [countries] = useCountries();
   let [years] = useYears();
   let [yearValue, handleYearChange] = useHandleYearChange();
- 
+
   //  ToolTip State
   let [tooltipContext, setToolTipContext] = useToolTip();
   let [zoomState, setZoomState] = useZoom();
@@ -31,7 +31,7 @@ function App() {
   let [clickedSubCat, setClickedSubCat] = useClickedSubCat();
   let [defContext, setDefContext] = useDefinitions();
 
-  let mapData = useMemo(()=> d3.json(localGeoData), []);
+  let mapData = useMemo(() => d3.json(localGeoData), []);
 
   let handleCountryChange = e => setCountryValue(e.target.value);
 
@@ -66,7 +66,7 @@ function App() {
     </select>
   );
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     let id = clicked ? clicked.replace(/ /g, "_") : null;
     let subId = clickedSubCat ? clickedSubCat.replace(/ /g, "_") : null;
     setDefContext({
