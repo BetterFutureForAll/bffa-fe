@@ -10,9 +10,9 @@ function MapContainer({
   zoomState, setZoomState }) {
 
   let [loading, setLoading] = useState(true);
-  const setLoadingCallback  = useCallback(()=>{
-    setLoading(t=>!t);
-  },[]);
+  const setLoadingCallback = useCallback(() => {
+    setLoading(t => !t);
+  }, []);
 
   return (
     <>

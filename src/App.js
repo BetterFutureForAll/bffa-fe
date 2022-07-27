@@ -23,7 +23,7 @@ function App() {
   let [countries] = useCountries();
   let [years] = useYears();
   let [yearValue, handleYearChange] = useHandleYearChange();
- 
+
   //  ToolTip State
   let [tooltipContext, setToolTipContext] = useToolTip();
   let [zoomState, setZoomState] = useZoom();
@@ -31,7 +31,7 @@ function App() {
   let [clickedSubCat, setClickedSubCat] = useClickedSubCat();
   let [defContext, setDefContext] = useDefinitions();
 
-  let mapData = useMemo(()=> d3.json(localGeoData), []);
+  let mapData = useMemo(() => d3.json(localGeoData), []);
 
   let handleCountryChange = e => setCountryValue(e.target.value);
 

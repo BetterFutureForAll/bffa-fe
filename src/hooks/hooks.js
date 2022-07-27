@@ -181,10 +181,10 @@ export function useWindowSize() {
 };
 
 export function useMapSize(height, width) {
-  let heightCalc = (window.matchMedia('(orientation: landscape)').matches&& window.matchMedia('(min-width: 600px)').matches) ? height : height * .4;
-  let widthCalc = (window.matchMedia('(orientation: landscape)').matches&& window.matchMedia('(min-width: 600px)').matches) ? width * .55 : width;
-  const [mapHeight, setMapHeight] = useState([ heightCalc, widthCalc]);
-  useEffect(()=>{
+  let heightCalc = (window.matchMedia('(orientation: landscape)').matches && window.matchMedia('(min-width: 600px)').matches) ? height : height * .4;
+  let widthCalc = (window.matchMedia('(orientation: landscape)').matches && window.matchMedia('(min-width: 600px)').matches) ? width * .55 : width;
+  const [mapHeight, setMapHeight] = useState([heightCalc, widthCalc]);
+  useEffect(() => {
     setMapHeight([heightCalc, widthCalc]);
   }, [heightCalc, widthCalc]);
   return mapHeight;
