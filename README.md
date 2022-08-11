@@ -1,7 +1,9 @@
 # Better Future For All
 This app is for rendering data visualizations from [Social Progress Imperative](https://www.socialprogress.org)  
 
-The goal of this front end app is to render visual representations of the data gathered by Social Progress Imperative to make it easily accessible and digestible for users. Rendering Data visualizations for the data collected will help people in leadership roles to identify needs and strengths of their community in order to help improve the quality of life for the communities in meaningful and impactful ways.  
+The goal of this app is to provide visual representations of data gathered by Social Progress Imperative with a aim to make it easily accessible and understood by users. Rendering visualizations will help people in leadership roles to identify needs and strengths of their community in order to help improve the quality of life for the communities in meaningful and impactful ways.
+
+##
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
