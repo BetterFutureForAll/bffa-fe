@@ -86,12 +86,11 @@ function ModalDefinitions({ modalRef, spiData, defContext }) {
       //indicator icon 
       divTitle.append("h3").text('+').attr("class", "dimension_icon");
       //images
-      divTitle.append("img").attr("src", (d, i)=>{
-        console.log(d, i);
-        switch(i) {
-          case 0:  return basic_needs;
-          case 1:  return foundations;
-          case 2:  return opportunity;
+      divTitle.append("img").attr("src", (d, i) => {
+        switch (i) {
+          case 0: return basic_needs;
+          case 1: return foundations;
+          case 2: return opportunity;
           default: return;
         }
       }).attr('class', 'dimension_img');
@@ -243,7 +242,7 @@ function ModalDefinitions({ modalRef, spiData, defContext }) {
       if (defContext.component && d3.select(`#${defContext.component}_title`)) {
         d3.select(`#${defContext.component}_title`).dispatch('click');
       }
-      
+
       d3.selectAll('#remove').remove();
     };
 
