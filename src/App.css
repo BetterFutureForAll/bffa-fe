@@ -190,7 +190,7 @@
   text-align: center;
   align-items: stretch;
   grid-template-areas: 
-  "icon h2";
+  "icon img h2";
   background-color: rgba(255, 255, 255, 0.6);
 }
 
@@ -200,6 +200,12 @@
 }
 
 .dimension_img {
+  grid-area: img;
+  max-width: 100%;
+  max-height: 1.2em;
+}
+
+.dimension_icon {
   grid-area: icon;
   max-width: 100%;
   max-height: 1em;
