@@ -2,22 +2,22 @@ import React, { useLayoutEffect } from 'react';
 import * as d3 from 'd3';
 
 import basic_needs from '../assets/bffa_icons/0_0_basic.png';
-import basic_nutrition from '../assets/bffa_icons/0_1_nutrition.png';
-import basic_water from '../assets/bffa_icons/0_2_water.png';
-import basic_shelter from '../assets/bffa_icons/0_3_shelter.png';
-import basic_safety from '../assets/bffa_icons/0_4_safety.png';
+// import basic_nutrition from '../assets/bffa_icons/0_1_nutrition.png';
+// import basic_water from '../assets/bffa_icons/0_2_water.png';
+// import basic_shelter from '../assets/bffa_icons/0_3_shelter.png';
+// import basic_safety from '../assets/bffa_icons/0_4_safety.png';
 
 import foundations from '../assets/bffa_icons/1_0_foundations.png';
-import foundations_knowledge from '../assets/bffa_icons/1_1_knowledge.png';
-import foundations_communication from '../assets/bffa_icons/1_2_communications.png';
-import foundations_health from '../assets/bffa_icons/1_3_health.png';
-import foundations_environmental from '../assets/bffa_icons/1_4_environmental.png';
+// import foundations_knowledge from '../assets/bffa_icons/1_1_knowledge.png';
+// import foundations_communication from '../assets/bffa_icons/1_2_communications.png';
+// import foundations_health from '../assets/bffa_icons/1_3_health.png';
+// import foundations_environmental from '../assets/bffa_icons/1_4_environmental.png';
 
 import opportunity from '../assets/bffa_icons/2_0_opportunity.png';
-import opportunity_rights from '../assets/bffa_icons/2_1_rights.png';
-import opportunity_freedom from '../assets/bffa_icons/2_2_freedom.png';
-import opportunity_inclusiveness from '../assets/bffa_icons/2_3_inclusiveness.png';
-import opportunity_education from '../assets/bffa_icons/2_4_education.png';
+// import opportunity_rights from '../assets/bffa_icons/2_1_rights.png';
+// import opportunity_freedom from '../assets/bffa_icons/2_2_freedom.png';
+// import opportunity_inclusiveness from '../assets/bffa_icons/2_3_inclusiveness.png';
+// import opportunity_education from '../assets/bffa_icons/2_4_education.png';
 
 function ModalDefinitions({ modalRef, spiData, defContext }) {
 
