@@ -1,6 +1,24 @@
 import React, { useLayoutEffect } from 'react';
 import * as d3 from 'd3';
 
+import basic_needs from '../assets/bffa_icons/0_0_basic.png';
+import basic_nutrition from '../assets/bffa_icons/0_1_nutrition.png';
+import basic_water from '../assets/bffa_icons/0_2_water.png';
+import basic_shelter from '../assets/bffa_icons/0_3_shelter.png';
+import basic_safety from '../assets/bffa_icons/0_4_safety.png';
+
+import foundations from '../assets/bffa_icons/1_0_foundations.png';
+import foundations_knowledge from '../assets/bffa_icons/1_1_knowledge.png';
+import foundations_communication from '../assets/bffa_icons/1_2_communications.png';
+import foundations_health from '../assets/bffa_icons/1_3_health.png';
+import foundations_environmental from '../assets/bffa_icons/1_4_environmental.png';
+
+import opportunity from '../assets/bffa_icons/2_0_opportunity.png';
+import opportunity_rights from '../assets/bffa_icons/2_1_rights.png';
+import opportunity_freedom from '../assets/bffa_icons/2_2_freedom.png';
+import opportunity_inclusiveness from '../assets/bffa_icons/2_3_inclusiveness.png';
+import opportunity_education from '../assets/bffa_icons/2_4_education.png';
+
 function ModalDefinitions({ modalRef, spiData, defContext }) {
 
   let currentDefinitions = require('../assets/definitions-2021.csv');
@@ -8,6 +26,8 @@ function ModalDefinitions({ modalRef, spiData, defContext }) {
     //re-key the parsedDefinitions if needed
     return data;
   });
+
+
 
   function componentImgImport(d) {
     switch (d[0]) {
@@ -31,6 +51,10 @@ function ModalDefinitions({ modalRef, spiData, defContext }) {
   };
 
   useLayoutEffect(() => {
+
+    let BasicImageArray = [basic_nutrition,basic_water,basic_shelter,basic_safety];
+    let FoundationImageArray = [foundations_knowledge,foundations_communication,foundations_health,foundations_environmental];
+    let OpportunityImageArray = [opportunity_rights,opportunity_freedom,opportunity_inclusiveness,opportunity_education];
 
     function tabulateModal(data) {
       // Dimension,Component,Indicator name, unit ,Definition,Source,Link
@@ -65,7 +89,18 @@ function ModalDefinitions({ modalRef, spiData, defContext }) {
         let id = (d[0]).replace(/ /g, "_");
         return `${id}_title`;
       }).attr('class', 'dimension-title').on('click', addComponents);
-      divTitle.append("h3").text('+').attr("class", "dimension_img");
+      //indicator icon 
+      divTitle.append("h3").text('+').attr("class", "dimension_icon");
+      //images
+      divTitle.append("img").attr("src", (d, i) => {
+        switch (i) {
+          case 0: return basic_needs;
+          case 1: return foundations;
+          case 2: return opportunity;
+          default: return;
+        }
+      }).attr('class', 'dimension_img');
+
       divTitle.append('h4').text(d => {
         let target = d[0]
         d[0] === '' ? target = '*' : target = d[0];
@@ -81,10 +116,10 @@ function ModalDefinitions({ modalRef, spiData, defContext }) {
       // Components
       function addComponents(event, d) {
         d3.selectAll('.component-box').remove();
-        d3.selectAll('.dimension_img').text('+');
+        d3.selectAll('.dimension_icon').text('+');
         d3.selectAll('.dimension-title').on('click', addComponents);
         d3.select(this).on('click', collapseDimension);
-        d3.select(this).select('.dimension_img').text('-');
+        d3.select(this).select('.dimension_icon').text('-');
         let component = d3.select(this.parentNode)
           .append('div').attr('class', 'component-box')
           .selectAll('.component')
@@ -102,7 +137,16 @@ function ModalDefinitions({ modalRef, spiData, defContext }) {
           let parsedId = d[0].replace(/ /g, "_");
           return `${parsedId}_title`;
         }).attr('class', 'component-title').on('click', addIndicators);
-        componentTitle.append("h3").text('+').attr("class", "component_img");
+        componentTitle.append("h3").text('+').attr("class", "component_icon");
+        componentTitle.append("img").attr("src", (d, i) => {
+          let target = this.parentNode.id;
+          switch (target) {
+            case "Basic_Human_Needs": return BasicImageArray[i];
+            case "Foundations_of_Wellbeing": return FoundationImageArray[i];
+            case "Opportunity": return OpportunityImageArray[i];
+            default: return;
+          }
+        }).attr('class', 'component_img');
         componentTitle.append('h4').text(d => {
           //Rounded Number
           let target = d[0];
@@ -118,17 +162,17 @@ function ModalDefinitions({ modalRef, spiData, defContext }) {
       };
 
       function collapseDimension() {
-        d3.select(this).select('.dimension_img').text('+');
+        d3.select(this).select('.dimension_icon').text('+');
         d3.select(this).on('click', addComponents);
         d3.selectAll('.component-box').remove();
       }
 
       function addIndicators(event, d) {
         d3.selectAll('.indicator-box').remove();
-        d3.selectAll('.component_img').text('+');
+        d3.selectAll('.component_icon').text('+');
         d3.selectAll('.component-title').on('click', addIndicators);
         d3.select(this).on('click', collapseComponent);
-        d3.select(this).select('.component_img').text('-');
+        d3.select(this).select('.component_icon').text('-');
 
         let indicator = d3.select(this.parentNode).append('ul')
           .attr('class', 'indicator-box')
@@ -213,7 +257,7 @@ function ModalDefinitions({ modalRef, spiData, defContext }) {
       if (defContext.component && d3.select(`#${defContext.component}_title`)) {
         d3.select(`#${defContext.component}_title`).dispatch('click');
       }
-      
+
       d3.selectAll('#remove').remove();
     };
 
