@@ -139,11 +139,10 @@ function ModalDefinitions({ modalRef, spiData, defContext }) {
         }).attr('class', 'component-title').on('click', addIndicators);
         componentTitle.append("h3").text('+').attr("class", "component_icon");
         componentTitle.append("img").attr("src", (d, i) => {
-          //Target relies on event, may not be stable//
-          let target = event.target.__data__[0];
+          let target = this.parentNode.id;
           switch (target) {
-            case "Basic Human Needs": return BasicImageArray[i];
-            case "Foundations of Wellbeing": return FoundationImageArray[i];
+            case "Basic_Human_Needs": return BasicImageArray[i];
+            case "Foundations_of_Wellbeing": return FoundationImageArray[i];
             case "Opportunity": return OpportunityImageArray[i];
             default: return;
           }
