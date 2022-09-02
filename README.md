@@ -1,5 +1,11 @@
-# Better Future For All
+## Better Future For All
+
+## Project Description
 This app is for rendering data visualizations from [Social Progress Imperative](https://www.socialprogress.org)  
+
+It is available as standalone at [BetterFutureForAll](https://betterfutureforall.netlify.app/)
+
+Visit our Homepage at [Better Future For All](https://bffa.org/)
 
 The goal of this app is to provide visual representations of data gathered by Social Progress Imperative with a aim to make it easily accessible and understood by users. Rendering visualizations will help people in leadership roles to identify needs and strengths of their community in order to help improve the quality of life for the communities in meaningful and impactful ways.
 
