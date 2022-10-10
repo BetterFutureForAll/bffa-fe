@@ -108,6 +108,7 @@ function ModalDefinitions({ modalRef, spiData, defContext }) {
           return "GDP is Not Destiny";
         } else {
           let value = +spiData[0][`${target}`];
+          console.log(spiData[0], target);
           let result = `${d[0]}:  ${value.toFixed()}`;
           return result;
         }

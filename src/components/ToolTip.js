@@ -79,13 +79,19 @@ const ToolTip = ({ tooltipContext, zoomState, setClicked, setClickedSubCat }) =>
       svg.selectAll('.graphicTooltip').remove();
 
       let x, y;
-      if (data[0]['SPI country code'] === 'WWW') {
+      // errors out with bad data.
+      console.log(data[0]);
+      if (data[0].spicountrycode === 'WWW') {
         // world uses CPV as center
-        x = svg.select(`#CPV_target`).attr('cx');
-        y = svg.select(`#CPV_target`).attr('cy');
+        var target =  svg.select('#viewbox')
+        // var bbox = target.node().getBBox() || 0;
+        console.log(svg);
+        x=0; y=0;
+        // x = svg.select(`#CPV_target`).attr('cx');
+        // y = svg.select(`#CPV_target`).attr('cy');
       } else {
-        x = svg.select(`#${data[0]['SPI country code']}_target`).attr('cx');
-        y = svg.select(`#${data[0]['SPI country code']}_target`).attr('cy');
+        x = svg.select(`#${data[0]['spicountrycode']}_target`).attr('cx');
+        y = svg.select(`#${data[0]['spicountrycode']}_target`).attr('cy');
       }
 
       let fontSize = 16 / zoomState.k;
