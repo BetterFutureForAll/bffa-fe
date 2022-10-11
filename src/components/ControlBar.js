@@ -61,7 +61,7 @@ const ControlBar = ({
       )
       .attr("transform", (d, i) => { return "translate(" + i * squareSize + ", 0)"; });
 
-    scoreText.current = spiData ? spiData[0][`Social Progress Index`] : '';
+    scoreText.current = spiData ? spiData[0].score_spi : '';
   }, [width, height, legendData, squareSize, spiData])
 
   return (

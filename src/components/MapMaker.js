@@ -10,7 +10,7 @@ const MapMaker = ({
   setCountryValue, tooltipContext }) => {
 
   let loadingSpinner = require('../assets/loadingMap.gif');
-
+  
 
   useEffect(() => {
 

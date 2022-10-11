@@ -18,6 +18,7 @@ import opportunity_rights from '../assets/bffa_icons/2_1_rights.png';
 import opportunity_freedom from '../assets/bffa_icons/2_2_freedom.png';
 import opportunity_inclusiveness from '../assets/bffa_icons/2_3_inclusiveness.png';
 import opportunity_education from '../assets/bffa_icons/2_4_education.png';
+import { dataKeys } from '../services/SocialProgress';
 
 function ModalDefinitions({ modalRef, spiData, defContext }) {
 
@@ -109,6 +110,7 @@ function ModalDefinitions({ modalRef, spiData, defContext }) {
         } else {
           let value = +spiData[0][`${target}`];
           console.log(spiData[0], target);
+          console.log(dataKeys);
           let result = `${d[0]}:  ${value.toFixed()}`;
           return result;
         }

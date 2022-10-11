@@ -135,8 +135,8 @@ const ToolTip = ({ tooltipContext, zoomState, setClicked, setClickedSubCat }) =>
         .attr("cy", y)
         // .attr("r", 0)
         // .transition().duration(750)
-        .attr("r", d => d ? +d["Social Progress Index"] / zoomState.k : 0)
-        .style('fill', d => colorScale(d ? +d["Social Progress Index"] : 0))
+        .attr("r", d => d ? +d.score_spi / zoomState.k : 0)
+        .style('fill', d => colorScale(d ? +d.score_spi : 0))
         .style('stroke', 'black')
         .attr("cursor", "pointer")
         .attr("stroke-width", 1 / zoomState.k)
@@ -189,7 +189,7 @@ const ToolTip = ({ tooltipContext, zoomState, setClicked, setClickedSubCat }) =>
           enter
             .append("tspan")
             .text(d => {
-              return `${d["Country"]}`
+              return `${d.country}`
             })
             .attr('x', 0)
             .attr('y', spiScale(120) / zoomState.k)
@@ -197,7 +197,7 @@ const ToolTip = ({ tooltipContext, zoomState, setClicked, setClickedSubCat }) =>
           enter
             .append("tspan")
             .text(d => {
-              let rounded = (+d["Social Progress Index"]).toFixed();
+              let rounded = (+d.score_spi).toFixed();
               if (+rounded === 0) {
                 return `Score Unavailable`;
               }

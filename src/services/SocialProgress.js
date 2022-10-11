@@ -8,6 +8,12 @@ export const parsedSpiData = d3.csv(data2022).then((data) => {
   return cleanData;
 });
 
+export const dataKeys = d3.csv(data2022).then((data) => {
+  let cleanData = data.filter((d, i)=>{ return (i === 0); });
+  console.log('keys',cleanData[0]);
+  return cleanData[0];
+});
+
 export async function makeYearsArray() {
   let years;
   await parsedSpiData.then(function (data) {
