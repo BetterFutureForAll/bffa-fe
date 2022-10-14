@@ -22,55 +22,56 @@ const ToolTip = ({ tooltipContext, zoomState, setClicked, setClickedSubCat }) =>
       if (!data) return;
 
       function parsedData(d) {
+        console.log(d);
         // returning values as is, needs Keys and Values/ 
 
         let basics = Object.assign({},
-          { "Basic Human Needs": d["Basic Human Needs"] },
-          { scale: spiScale(d["Basic Human Needs"]) },
-          { color: basicColorScale(d["Basic Human Needs"]) },
+          { "Basic Human Needs": d.score_bhn },
+          { scale: spiScale(d.score_bhn) },
+          { color: basicColorScale(d.score_bhn) },
           {
             subPetals:
               [
-                { "Nutrition and Basic Medical Care": d["Nutrition and Basic Medical Care"], colorFn: basicColorScale, angle: 0 },
-                { 'Water and Sanitation': d['Water and Sanitation'], colorFn: basicColorScale, angle: 20 },
-                { 'Shelter': d['Shelter'], colorFn: basicColorScale, angle: 40 },
-                { 'Personal Safety': d['Personal Safety'], colorFn: basicColorScale, angle: 60 }
+                { "Nutrition and Basic Medical Care": d.score_nbmc, colorFn: basicColorScale, angle: 0 },
+                { 'Water and Sanitation': d.score_nbmc, colorFn: basicColorScale, angle: 20 },
+                { 'Shelter': d.score_nbmc, colorFn: basicColorScale, angle: 40 },
+                { 'Personal Safety': d.score_ps, colorFn: basicColorScale, angle: 60 }
               ]
           },
           { angle: 30 });
 
         let foundations = Object.assign({},
-          { "Foundations of Wellbeing": d["Foundations of Wellbeing"] },
-          { scale: spiScale(d["Foundations of Wellbeing"]) },
-          { color: foundationsColorScale(d["Foundations of Wellbeing"]) },
+          { "Foundations of Wellbeing": d.score_fow },
+          { scale: spiScale(d.score_fow) },
+          { color: foundationsColorScale(d.score_fow) },
           {
             subPetals:
               [
-                { "Access to Basic Knowledge": d["Access to Basic Knowledge"], colorFn: foundationsColorScale, angle: 120 },
-                { 'Access to Information and Communications': d['Access to Information and Communications'], colorFn: foundationsColorScale, angle: 140 },
-                { 'Health and Wellness': d['Health and Wellness'], colorFn: foundationsColorScale, angle: 160 },
-                { 'Environmental Quality': d['Environmental Quality'], colorFn: foundationsColorScale, angle: 180 }
+                { "Access to Basic Knowledge": d.score_abk, colorFn: foundationsColorScale, angle: 120 },
+                { 'Access to Information and Communications': d.score_abk, colorFn: foundationsColorScale, angle: 140 },
+                { 'Health and Wellness': d.score_hw, colorFn: foundationsColorScale, angle: 160 },
+                { 'Environmental Quality': d.score_eq, colorFn: foundationsColorScale, angle: 180 }
               ]
           },
           { angle: 150 });
 
         let opportunity = Object.assign({},
-          { "Opportunity": d["Opportunity"] },
-          { scale: spiScale(d["Opportunity"]) },
-          { color: opportunityColorScale(d["Opportunity"]) },
+          { "Opportunity": d.score_opp },
+          { scale: spiScale(d.score_opp) },
+          { color: opportunityColorScale(d.score_opp) },
           {
             subPetals:
               [
-                { 'Personal Rights': d['Personal Rights'], colorFn: opportunityColorScale, angle: 240 },
-                { "Personal Freedom and Choice": d["Personal Freedom and Choice"], colorFn: opportunityColorScale, angle: 260 },
-                { 'Inclusiveness': d['Inclusiveness'], colorFn: opportunityColorScale, angle: 280 },
-                { 'Access to Advanced Education': d['Access to Advanced Education'], colorFn: opportunityColorScale, angle: 300 }
+                { 'Personal Rights': d.score_pr, colorFn: opportunityColorScale, angle: 240 },
+                { "Personal Freedom and Choice": d.score_pr, colorFn: opportunityColorScale, angle: 260 },
+                { 'Inclusiveness': d.score_incl, colorFn: opportunityColorScale, angle: 280 },
+                { 'Access to Advanced Education': d.score_aae, colorFn: opportunityColorScale, angle: 300 }
               ]
           },
           { angle: 270 });
 
         let result = Object.assign({}, d, { petals: [basics, foundations, opportunity] })
-
+          console.log('result',result);
         return [result];
       }
 
