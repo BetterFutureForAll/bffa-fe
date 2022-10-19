@@ -18,11 +18,10 @@ const ToolTip = ({ tooltipContext, zoomState, setClicked, setClickedSubCat }) =>
     let subPetalPath = "M 0 0 L 85 15 A 1 1 0 0 0 85 -15 L 0 0";
 
     function ready() {
-      let { svgRef, data } = tooltipContext;
+      let { svgRef, data, size } = tooltipContext;
       if (!data) return;
 
       function parsedData(d) {
-        console.log(d);
         // returning values as is, needs Keys and Values/ 
 
         let basics = Object.assign({},
@@ -71,23 +70,19 @@ const ToolTip = ({ tooltipContext, zoomState, setClicked, setClickedSubCat }) =>
           { angle: 270 });
 
         let result = Object.assign({}, d, { petals: [basics, foundations, opportunity] })
-          console.log('result',result);
         return [result];
       }
 
       let svg = d3.select(svgRef.current);
 
       svg.selectAll('.graphicTooltip').remove();
-
       let x, y;
       // errors out with bad data.
-      console.log(data[0]);
       if (data[0].spicountrycode === 'WWW') {
         // world uses CPV as center
         var target =  svg.select('#viewbox')
         // var bbox = target.node().getBBox() || 0;
-        console.log(svg);
-        x=0; y=0;
+        x= size.height/ 2 ; y = size.width / 2;
         // x = svg.select(`#CPV_target`).attr('cx');
         // y = svg.select(`#CPV_target`).attr('cy');
       } else {
