@@ -162,8 +162,6 @@ function ModalDefinitions({ modalRef, spiData, defContext }) {
           return result;
         });
         componentTitle.append('p').text(d => {
-          console.log(d);
-          console.log(keyDescriptions);
           let result = componentQuestionMatch(d);
           return result;
         })
