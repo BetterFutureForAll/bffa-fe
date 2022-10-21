@@ -22,13 +22,30 @@ import { dataKeys } from '../services/SocialProgress';
 
 function ModalDefinitions({ modalRef, spiData, defContext }) {
 
-  let currentDefinitions = require('../assets/definitions-2021.csv');
+  let currentDefinitions = require('../assets/def2022.csv');
   let parsedDefinitions = d3.csv(currentDefinitions, function (data) {
     //re-key the parsedDefinitions if needed
     return data;
   });
 
-
+  let keys = {
+    score_aae: "Access to Advanced Education",
+    score_abk: "Access to Basic Knowledge",
+    score_aic: "Access to Information & Communications",
+    score_bhn: "Basic Human Needs",
+    score_eq: "Environmental Quality",
+    score_fow: "Foundations of Wellbeing",
+    score_hw: "Health & Wellness ",
+    score_incl: "Inclusiveness",
+    score_nbmc: "Nutrition & Basic Medical Care",
+    score_opp: "Opportunity",
+    score_pfc: "Personal Freedom & Choice",
+    score_pr: "Personal Rights",
+    score_ps: "Personal Safety",
+    score_sh: "Shelter",
+    score_spi: "Social Progress Index",
+    score_ws: "Water & Sanitation"
+  };
 
   function componentImgImport(d) {
     switch (d[0]) {
@@ -53,15 +70,22 @@ function ModalDefinitions({ modalRef, spiData, defContext }) {
 
   useLayoutEffect(() => {
 
-    let BasicImageArray = [basic_nutrition,basic_water,basic_shelter,basic_safety];
-    let FoundationImageArray = [foundations_knowledge,foundations_communication,foundations_health,foundations_environmental];
-    let OpportunityImageArray = [opportunity_rights,opportunity_freedom,opportunity_inclusiveness,opportunity_education];
+    let BasicImageArray = [basic_nutrition, basic_water, basic_shelter, basic_safety];
+    let FoundationImageArray = [foundations_knowledge, foundations_communication, foundations_health, foundations_environmental];
+    let OpportunityImageArray = [opportunity_rights, opportunity_freedom, opportunity_inclusiveness, opportunity_education];
 
     function tabulateModal(data) {
       // Dimension,Component,Indicator name, unit ,Definition,Source,Link
       // Group data on each column, indicator will hold the unique values.
-      let groupedData = d3.group(data, d => d["Dimension"], d => d["Component"], d => d['Indicator name'])
+      let scoreData = data[0];
+      let keyDescriptions = data[1];
+      let groupedData = d3.group(scoreData, d => d["Dimension"], d => d["Component"], d => d['Indicator name'])
+      console.log('keys:', keyDescriptions);
 
+      function keyMatcher(target) { 
+        return Object.keys(keyDescriptions).find(value => keyDescriptions[value] === target ); 
+      };
+   
       let modal = d3.select(modalRef.current);
       modal.selectAll('.modal').remove();
       let dimDiv = modal.append('div').attr('class', 'modal');
@@ -73,6 +97,7 @@ function ModalDefinitions({ modalRef, spiData, defContext }) {
             .append("div")
             .attr("class", (d, i) => { return `dim-${i} dimension`; })
             .attr("id", d => {
+              console.log('id', d);
               if (d[0].length === 0) {
                 return "remove";
               }
@@ -108,9 +133,9 @@ function ModalDefinitions({ modalRef, spiData, defContext }) {
         if (target === "*" || undefined) {
           return "GDP is Not Destiny";
         } else {
-          let value = +spiData[0][`${target}`];
-          console.log(spiData[0], target);
-          console.log(dataKeys);
+          let value = +spiData[0][`${keyMatcher(target)}`];
+          console.log('scorematch:', spiData[0], target);
+          console.log('matched', keyMatcher(target));
           let result = `${d[0]}:  ${value.toFixed()}`;
           return result;
         }
@@ -153,7 +178,7 @@ function ModalDefinitions({ modalRef, spiData, defContext }) {
         componentTitle.append('h4').text(d => {
           //Rounded Number
           let target = d[0];
-          let value = +spiData[0][`${target}`];
+          let value = +spiData[0][`${keyMatcher(target)}`];
           let result = `${d[0]}:  ${value.toFixed()}`;
           return result;
         });
@@ -197,6 +222,8 @@ function ModalDefinitions({ modalRef, spiData, defContext }) {
         indicator.append('tspan')
           .text((d, i) => {
             let target = d[0];
+            console.log('indicator-name:', target, d);
+            console.log('get:', spiData[0]);
             let match = spiData[0][`${target}`]
             if (!match) return;
             // //round the match value
@@ -264,7 +291,7 @@ function ModalDefinitions({ modalRef, spiData, defContext }) {
       d3.selectAll('#remove').remove();
     };
 
-    parsedDefinitions.then((data) => {
+    Promise.all([parsedDefinitions, dataKeys]).then((data) => {
       if (!spiData) return;
       tabulateModal(data);
     });
