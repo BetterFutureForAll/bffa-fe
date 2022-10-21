@@ -1,17 +1,15 @@
 import * as d3 from 'd3';
 
-let currentData = require('../assets/SPI2011-2021-dataset.csv');
 let data2022 = require('../assets/spi2022.csv');
+const keyFixer = (key) => key.replace(/[\n\r]*\((.*)\)[ \n\r]*/g, '');
 
 export const parsedSpiData = d3.csv(data2022).then((data) => {
-  let cleanData = data.filter((d, i)=>{ return (i !== 0); });
+  let cleanData = data.filter((d, i) => { return (i !== 0); });
   return cleanData;
 });
 
 export const dataKeys = d3.csv(data2022).then((data) => {
-  let cleanData = data.filter((d, i)=>{ return (i === 0); });
-  console.log('keys',cleanData[0]);
-  return cleanData[0];
+  return data[0];
 });
 
 export async function makeYearsArray() {
@@ -20,9 +18,9 @@ export async function makeYearsArray() {
     let yearsGroup = d3.group(data, d => d['spiyear']);
     years = Array.from(yearsGroup).map(d => d[0]);
   });
-  console.log(years);
   return years;
 }
+
 export async function makeCountriesArray() {
   let countries;
   await parsedSpiData.then(function (data) {
@@ -45,7 +43,7 @@ export async function getSpiDataByCountry(data, countryValue) {
   let result = countries.get(countryValue);
   if (!result) return;
   let input = result[0];
-  const keyFixer = (key) => key.replace(/[\n\r]*\((.*)\)[ \n\r]*/g, '')
+
 
   const output = Object.keys(input).reduce((previous, key) => {
     return { ...previous, [`${keyFixer(key)}`]: input[key] };

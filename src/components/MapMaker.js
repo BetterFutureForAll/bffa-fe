@@ -11,7 +11,6 @@ const MapMaker = ({
 
   let loadingSpinner = require('../assets/loadingMap.gif');
   
-
   useEffect(() => {
 
     function ready(data) {
@@ -43,9 +42,7 @@ const MapMaker = ({
 
       function countryMouseOver(event, d) {
         let spiMatch = getSpiData(d);
-        console.log(spiMatch);
         let name = spiMatch ? spiMatch[0].country : "World";
-        console.log(name);
         setCountryValue(name);
       };
 

@@ -80,7 +80,8 @@ function App() {
     setToolTipContext({
       svgRef,
       countryValue,
-      data: spiByCountry
+      data: spiByCountry,
+      size: { height: mapHeight, width: mapWidth }
     });
   }, [countryValue, yearValue, spiByCountry, setToolTipContext])
 

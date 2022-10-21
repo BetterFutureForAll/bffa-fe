@@ -80,12 +80,13 @@ function ModalDefinitions({ modalRef, spiData, defContext }) {
       let scoreData = data[0];
       let keyDescriptions = data[1];
       let groupedData = d3.group(scoreData, d => d["Dimension"], d => d["Component"], d => d['Indicator name'])
-      console.log('keys:', keyDescriptions);
 
-      function keyMatcher(target) { 
-        return Object.keys(keyDescriptions).find(value => keyDescriptions[value] === target ); 
+      function keyMatcher(target) {
+        const keyFixer = (key) => key.replace(/[\n\r]*\((.*)\)[ \n\r]*/g, '');
+        const targetFixer = (target) => target.replace(/and/, '&');
+        return Object.keys(keyDescriptions).find(value => keyFixer(keyDescriptions[value]) === targetFixer(target) );
       };
-   
+
       let modal = d3.select(modalRef.current);
       modal.selectAll('.modal').remove();
       let dimDiv = modal.append('div').attr('class', 'modal');
@@ -97,7 +98,6 @@ function ModalDefinitions({ modalRef, spiData, defContext }) {
             .append("div")
             .attr("class", (d, i) => { return `dim-${i} dimension`; })
             .attr("id", d => {
-              console.log('id', d);
               if (d[0].length === 0) {
                 return "remove";
               }
@@ -134,8 +134,6 @@ function ModalDefinitions({ modalRef, spiData, defContext }) {
           return "GDP is Not Destiny";
         } else {
           let value = +spiData[0][`${keyMatcher(target)}`];
-          console.log('scorematch:', spiData[0], target);
-          console.log('matched', keyMatcher(target));
           let result = `${d[0]}:  ${value.toFixed()}`;
           return result;
         }
@@ -222,9 +220,7 @@ function ModalDefinitions({ modalRef, spiData, defContext }) {
         indicator.append('tspan')
           .text((d, i) => {
             let target = d[0];
-            console.log('indicator-name:', target, d);
-            console.log('get:', spiData[0]);
-            let match = spiData[0][`${target}`]
+            let match = spiData[0][`${keyMatcher(target)}`]
             if (!match) return;
             // //round the match value
             let rounded = (+match).toFixed(3);
@@ -236,7 +232,7 @@ function ModalDefinitions({ modalRef, spiData, defContext }) {
         indicator.append('tspan')
           .text(d => {
             if (!d[1]) return;
-            let match = d[1][0]['Unit'];
+            let match = d[1][0]['Unit of measurement'];
             let subString = match ? match : null;
             return `    ${subString}`;
           }).attr('class', 'indicator-substring')
