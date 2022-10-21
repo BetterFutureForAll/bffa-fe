@@ -28,26 +28,7 @@ function ModalDefinitions({ modalRef, spiData, defContext }) {
     return data;
   });
 
-  let keys = {
-    score_aae: "Access to Advanced Education",
-    score_abk: "Access to Basic Knowledge",
-    score_aic: "Access to Information & Communications",
-    score_bhn: "Basic Human Needs",
-    score_eq: "Environmental Quality",
-    score_fow: "Foundations of Wellbeing",
-    score_hw: "Health & Wellness ",
-    score_incl: "Inclusiveness",
-    score_nbmc: "Nutrition & Basic Medical Care",
-    score_opp: "Opportunity",
-    score_pfc: "Personal Freedom & Choice",
-    score_pr: "Personal Rights",
-    score_ps: "Personal Safety",
-    score_sh: "Shelter",
-    score_spi: "Social Progress Index",
-    score_ws: "Water & Sanitation"
-  };
-
-  function componentImgImport(d) {
+  function componentQuestionMatch(d) {
     switch (d[0]) {
       case "Nutrition and Basic Medical Care": return 'Do people have enough food to eat and are they receiving basic medical care? ';
       case "Water and Sanitation": return 'Can people drink water and keep themselves clean without getting sick?';
@@ -181,7 +162,9 @@ function ModalDefinitions({ modalRef, spiData, defContext }) {
           return result;
         });
         componentTitle.append('p').text(d => {
-          let result = componentImgImport(d);
+          console.log(d);
+          console.log(keyDescriptions);
+          let result = componentQuestionMatch(d);
           return result;
         })
         d3.select(this).exit().remove();

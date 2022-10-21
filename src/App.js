@@ -81,7 +81,6 @@ function App() {
       svgRef,
       countryValue,
       data: spiByCountry,
-      size: { height: mapHeight, width: mapWidth }
     });
   }, [countryValue, yearValue, spiByCountry, setToolTipContext])
 

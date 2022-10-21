@@ -10,7 +10,6 @@ import {
 // needs X, Y, and SPI Data set
 const ToolTip = ({ tooltipContext, zoomState, setClicked, setClickedSubCat }) => {
 
-
   useEffect(() => {
 
     let spiScale = d3.scaleLinear().domain([0, 100]).range([0, 100]);
@@ -18,7 +17,7 @@ const ToolTip = ({ tooltipContext, zoomState, setClicked, setClickedSubCat }) =>
     let subPetalPath = "M 0 0 L 85 15 A 1 1 0 0 0 85 -15 L 0 0";
 
     function ready() {
-      let { svgRef, data, size } = tooltipContext;
+      let { svgRef, data } = tooltipContext;
       if (!data) return;
 
       function parsedData(d) {
@@ -77,14 +76,11 @@ const ToolTip = ({ tooltipContext, zoomState, setClicked, setClickedSubCat }) =>
 
       svg.selectAll('.graphicTooltip').remove();
       let x, y;
-      // errors out with bad data.
+      //Needs Error Catch
       if (data[0].spicountrycode === 'WWW') {
-        // world uses CPV as center
-        var target =  svg.select('#viewbox')
-        // var bbox = target.node().getBBox() || 0;
-        x= size.height/ 2 ; y = size.width / 2;
-        // x = svg.select(`#CPV_target`).attr('cx');
-        // y = svg.select(`#CPV_target`).attr('cy');
+        var bbox = svg.node().getBBox();
+        x = bbox.x + bbox.width/2;
+        y = bbox.y + bbox.height/2;
       } else {
         x = svg.select(`#${data[0]['spicountrycode']}_target`).attr('cx');
         y = svg.select(`#${data[0]['spicountrycode']}_target`).attr('cy');
