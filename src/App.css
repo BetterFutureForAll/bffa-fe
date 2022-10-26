@@ -1,5 +1,6 @@
-* { 
-  margin: 0; padding: 0; 
+* {
+  margin: 0;
+  padding: 0;
 }
 
 .App {
@@ -11,9 +12,9 @@
   height: 100vh;
   line-height: 1.2em;
   overflow: hidden;
-  -moz-box-sizing: border-box; 
-  -webkit-box-sizing: border-box; 
-  box-sizing: border-box; 
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 #MapContainer {
@@ -41,7 +42,7 @@
   width: 100%;
   align-items: center;
   justify-content: space-evenly;
-  background-color:lightblue;
+  background-color: lightblue;
 }
 
 .select-years {
@@ -55,6 +56,7 @@
   text-align: center;
   background-color: white;
 }
+
 .select-countries {
   padding: 0;
   margin: 0;
@@ -67,7 +69,7 @@
   font-size: large;
   font-weight: bold;
   background-color: white;
-  
+
 }
 
 .select-countries-div {
@@ -89,13 +91,16 @@
 .App-link {
   color: #bfd5db;
 }
+
 #loading-spinner {
   animation-name: loading-spinner;
 }
+
 @keyframes loading-spinner {
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
@@ -107,33 +112,37 @@
   width: 100vw;
   margin: 0;
   padding: 0;
-  background-color:rgba(255,255,255,0.5);
+  background-color: rgba(255, 255, 255, 0.5);
   overflow-y: scroll;
   overflow-x: hidden;
   height: fit-content;
 }
 
 @media only screen and (min-width: 600px) and (orientation: landscape) {
+
   /* landscape rules */
   .App {
     display: grid;
     grid-template-columns: 55vw 45vw;
     grid-template-rows: 85vh 15vh;
-    grid-template-areas: 
+    grid-template-areas:
       "map def"
       "control def";
   }
+
   #MapContainer {
     width: 100%;
     height: 100% !important;
     grid-area: map;
   }
+
   .ControlBar {
     grid-area: control;
     height: 4em;
     width: 100%;
     align-self: end;
   }
+
   .modal-wrapper {
     height: 100vh !important;
     width: 45vw !important;
@@ -177,20 +186,20 @@
   background-color: rgb(37, 150, 190, 0.35);
 }
 
-.dim-1{
-  background-color: rgba(249,164,86, 0.35);
+.dim-1 {
+  background-color: rgba(249, 164, 86, 0.35);
 }
 
-.dim-2{
-  background-color: rgba(156,193,109, 0.47);
+.dim-2 {
+  background-color: rgba(156, 193, 109, 0.47);
 }
 
 .dimension-title {
   display: grid;
   text-align: center;
   align-items: stretch;
-  grid-template-areas: 
-  "icon img h2";
+  grid-template-areas:
+    "icon img h2";
   background-color: rgba(255, 255, 255, 0.6);
 }
 
@@ -216,9 +225,9 @@
   width: auto;
   display: grid;
   align-items: stretch;
-  grid-template-areas: 
-  "icon image h4"
-  "icon image p";
+  grid-template-areas:
+    "icon image h4"
+    "icon image p";
 }
 
 .component_icon {
@@ -263,6 +272,7 @@
   text-align: left;
   font-style: italic;
 }
+
 ::marker {
   font-size: 1.2em;
 }
@@ -279,11 +289,11 @@
 .indicator-box {
   list-style-type: disclosure-closed;
   padding-left: 2.5em;
-  
+
   background-color: rgba(255, 255, 255, 0.4);
-  -moz-box-sizing: border-box; 
-  -webkit-box-sizing: border-box; 
-  box-sizing: border-box; 
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 .indicator-box p h4 {
@@ -297,20 +307,23 @@
 .indicator-definitions {
   background-color: rgba(255, 255, 255, 0.4);
 }
+
 .indicator-substring {
   display: flex;
 }
 
-.indicator-link {
-  padding: 1em;
-}
+
 
 .indicator-definition {
   list-style-type: none;
   display: flex;
   font-style: italic;
-  white-space: pre-wrap;
-  padding-left: 1em;
+  text-indent: 1rem;
+  box-sizing: border-box;
+  padding: .5rem;
 }
 
-
+.indicator-link {
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}

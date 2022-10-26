@@ -25,6 +25,15 @@ function ModalDefinitions({ modalRef, spiData, defContext }) {
   let currentDefinitions = require('../assets/def2022.csv');
   let parsedDefinitions = d3.csv(currentDefinitions, function (data) {
     //re-key the parsedDefinitions if needed
+    let links = data['Link'].split(/\r?\n/);
+    let sources = data['Source'].split(/;/);
+    if(links.length === 0) return data;
+    let result = []
+    links.forEach(function(d, i) {  
+      result.push({ citation: [ links[i], sources[i] ]})
+      // return d;
+    });
+    data.citations = result;
     return data;
   });
 
@@ -63,9 +72,11 @@ function ModalDefinitions({ modalRef, spiData, defContext }) {
       let groupedData = d3.group(scoreData, d => d["Dimension"], d => d["Component"], d => d['Indicator name'])
 
       function keyMatcher(target) {
+
         const keyFixer = (key) => key.replace(/[\n\r]*\((.*)\)[ \n\r]*/g, '');
         const targetFixer = (target) => target.replace(/and/, '&');
-        return Object.keys(keyDescriptions).find(value => keyFixer(keyDescriptions[value]) === targetFixer(target) );
+
+        return Object.keys(keyDescriptions).find(value => keyFixer(keyDescriptions[value]) === targetFixer(target));
       };
 
       let modal = d3.select(modalRef.current);
@@ -241,14 +252,25 @@ function ModalDefinitions({ modalRef, spiData, defContext }) {
             return d[1][0]['Definition']
           })
           .attr("class", "indicator-definition");
-        indicator.append("a")
-          .attr("href", d => { return `${d[1][0]['Link']}` })
-          .text(d => {
-            return `${d[1][0]['Source']} ⓘ`
-          })
-          .attr("class", "indicator-source")
-          .attr("target", "_blank")
-          .attr("rel", "noopener noreferrer");
+        // ******************************************** Check for Multiple Links **********
+        indicator
+          .selectAll('.citation')
+          .data(d[1][0].citations)
+          .join(enter  => {
+            return enter.append('a')
+            .attr('class', 'citation')
+            .attr("href", d => {
+              return d.citation[0];
+            })
+            .text(d => {
+              let result = d.citation[1]? d.citation[1] : d.citation[0];
+              return `${result}\n`
+            })
+            .attr("class", "indicator-link")
+            .attr("target", "_blank")
+            .attr("rel", "noopener noreferrer");
+      });
+
       }
 
       function collapseIndicator() {
