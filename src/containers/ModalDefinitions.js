@@ -24,14 +24,13 @@ function ModalDefinitions({ modalRef, spiData, defContext }) {
 
   let currentDefinitions = require('../assets/def2022.csv');
   let parsedDefinitions = d3.csv(currentDefinitions, function (data) {
-    //re-key the parsedDefinitions if needed
+    //Make a citation Array for indicators with multiple sources
     let links = data['Link'].split(/\r?\n/);
     let sources = data['Source'].split(/;/);
     if(links.length === 0) return data;
     let result = []
     links.forEach(function(d, i) {  
       result.push({ citation: [ links[i], sources[i] ]})
-      // return d;
     });
     data.citations = result;
     return data;
