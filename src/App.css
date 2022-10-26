@@ -318,7 +318,7 @@
   font-style: italic;
   text-indent: 1rem;
   box-sizing: border-box;
-  padding: .5rem;
+  padding: 0 .5rem 0;
 }
 
 .indicator-link {
