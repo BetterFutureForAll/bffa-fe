@@ -21,7 +21,7 @@ import opportunity_education from '../assets/bffa_icons/2_4_education.png';
 import { dataKeys } from '../services/SocialProgress';
 
 function ModalDefinitions({ modalRef, spiData, defContext }) {
-
+  
   let currentDefinitions = require('../assets/def2022.csv');
   let parsedDefinitions = d3.csv(currentDefinitions, function (data) {
     //Make a citation Array for indicators with multiple sources
@@ -74,8 +74,8 @@ function ModalDefinitions({ modalRef, spiData, defContext }) {
 
         const keyFixer = (key) => key.replace(/[\n\r]*\((.*)\)[ \n\r]*/g, '');
         const targetFixer = (target) => target.replace(/and/, '&');
-
-        return Object.keys(keyDescriptions).find(value => keyFixer(keyDescriptions[value]) === targetFixer(target));
+        let result = Object.keys(keyDescriptions).find(value => keyFixer(keyDescriptions[value]) === targetFixer(target));
+        return result;
       };
 
       let modal = d3.select(modalRef.current);
