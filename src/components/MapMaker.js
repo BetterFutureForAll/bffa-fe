@@ -10,8 +10,7 @@ const MapMaker = ({
   setCountryValue, tooltipContext }) => {
 
   let loadingSpinner = require('../assets/loadingMap.gif');
-
-
+  
   useEffect(() => {
 
     function ready(data) {
@@ -27,8 +26,10 @@ const MapMaker = ({
 
       let mapFeatures = feature(data[0], data[0].objects.countries).features;
 
-      let spiCountryGroup = d3.group(data[1], s => s["SPI country code"]);
+      let spiCountryGroup = d3.group(data[1], d => d.spicountrycode);
+
       function spiMatcher(id) { return spiCountryGroup.get(id); };
+
       function getSpiData(d) {
         let spiMatch;
         if (d.properties.ISO_A3_EH === '-99') {
@@ -38,9 +39,10 @@ const MapMaker = ({
         }
         return spiMatch;
       }
+
       function countryMouseOver(event, d) {
         let spiMatch = getSpiData(d);
-        let name = spiMatch ? spiMatch[0]["Country"] : "World";
+        let name = spiMatch ? spiMatch[0].country : "World";
         setCountryValue(name);
       };
 
@@ -82,12 +84,12 @@ const MapMaker = ({
         .attr("class", "country")
         .attr("id", (d, i) => {
           let match = getSpiData(d);
-          return (match ? `${match[0]['SPI country code']}` : `i${i}`);
+          return (match ? `${match[0].spicountrycode}` : `i${i}`);
         })
         .attr("cursor", "pointer")
         .attr("fill", d => {
           let match = getSpiData(d);
-          return match ? colorScale(match[0]['Social Progress Index']) : "#c4c2c4"
+          return match ? colorScale(match[0].score_spi) : "#c4c2c4"
         })
         .on("click", countryMouseOver)
         .on("mouseenter", (event, d) => {
@@ -106,9 +108,9 @@ const MapMaker = ({
         .join('circle')
         .attr('class', 'toolTipTarget')
         .attr('id', (d, i) => {
-          let match = getSpiData(d)
+          let match = getSpiData(d);
           //ID has to adjust for the spiMatch function to find it proper target.
-          return (match ? `${match[0]['SPI country code']}_target` : `i${i}_target`)
+          return (match ? `${match[0].spicountrycode}_target` : `${i}_target`)
         })
         .attr("cx", d => path.centroid(d)[0])
         .attr("cy", d => path.centroid(d)[1])

@@ -57,7 +57,7 @@ export const useYears = () => {
 };
 
 export const useHandleYearChange = () => {
-  let [yearValue, setYearValue] = useState('2021');
+  let [yearValue, setYearValue] = useState('2022');
   let handleYearChange = (e) => {
     setYearValue(e.target.value);
   };

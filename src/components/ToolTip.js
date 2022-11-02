@@ -10,7 +10,6 @@ import {
 // needs X, Y, and SPI Data set
 const ToolTip = ({ tooltipContext, zoomState, setClicked, setClickedSubCat }) => {
 
-
   useEffect(() => {
 
     let spiScale = d3.scaleLinear().domain([0, 100]).range([0, 100]);
@@ -25,67 +24,66 @@ const ToolTip = ({ tooltipContext, zoomState, setClicked, setClickedSubCat }) =>
         // returning values as is, needs Keys and Values/ 
 
         let basics = Object.assign({},
-          { "Basic Human Needs": d["Basic Human Needs"] },
-          { scale: spiScale(d["Basic Human Needs"]) },
-          { color: basicColorScale(d["Basic Human Needs"]) },
+          { "Basic Human Needs": d.score_bhn },
+          { scale: spiScale(d.score_bhn) },
+          { color: basicColorScale(d.score_bhn) },
           {
             subPetals:
               [
-                { "Nutrition and Basic Medical Care": d["Nutrition and Basic Medical Care"], colorFn: basicColorScale, angle: 0 },
-                { 'Water and Sanitation': d['Water and Sanitation'], colorFn: basicColorScale, angle: 20 },
-                { 'Shelter': d['Shelter'], colorFn: basicColorScale, angle: 40 },
-                { 'Personal Safety': d['Personal Safety'], colorFn: basicColorScale, angle: 60 }
+                { "Nutrition and Basic Medical Care": d.score_nbmc, colorFn: basicColorScale, angle: 0 },
+                { 'Water and Sanitation': d.score_nbmc, colorFn: basicColorScale, angle: 20 },
+                { 'Shelter': d.score_nbmc, colorFn: basicColorScale, angle: 40 },
+                { 'Personal Safety': d.score_ps, colorFn: basicColorScale, angle: 60 }
               ]
           },
           { angle: 30 });
 
         let foundations = Object.assign({},
-          { "Foundations of Wellbeing": d["Foundations of Wellbeing"] },
-          { scale: spiScale(d["Foundations of Wellbeing"]) },
-          { color: foundationsColorScale(d["Foundations of Wellbeing"]) },
+          { "Foundations of Wellbeing": d.score_fow },
+          { scale: spiScale(d.score_fow) },
+          { color: foundationsColorScale(d.score_fow) },
           {
             subPetals:
               [
-                { "Access to Basic Knowledge": d["Access to Basic Knowledge"], colorFn: foundationsColorScale, angle: 120 },
-                { 'Access to Information and Communications': d['Access to Information and Communications'], colorFn: foundationsColorScale, angle: 140 },
-                { 'Health and Wellness': d['Health and Wellness'], colorFn: foundationsColorScale, angle: 160 },
-                { 'Environmental Quality': d['Environmental Quality'], colorFn: foundationsColorScale, angle: 180 }
+                { "Access to Basic Knowledge": d.score_abk, colorFn: foundationsColorScale, angle: 120 },
+                { 'Access to Information and Communications': d.score_abk, colorFn: foundationsColorScale, angle: 140 },
+                { 'Health and Wellness': d.score_hw, colorFn: foundationsColorScale, angle: 160 },
+                { 'Environmental Quality': d.score_eq, colorFn: foundationsColorScale, angle: 180 }
               ]
           },
           { angle: 150 });
 
         let opportunity = Object.assign({},
-          { "Opportunity": d["Opportunity"] },
-          { scale: spiScale(d["Opportunity"]) },
-          { color: opportunityColorScale(d["Opportunity"]) },
+          { "Opportunity": d.score_opp },
+          { scale: spiScale(d.score_opp) },
+          { color: opportunityColorScale(d.score_opp) },
           {
             subPetals:
               [
-                { 'Personal Rights': d['Personal Rights'], colorFn: opportunityColorScale, angle: 240 },
-                { "Personal Freedom and Choice": d["Personal Freedom and Choice"], colorFn: opportunityColorScale, angle: 260 },
-                { 'Inclusiveness': d['Inclusiveness'], colorFn: opportunityColorScale, angle: 280 },
-                { 'Access to Advanced Education': d['Access to Advanced Education'], colorFn: opportunityColorScale, angle: 300 }
+                { 'Personal Rights': d.score_pr, colorFn: opportunityColorScale, angle: 240 },
+                { "Personal Freedom and Choice": d.score_pr, colorFn: opportunityColorScale, angle: 260 },
+                { 'Inclusiveness': d.score_incl, colorFn: opportunityColorScale, angle: 280 },
+                { 'Access to Advanced Education': d.score_aae, colorFn: opportunityColorScale, angle: 300 }
               ]
           },
           { angle: 270 });
 
         let result = Object.assign({}, d, { petals: [basics, foundations, opportunity] })
-
         return [result];
       }
 
       let svg = d3.select(svgRef.current);
 
       svg.selectAll('.graphicTooltip').remove();
-
       let x, y;
-      if (data[0]['SPI country code'] === 'WWW') {
-        // world uses CPV as center
-        x = svg.select(`#CPV_target`).attr('cx');
-        y = svg.select(`#CPV_target`).attr('cy');
+      //Needs Error Catch
+      if (data[0].spicountrycode === 'WWW') {
+        var bbox = svg.node().getBBox();
+        x = bbox.x + bbox.width/2;
+        y = bbox.y + bbox.height/2;
       } else {
-        x = svg.select(`#${data[0]['SPI country code']}_target`).attr('cx');
-        y = svg.select(`#${data[0]['SPI country code']}_target`).attr('cy');
+        x = svg.select(`#${data[0]['spicountrycode']}_target`).attr('cx');
+        y = svg.select(`#${data[0]['spicountrycode']}_target`).attr('cy');
       }
 
       let fontSize = 16 / zoomState.k;
@@ -129,8 +127,8 @@ const ToolTip = ({ tooltipContext, zoomState, setClicked, setClickedSubCat }) =>
         .attr("cy", y)
         // .attr("r", 0)
         // .transition().duration(750)
-        .attr("r", d => d ? +d["Social Progress Index"] / zoomState.k : 0)
-        .style('fill', d => colorScale(d ? +d["Social Progress Index"] : 0))
+        .attr("r", d => d ? +d.score_spi / zoomState.k : 0)
+        .style('fill', d => colorScale(d ? +d.score_spi : 0))
         .style('stroke', 'black')
         .attr("cursor", "pointer")
         .attr("stroke-width", 1 / zoomState.k)
@@ -183,7 +181,7 @@ const ToolTip = ({ tooltipContext, zoomState, setClicked, setClickedSubCat }) =>
           enter
             .append("tspan")
             .text(d => {
-              return `${d["Country"]}`
+              return `${d.country}`
             })
             .attr('x', 0)
             .attr('y', spiScale(120) / zoomState.k)
@@ -191,7 +189,7 @@ const ToolTip = ({ tooltipContext, zoomState, setClicked, setClickedSubCat }) =>
           enter
             .append("tspan")
             .text(d => {
-              let rounded = (+d["Social Progress Index"]).toFixed();
+              let rounded = (+d.score_spi).toFixed();
               if (+rounded === 0) {
                 return `Score Unavailable`;
               }

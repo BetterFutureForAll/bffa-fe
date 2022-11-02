@@ -1,23 +1,30 @@
 import * as d3 from 'd3';
 
-let currentData = require('../assets/SPI2011-2021-dataset.csv');
+let data2022 = require('../assets/spi2022.csv');
+const keyFixer = (key) => key.replace(/[\n\r]*\((.*)\)[ \n\r]*/g, '');
 
-export const parsedSpiData = d3.csv(currentData).then((data) => {
-  return data;
+export const parsedSpiData = d3.csv(data2022).then((data) => {
+  let cleanData = data.filter((d, i) => { return (i !== 0); });
+  return cleanData;
+});
+
+export const dataKeys = d3.csv(data2022).then((data) => {
+  return data[0];
 });
 
 export async function makeYearsArray() {
   let years;
   await parsedSpiData.then(function (data) {
-    let yearsGroup = d3.group(data, d => d['SPI year']);
+    let yearsGroup = d3.group(data, d => d['spiyear']);
     years = Array.from(yearsGroup).map(d => d[0]);
   });
   return years;
 }
+
 export async function makeCountriesArray() {
   let countries;
   await parsedSpiData.then(function (data) {
-    let countryGroup = d3.group(data, d => d['Country']);
+    let countryGroup = d3.group(data, d => d['country']);
     countries = Array.from(countryGroup).map(d => d[0])
   });
   return countries;
@@ -25,18 +32,18 @@ export async function makeCountriesArray() {
 
 export async function getSpiDataByYear(year) {
   return parsedSpiData.then(function (data) {
-    let yearsGroup = d3.group(data, d => d['SPI year'])
+    let yearsGroup = d3.group(data, d => d['spiyear'])
     let result = yearsGroup.get(year);
     return result;
   });
 }
 
 export async function getSpiDataByCountry(data, countryValue) {
-  let countries = d3.group(data, d => d['Country'])
+  let countries = d3.group(data, d => d['country'])
   let result = countries.get(countryValue);
   if (!result) return;
   let input = result[0];
-  const keyFixer = (key) => key.replace(/[\n\r]*\((.*)\)[ \n\r]*/g, '')
+
 
   const output = Object.keys(input).reduce((previous, key) => {
     return { ...previous, [`${keyFixer(key)}`]: input[key] };

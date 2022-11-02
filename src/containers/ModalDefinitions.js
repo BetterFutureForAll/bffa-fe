@@ -18,18 +18,25 @@ import opportunity_rights from '../assets/bffa_icons/2_1_rights.png';
 import opportunity_freedom from '../assets/bffa_icons/2_2_freedom.png';
 import opportunity_inclusiveness from '../assets/bffa_icons/2_3_inclusiveness.png';
 import opportunity_education from '../assets/bffa_icons/2_4_education.png';
+import { dataKeys } from '../services/SocialProgress';
 
 function ModalDefinitions({ modalRef, spiData, defContext }) {
-
-  let currentDefinitions = require('../assets/definitions-2021.csv');
+  
+  let currentDefinitions = require('../assets/def2022.csv');
   let parsedDefinitions = d3.csv(currentDefinitions, function (data) {
-    //re-key the parsedDefinitions if needed
+    //Make a citation Array for indicators with multiple sources
+    let links = data['Link'].split(/\r?\n/);
+    let sources = data['Source'].split(/;/);
+    if(links.length === 0) return data;
+    let result = []
+    links.forEach(function(d, i) {  
+      result.push({ citation: [ links[i], sources[i] ]})
+    });
+    data.citations = result;
     return data;
   });
 
-
-
-  function componentImgImport(d) {
+  function componentQuestionMatch(d) {
     switch (d[0]) {
       case "Nutrition and Basic Medical Care": return 'Do people have enough food to eat and are they receiving basic medical care? ';
       case "Water and Sanitation": return 'Can people drink water and keep themselves clean without getting sick?';
@@ -52,14 +59,24 @@ function ModalDefinitions({ modalRef, spiData, defContext }) {
 
   useLayoutEffect(() => {
 
-    let BasicImageArray = [basic_nutrition,basic_water,basic_shelter,basic_safety];
-    let FoundationImageArray = [foundations_knowledge,foundations_communication,foundations_health,foundations_environmental];
-    let OpportunityImageArray = [opportunity_rights,opportunity_freedom,opportunity_inclusiveness,opportunity_education];
+    let BasicImageArray = [basic_nutrition, basic_water, basic_shelter, basic_safety];
+    let FoundationImageArray = [foundations_knowledge, foundations_communication, foundations_health, foundations_environmental];
+    let OpportunityImageArray = [opportunity_rights, opportunity_freedom, opportunity_inclusiveness, opportunity_education];
 
     function tabulateModal(data) {
       // Dimension,Component,Indicator name, unit ,Definition,Source,Link
       // Group data on each column, indicator will hold the unique values.
-      let groupedData = d3.group(data, d => d["Dimension"], d => d["Component"], d => d['Indicator name'])
+      let scoreData = data[0];
+      let keyDescriptions = data[1];
+      let groupedData = d3.group(scoreData, d => d["Dimension"], d => d["Component"], d => d['Indicator name'])
+
+      function keyMatcher(target) {
+
+        const keyFixer = (key) => key.replace(/[\n\r]*\((.*)\)[ \n\r]*/g, '');
+        const targetFixer = (target) => target.replace(/and/, '&');
+        let result = Object.keys(keyDescriptions).find(value => keyFixer(keyDescriptions[value]) === targetFixer(target));
+        return result;
+      };
 
       let modal = d3.select(modalRef.current);
       modal.selectAll('.modal').remove();
@@ -107,7 +124,7 @@ function ModalDefinitions({ modalRef, spiData, defContext }) {
         if (target === "*" || undefined) {
           return "GDP is Not Destiny";
         } else {
-          let value = +spiData[0][`${target}`];
+          let value = +spiData[0][`${keyMatcher(target)}`];
           let result = `${d[0]}:  ${value.toFixed()}`;
           return result;
         }
@@ -150,12 +167,12 @@ function ModalDefinitions({ modalRef, spiData, defContext }) {
         componentTitle.append('h4').text(d => {
           //Rounded Number
           let target = d[0];
-          let value = +spiData[0][`${target}`];
+          let value = +spiData[0][`${keyMatcher(target)}`];
           let result = `${d[0]}:  ${value.toFixed()}`;
           return result;
         });
         componentTitle.append('p').text(d => {
-          let result = componentImgImport(d);
+          let result = componentQuestionMatch(d);
           return result;
         })
         d3.select(this).exit().remove();
@@ -194,7 +211,7 @@ function ModalDefinitions({ modalRef, spiData, defContext }) {
         indicator.append('tspan')
           .text((d, i) => {
             let target = d[0];
-            let match = spiData[0][`${target}`]
+            let match = spiData[0][`${keyMatcher(target)}`]
             if (!match) return;
             // //round the match value
             let rounded = (+match).toFixed(3);
@@ -206,7 +223,7 @@ function ModalDefinitions({ modalRef, spiData, defContext }) {
         indicator.append('tspan')
           .text(d => {
             if (!d[1]) return;
-            let match = d[1][0]['Unit'];
+            let match = d[1][0]['Unit of measurement'];
             let subString = match ? match : null;
             return `    ${subString}`;
           }).attr('class', 'indicator-substring')
@@ -234,14 +251,25 @@ function ModalDefinitions({ modalRef, spiData, defContext }) {
             return d[1][0]['Definition']
           })
           .attr("class", "indicator-definition");
-        indicator.append("a")
-          .attr("href", d => { return `${d[1][0]['Link']}` })
-          .text(d => {
-            return `${d[1][0]['Source']} ⓘ`
-          })
-          .attr("class", "indicator-source")
-          .attr("target", "_blank")
-          .attr("rel", "noopener noreferrer");
+        // ******************************************** Check for Multiple Links **********
+        indicator
+          .selectAll('.citation')
+          .data(d[1][0].citations)
+          .join(enter  => {
+            return enter.append('a')
+            .attr('class', 'citation')
+            .attr("href", d => {
+              return d.citation[0];
+            })
+            .text(d => {
+              let result = d.citation[1]? d.citation[1] : d.citation[0];
+              return `${result}\n`
+            })
+            .attr("class", "indicator-link")
+            .attr("target", "_blank")
+            .attr("rel", "noopener noreferrer");
+      });
+
       }
 
       function collapseIndicator() {
@@ -261,7 +289,7 @@ function ModalDefinitions({ modalRef, spiData, defContext }) {
       d3.selectAll('#remove').remove();
     };
 
-    parsedDefinitions.then((data) => {
+    Promise.all([parsedDefinitions, dataKeys]).then((data) => {
       if (!spiData) return;
       tabulateModal(data);
     });
