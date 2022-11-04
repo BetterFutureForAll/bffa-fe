@@ -78,9 +78,8 @@ const ToolTip = ({ tooltipContext, zoomState, setClicked, setClickedSubCat }) =>
       let x, y;
       //Needs Error Catch
       if (data[0].spicountrycode === 'WWW') {
-        var bbox = svg.node().getBBox();
-        x = bbox.x + bbox.width/2;
-        y = bbox.y + bbox.height/2;
+        x = svg.select(`#CPV_target`).attr('cx');
+        y = svg.select(`#CPV_target`).attr('cy');
       } else {
         x = svg.select(`#${data[0]['spicountrycode']}_target`).attr('cx');
         y = svg.select(`#${data[0]['spicountrycode']}_target`).attr('cy');
