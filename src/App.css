@@ -123,7 +123,7 @@
   /* landscape rules */
   .App {
     display: grid;
-    grid-template-columns: 55vw 45vw;
+    grid-template-columns: 60vw 40vw;
     grid-template-rows: 85vh 15vh;
     grid-template-areas:
       "map def"
@@ -145,7 +145,7 @@
 
   .modal-wrapper {
     height: 100vh !important;
-    width: 45vw !important;
+    width: 40vw !important;
     grid-area: def;
   }
 }
