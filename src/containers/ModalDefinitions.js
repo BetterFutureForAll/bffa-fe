@@ -72,8 +72,9 @@ function ModalDefinitions({ modalRef, spiData, defContext }) {
 
       function keyMatcher(target) {
 
-        const keyFixer = (key) => key.replace(/[\n\r]*\((.*)\)[ \n\r]*/g, '');
-        const targetFixer = (target) => target.replace(/and/, '&');
+        const keyFixer = (key) => key.replace(/[\n\r]*\((.*)\)[ \n\r]*/g, '').replace(/and/, '&').replace(/[ \t]+$/, '' ).toLowerCase();
+        const targetFixer = (target) => target.replace(/and/, '&').replace(/[ \t]+$/, '' ).toLowerCase();
+
         let result = Object.keys(keyDescriptions).find(value => keyFixer(keyDescriptions[value]) === targetFixer(target));
         return result;
       };
