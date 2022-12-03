@@ -21,16 +21,16 @@ import opportunity_education from '../assets/bffa_icons/2_4_education.png';
 import { dataKeys } from '../services/SocialProgress';
 
 function ModalDefinitions({ modalRef, spiData, defContext }) {
-  
+
   let currentDefinitions = require('../assets/def2022.csv');
   let parsedDefinitions = d3.csv(currentDefinitions, function (data) {
     //Make a citation Array for indicators with multiple sources
     let links = data['Link'].split(/\r?\n/);
     let sources = data['Source'].split(/;/);
-    if(links.length === 0) return data;
+    if (links.length === 0) return data;
     let result = []
-    links.forEach(function(d, i) {  
-      result.push({ citation: [ links[i], sources[i] ]})
+    links.forEach(function (d, i) {
+      result.push({ citation: [links[i], sources[i]] })
     });
     data.citations = result;
     return data;
@@ -72,8 +72,8 @@ function ModalDefinitions({ modalRef, spiData, defContext }) {
 
       function keyMatcher(target) {
 
-        const keyFixer = (key) => key.replace(/[\n\r]*\((.*)\)[ \n\r]*/g, '').replace(/and/, '&').replace(/[ \t]+$/, '' ).toLowerCase();
-        const targetFixer = (target) => target.replace(/and/, '&').replace(/[ \t]+$/, '' ).toLowerCase();
+        const keyFixer = (key) => key.replace(/[\n\r]*\((.*)\)[ \n\r]*/g, '').replace(/and/, '&').replace(/[ \t]+$/, '').toLowerCase();
+        const targetFixer = (target) => target.replace(/and/, '&').replace(/[ \t]+$/, '').toLowerCase();
 
         let result = Object.keys(keyDescriptions).find(value => keyFixer(keyDescriptions[value]) === targetFixer(target));
         return result;
@@ -155,7 +155,8 @@ function ModalDefinitions({ modalRef, spiData, defContext }) {
           let parsedId = d[0].replace(/ /g, "_");
           return `${parsedId}_title`;
         }).attr('class', 'component-title').on('click', addIndicators);
-        componentTitle.append("h3").text('+').attr("class", "component_icon");
+
+        //Append Icons 
         componentTitle.append("img").attr("src", (d, i) => {
           let target = this.parentNode.id;
           switch (target) {
@@ -165,8 +166,12 @@ function ModalDefinitions({ modalRef, spiData, defContext }) {
             default: return;
           }
         }).attr('class', 'component_img');
+
+        //Component Control
+        componentTitle.append("h3").text('+').attr("class", "component_icon");
+
+        //Title and Score 
         componentTitle.append('h4').text(d => {
-          //Rounded Number
           let target = d[0];
           let value = +spiData[0][`${keyMatcher(target)}`];
           let result = `${d[0]}:  ${value.toFixed()}`;
@@ -256,20 +261,20 @@ function ModalDefinitions({ modalRef, spiData, defContext }) {
         indicator
           .selectAll('.citation')
           .data(d[1][0].citations)
-          .join(enter  => {
+          .join(enter => {
             return enter.append('a')
-            .attr('class', 'citation')
-            .attr("href", d => {
-              return d.citation[0];
-            })
-            .text(d => {
-              let result = d.citation[1]? d.citation[1] : d.citation[0];
-              return `${result}\n`
-            })
-            .attr("class", "indicator-link")
-            .attr("target", "_blank")
-            .attr("rel", "noopener noreferrer");
-      });
+              .attr('class', 'citation')
+              .attr("href", d => {
+                return d.citation[0];
+              })
+              .text(d => {
+                let result = d.citation[1] ? d.citation[1] : d.citation[0];
+                return `${result}\n`
+              })
+              .attr("class", "indicator-link")
+              .attr("target", "_blank")
+              .attr("rel", "noopener noreferrer");
+          });
 
       }
 
