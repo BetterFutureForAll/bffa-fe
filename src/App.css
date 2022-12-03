@@ -8,7 +8,6 @@
   flex-direction: column;
   text-align: center;
   font-size: 100%;
-  align-items: flex-start;
   height: 100vh;
   line-height: 1.2em;
   overflow: hidden;
@@ -33,6 +32,13 @@
   height: 100vh;
   width: 100vw;
   z-index: 1;
+}
+
+.legend {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-evenly;
 }
 
 .ControlBar {
@@ -124,10 +130,11 @@
   .App {
     display: grid;
     grid-template-columns: 60vw 40vw;
-    grid-template-rows: 85vh 15vh;
+    grid-template-rows: 5vh 90vh 5vh;
     grid-template-areas:
+      "map control"
       "map def"
-      "control def";
+      "legend def";
   }
 
   #MapContainer {
@@ -135,10 +142,17 @@
     height: 100% !important;
     grid-area: map;
   }
+  .legend{
+    grid-area: legend;
+    height: 100%;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+  }
 
   .ControlBar {
     grid-area: control;
-    height: 4em;
+    height: 100%;
     width: 100%;
     align-self: end;
   }
@@ -199,7 +213,7 @@
   text-align: center;
   align-items: stretch;
   grid-template-areas:
-    "icon img h2";
+    "img icon h2";
   background-color: rgba(255, 255, 255, 0.6);
 }
 
@@ -226,8 +240,8 @@
   display: grid;
   align-items: stretch;
   grid-template-areas:
-    "icon image h4"
-    "icon image p";
+    "image icon h4"
+    "image icon p";
 }
 
 .component_icon {

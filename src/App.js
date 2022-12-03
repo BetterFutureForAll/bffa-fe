@@ -9,6 +9,7 @@ import {
 } from './hooks/hooks';
 import ModalDefinitions from './containers/ModalDefinitions';
 import { useWindowSize, useHandleCountryChange, useCountries } from './hooks/hooks';
+import Legend from './components/Legend';
 import ControlBar from './components/ControlBar';
 
 let localGeoData = process.env.PUBLIC_URL + '/cleanedMap.json';
@@ -103,10 +104,12 @@ function App() {
         setClicked={setClicked}
         setClickedSubCat={setClickedSubCat}
       />
+      <Legend
+        height={mapHeight}
+        width={mapWidth}
+      />
       <div className="ControlBar">
         <ControlBar
-          height={mapHeight}
-          width={mapWidth}
           selectYears={selectYears}
           yearValue={yearValue}
           selectCountries={selectCountries}
