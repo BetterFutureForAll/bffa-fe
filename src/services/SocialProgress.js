@@ -1,59 +1,44 @@
 import * as d3 from 'd3';
+import { data } from '../assets/spi.json'
 
-let data2022 = require('../assets/spi2022.csv');
 const keyFixer = (key) => key.replace(/[\n\r]*\((.*)\)[ \n\r]*/g, '');
 
-export const parsedSpiData = d3.csv(data2022).then((data) => {
-  let cleanData = data.filter((d, i) => { return (i !== 0); });
-  return cleanData;
-});
+export const dataKeys = data[0];
+export const dataValues = data.slice(1);
 
-export const dataKeys = d3.csv(data2022).then((data) => {
-  return data[0];
-});
+const yearsGroup = d3.group(dataValues, d => d['spiyear']);
+const countryGroup = d3.group(dataValues, d => d['country']);
 
 export async function makeYearsArray() {
-  let years;
-  await parsedSpiData.then(function (data) {
-    let yearsGroup = d3.group(data, d => d['spiyear']);
-    years = Array.from(yearsGroup).map(d => d[0]);
-  });
+  let years = Array.from(yearsGroup).map(d => d[0]);
   return years;
 }
 
 export async function makeCountriesArray() {
-  let countries;
-  await parsedSpiData.then(function (data) {
-    let countryGroup = d3.group(data, d => d['country']);
-    countries = Array.from(countryGroup).map(d => d[0])
-  });
+  let countries = Array.from(countryGroup).map(d => d[0])
   return countries;
 }
 
 export async function getSpiDataByYear(year) {
-  return parsedSpiData.then(function (data) {
-    let yearsGroup = d3.group(data, d => d['spiyear'])
     let result = yearsGroup.get(year);
     return result;
-  });
-}
+};
 
 export async function getSpiDataByCountry(data, countryValue) {
-  let countries = d3.group(data, d => d['country'])
+  let countries = d3.group(data, d => d['country']);
   let result = countries.get(countryValue);
-  if (!result) return;
-  let input = result[0];
-
-
-  const output = Object.keys(input).reduce((previous, key) => {
-    return { ...previous, [`${keyFixer(key)}`]: input[key] };
+  let found = data.find(d=> d.country === countryValue)
+  console.log(data, result, found);
+  if (!found) return;
+  const output = Object.keys(found).reduce((previous, key) => {
+    return { ...previous, [`${keyFixer(key)}`]: found[key] };
   }, {});
 
   return [output];
 };
 
 export async function getScore(ISO_A3, data) {
-  var score = 'Score not Found';
+  var score = null;
   if (!data || data === undefined) {
     return 0;
   }
@@ -72,17 +57,14 @@ export const colorScale = d3.scaleSequential()
 
 export const basicColorScale = d3.scaleSequential()
   .interpolator(d3.interpolateRgb.gamma(2.2)("#ffffb0", "#0310ff"))
-  // .interpolator(d3.interpolateYlGnBu)
   .domain([0, 100]);
 
 export const foundationsColorScale = d3.scaleSequential()
   .interpolator(d3.interpolateRgb.gamma(2.2)("#ffffb0", "#ff0000"))
-  // .interpolator(d3.interpolateYlOrRd)
   .domain([0, 100]);
 
 export const opportunityColorScale = d3.scaleSequential()
   .interpolator(d3.interpolateRgb.gamma(2.2)("#ffffb0", "#00ff00"))
-  // .interpolator(d3.interpolateYlGn)
   .domain([0, 100]);
 
 
