@@ -24,23 +24,6 @@ import { definitionsArray } from '../assets/definitions.json';
 
 function ModalDefinitions({ modalRef, spiData, defContext }) {
 
-  let parsedDefinitions = () => {
-    let parsedData = [];
-    definitionsArray.forEach(data => {
-      //Make a citation Array for indicators with multiple sources
-      let links = data.link.split(/\r?\n/);
-      let sources = data.source.split(/;/);
-      if (links.length === 0) return data;
-      let result = []
-      links.forEach(function (d, i) {
-        result.push({ citation: [links[i], sources[i]] })
-      });
-      data.citations = result;
-      parsedData.push(data);
-    })
-    return parsedData;
-  };
-
   function componentQuestionMatch(d) {
     switch (d[0]) {
       case "Nutrition and Basic Medical Care": return 'Do people have enough food to eat and are they receiving basic medical care? ';
@@ -63,6 +46,24 @@ function ModalDefinitions({ modalRef, spiData, defContext }) {
   };
 
   useLayoutEffect(() => {
+
+  let parsedDefinitions = () => {
+
+    let parsedData = [];
+    definitionsArray.forEach(data => {
+      //Make a citation Array for indicators with multiple sources
+      let links = data.link.split(/\r?\n/);
+      let sources = data.source.split(/;/);
+      if (links.length === 0) return data;
+      let result = []
+      links.forEach(function (d, i) {
+        result.push({ citation: [links[i], sources[i]] })
+      });
+      data.citations = result;
+      parsedData.push(data);
+    })
+    return parsedData;
+  };
 
     let BasicImageArray = [basic_nutrition, basic_water, basic_shelter, basic_safety];
     let FoundationImageArray = [foundations_knowledge, foundations_communication, foundations_health, foundations_environmental];
@@ -313,7 +314,7 @@ function ModalDefinitions({ modalRef, spiData, defContext }) {
       tabulateModal(data);
     });
 
-  }, [parsedDefinitions, modalRef, spiData, defContext]);
+  }, [modalRef, spiData, defContext]);
 
   return (
     <div className="modal-wrapper" ref={modalRef} >

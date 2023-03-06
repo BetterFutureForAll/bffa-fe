@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useRef, useMemo } from 'react';
+import React, { useEffect, useLayoutEffect, useRef } from 'react';
 import './App.css';
 import MapContainer from './containers/Map';
 import {
