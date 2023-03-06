@@ -1,7 +1,20 @@
 import * as d3 from 'd3';
-import { data } from '../assets/spi.json'
+import { data } from '../assets/spi.json';
+import { countryIdTable } from '../assets/iso.json';
 
 const keyFixer = (key) => key.replace(/[\n\r]*\((.*)\)[ \n\r]*/g, '');
+
+export const parsedData = Promise.all([data, countryIdTable]).then(function (d) {
+  //Combine ISO3166 codes, ISO Alpha to ISO Numeric for ID
+  d[0].forEach((r) => {
+    var result = d[1].filter(function (iso) {
+      return iso['alpha-3'] === r.spicountrycode;
+    });
+    // assign a mapId to the spi data set 
+    r['mapId'] = (result[0] !== undefined) ? result[0]["country-code"] : null;
+  })
+  return d;
+});
 
 export const dataKeys = data[0];
 export const dataValues = data.slice(1);
@@ -20,15 +33,14 @@ export async function makeCountriesArray() {
 }
 
 export async function getSpiDataByYear(year) {
-    let result = yearsGroup.get(year);
-    return result;
+  let result = yearsGroup.get(year);
+  return result;
 };
 
 export async function getSpiDataByCountry(data, countryValue) {
-  let countries = d3.group(data, d => d['country']);
-  let result = countries.get(countryValue);
-  let found = data.find(d=> d.country === countryValue)
-  console.log(data, result, found);
+  // let countries = d3.group(data, d => d['country']);
+  // let result = countries.get(countryValue);
+  let found = data.find(d => d.country === countryValue)
   if (!found) return;
   const output = Object.keys(found).reduce((previous, key) => {
     return { ...previous, [`${keyFixer(key)}`]: found[key] };

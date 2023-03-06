@@ -22,7 +22,9 @@
   flex: 0 0 auto;
   height: 40%;
 }
-
+.graphicTooltip {
+  z-index: 1;
+}
 .petalPath {
   text-align: justify;
 }

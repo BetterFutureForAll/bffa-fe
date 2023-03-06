@@ -1,6 +1,5 @@
 import React, { useEffect, useLayoutEffect, useRef, useMemo } from 'react';
 import './App.css';
-import * as d3 from 'd3'
 import MapContainer from './containers/Map';
 import {
   useDataByCountry, useDataByYear, useYears,
@@ -11,8 +10,6 @@ import ModalDefinitions from './containers/ModalDefinitions';
 import { useWindowSize, useHandleCountryChange, useCountries } from './hooks/hooks';
 import Legend from './components/Legend';
 import ControlBar from './components/ControlBar';
-
-let localGeoData = process.env.PUBLIC_URL + '/cleanedMap.json';
 
 function App() {
   let modalRef = useRef(null);
@@ -32,7 +29,6 @@ function App() {
   let [clickedSubCat, setClickedSubCat] = useClickedSubCat();
   let [defContext, setDefContext] = useDefinitions();
 
-  let mapData = useMemo(() => d3.json(localGeoData), []);
 
   let handleCountryChange = e => setCountryValue(e.target.value);
 
@@ -98,7 +94,6 @@ function App() {
         tooltipContext={tooltipContext}
         setToolTipContext={setToolTipContext}
         spiData={spiByYear}
-        mapData={mapData}
         zoomState={zoomState}
         setZoomState={setZoomState}
         setClicked={setClicked}

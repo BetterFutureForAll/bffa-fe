@@ -21,12 +21,11 @@ const ToolTip = ({ tooltipContext, zoomState, setClicked, setClickedSubCat }) =>
       if (!data) return;
 
       function parsedData(d) {
-        // returning values as is, needs Keys and Values/ 
 
         let basics = Object.assign({},
           { "Basic Human Needs": d.score_bhn },
-          { scale: spiScale(d.score_bhn) },
-          { color: basicColorScale(d.score_bhn) },
+          { scale: spiScale(d.score_bhn || 0) },
+          { color: basicColorScale(d.score_bhn || 0) },
           {
             subPetals:
               [
@@ -40,8 +39,8 @@ const ToolTip = ({ tooltipContext, zoomState, setClicked, setClickedSubCat }) =>
 
         let foundations = Object.assign({},
           { "Foundations of Wellbeing": d.score_fow },
-          { scale: spiScale(d.score_fow) },
-          { color: foundationsColorScale(d.score_fow) },
+          { scale: spiScale(d.score_fow || 0) },
+          { color: foundationsColorScale(d.score_fow || 0) },
           {
             subPetals:
               [
@@ -55,8 +54,8 @@ const ToolTip = ({ tooltipContext, zoomState, setClicked, setClickedSubCat }) =>
 
         let opportunity = Object.assign({},
           { "Opportunity": d.score_opp },
-          { scale: spiScale(d.score_opp) },
-          { color: opportunityColorScale(d.score_opp) },
+          { scale: spiScale(d.score_opp || 0) },
+          { color: opportunityColorScale(d.score_opp || 0) },
           {
             subPetals:
               [
@@ -76,10 +75,14 @@ const ToolTip = ({ tooltipContext, zoomState, setClicked, setClickedSubCat }) =>
 
       svg.selectAll('.graphicTooltip').remove();
       let x, y;
-      //Needs Error Catch
+      var bbox = svg.node().getBBox();
+      // return the center of the bounding box
+      let center = [bbox.x + bbox.width / 2, bbox.y + bbox.height / 2];
+      // World Tooltip is always center
       if (data[0].spicountrycode === 'WWW') {
-        x = svg.select(`#CPV_target`).attr('cx');
-        y = svg.select(`#CPV_target`).attr('cy');
+        x = center[0];
+        y = center[1];
+        //set center to countries tooltip_target
       } else {
         x = svg.select(`#${data[0]['spicountrycode']}_target`).attr('cx');
         y = svg.select(`#${data[0]['spicountrycode']}_target`).attr('cy');
@@ -92,12 +95,9 @@ const ToolTip = ({ tooltipContext, zoomState, setClicked, setClickedSubCat }) =>
         .data(parsedData(data[0]))
         .attr('class', 'graphicTooltip')
 
-
       toolTip.attr('transform', `translate(${zoomState.x}, ${zoomState.y}) scale(${zoomState.k})`)
 
-      // Stoke width needs to adjust for circles, not petals
-      // .attr("stroke-width", 1 / zoomState.k)
-
+      //Outer Circle
       toolTip
         .selectAll('.outer')
         .data(d => [d])
@@ -108,14 +108,13 @@ const ToolTip = ({ tooltipContext, zoomState, setClicked, setClickedSubCat }) =>
         })
         .attr("cx", x)
         .attr("cy", y)
-        // .attr("r", 0)
-        // .transition().duration(500)
         .attr("r", 100 / zoomState.k)
         .style('fill', '#c4c2c4')
         .style("opacity", "0.5")
         .style('stroke', 'black')
-        .attr("stroke-width", 1 / zoomState.k)
+        .attr("stroke-width", 1 / zoomState.k);
 
+      //inner circle scaled to SPI score
       toolTip
         .selectAll('.inner')
         .data(d => [d])
@@ -124,27 +123,22 @@ const ToolTip = ({ tooltipContext, zoomState, setClicked, setClickedSubCat }) =>
         .attr('id', d => `${Object.keys(d)[0]}_inner`)
         .attr("cx", x)
         .attr("cy", y)
-        // .attr("r", 0)
-        // .transition().duration(750)
-        .attr("r", d => d ? +d.score_spi / zoomState.k : 0)
+        .attr("r", d => +d.score_spi ? +d.score_spi / zoomState.k : 0)
         .style('fill', d => colorScale(d ? +d.score_spi : 0))
         .style('stroke', 'black')
         .attr("cursor", "pointer")
-        .attr("stroke-width", 1 / zoomState.k)
+        .attr("stroke-width", 1 / zoomState.k);
 
-      // make 3 separate petals here
+      // Three Major petals, 
       let subPetals = toolTip
         .selectAll('.petalBackgroundPath')
         .data(d => d.petals)
         .join('path')
-        // append 3 petals.
         .attr('class', 'petalBackgroundPath')
         .attr("id", (d, i) => {
           return `${Object.keys(d)[0]}_bp`
         })
         .attr('d', petalPath)
-        // .attr('transform', d => `translate(${x}, ${y}) rotate(${d.angle}) scale(0)`)
-        // .transition().duration(750)
         .attr('transform', d => `translate(${x}, ${y}) rotate(${d.angle}) scale(${spiScale(100) * .01 / zoomState.k})`)
         .style('stroke', 'black')
         .style('fill', d => d.color)
@@ -166,7 +160,8 @@ const ToolTip = ({ tooltipContext, zoomState, setClicked, setClickedSubCat }) =>
         .style('fill', colorScale(0))
         .transition().duration(1000)
         .attr('transform', d => {
-          return `translate(${x}, ${y}) rotate(${d.angle}) scale(${d.scale * .01 / zoomState.k})`
+          let scale = +d.scale ? d.scale * .01 / zoomState.k : 0;
+          return `translate(${x}, ${y}) rotate(${d.angle}) scale(${scale})`
         })
         .style('stroke', 'black')
         .style('fill', d => d.color)
@@ -206,6 +201,8 @@ const ToolTip = ({ tooltipContext, zoomState, setClicked, setClickedSubCat }) =>
         .attr('transform', `translate(${x}, ${(y + spiScale(140))})`)
         .attr("font-weight", 700)
         .attr("font-size", fontSize)
+
+
 
       // ****** MouseOver Functions start here ******** ///
       var textTooltip = toolTip.selectAll(".tooltip-text-area")
@@ -267,9 +264,6 @@ const ToolTip = ({ tooltipContext, zoomState, setClicked, setClickedSubCat }) =>
 
         textTooltip.raise()
 
-        // Change the definitions On Hover
-        // let target = Object.keys(d)[0];
-        // setClickedSubCat(target);
       };
 
       svg.select(`#${data[0]['SPI country code']}_target`).raise();
@@ -303,7 +297,10 @@ const ToolTip = ({ tooltipContext, zoomState, setClicked, setClickedSubCat }) =>
           .attr('class', 'subPetalPath')
           .attr("id", d => `${Object.keys(d)[0]}_subPetal`)
           .attr('d', subPetalPath)
-          .attr('transform', d => `translate(${x}, ${y}) rotate(${d.angle}) scale(${spiScale(Object.values(d)[0]) * .01 / zoomState.k})`)
+          .attr('transform', d => {
+            let scale = +Object.values(d)[0] ? spiScale(Object.values(d)[0]) * .01 / zoomState.k : 0;
+            return `translate(${x}, ${y}) rotate(${d.angle}) scale(${scale})`
+          })
           .style('stroke', 'black')
           .style('fill', d => {
             return d.colorFn(Object.values(d)[0])
@@ -365,7 +362,7 @@ const ToolTip = ({ tooltipContext, zoomState, setClicked, setClickedSubCat }) =>
             }
           })
           .text(d => {
-            let rounded = (+Object.values(d)[0]).toFixed();
+            let rounded = +(+Object.values(d)[0]).toFixed() || 0;
             return `${Object.keys(d)[0]}-${rounded}`;
           });
       };
