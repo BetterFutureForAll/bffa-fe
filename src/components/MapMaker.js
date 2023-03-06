@@ -146,7 +146,6 @@ const MapMaker = ({
 
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-
   }, [yearValue, svgRef, height, width, spiData]);
 
   while (loading) return (<img src={loadingSpinner} alt={'loading spinner'} id="loading-spinner" className="loading-spinner" />)
