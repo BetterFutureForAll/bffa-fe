@@ -4,7 +4,7 @@ import MapMaker from '../components/MapMaker';
 function MapContainer({
   width, height,
   yearValue, setClickedSubCat, setClicked,
-  spiData, mapData,
+  spiData,
   countryValue, setCountryValue,
   tooltipContext, setToolTipContext, svgRef,
   zoomState, setZoomState }) {
@@ -29,7 +29,6 @@ function MapContainer({
           tooltipContext={tooltipContext}
           setToolTipContext={setToolTipContext}
           spiData={spiData}
-          mapData={mapData}
           zoomState={zoomState}
           setZoomState={setZoomState}
           setClicked={setClicked}

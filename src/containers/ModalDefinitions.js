@@ -18,23 +18,11 @@ import opportunity_rights from '../assets/bffa_icons/2_1_rights.png';
 import opportunity_freedom from '../assets/bffa_icons/2_2_freedom.png';
 import opportunity_inclusiveness from '../assets/bffa_icons/2_3_inclusiveness.png';
 import opportunity_education from '../assets/bffa_icons/2_4_education.png';
+
 import { dataKeys } from '../services/SocialProgress';
+import { definitionsArray } from '../assets/definitions.json';
 
 function ModalDefinitions({ modalRef, spiData, defContext }) {
-
-  let currentDefinitions = require('../assets/def2022.csv');
-  let parsedDefinitions = d3.csv(currentDefinitions, function (data) {
-    //Make a citation Array for indicators with multiple sources
-    let links = data['Link'].split(/\r?\n/);
-    let sources = data['Source'].split(/;/);
-    if (links.length === 0) return data;
-    let result = []
-    links.forEach(function (d, i) {
-      result.push({ citation: [links[i], sources[i]] })
-    });
-    data.citations = result;
-    return data;
-  });
 
   function componentQuestionMatch(d) {
     switch (d[0]) {
@@ -59,6 +47,24 @@ function ModalDefinitions({ modalRef, spiData, defContext }) {
 
   useLayoutEffect(() => {
 
+  let parsedDefinitions = () => {
+
+    let parsedData = [];
+    definitionsArray.forEach(data => {
+      //Make a citation Array for indicators with multiple sources
+      let links = data.link.split(/\r?\n/);
+      let sources = data.source.split(/;/);
+      if (links.length === 0) return data;
+      let result = []
+      links.forEach(function (d, i) {
+        result.push({ citation: [links[i], sources[i]] })
+      });
+      data.citations = result;
+      parsedData.push(data);
+    })
+    return parsedData;
+  };
+
     let BasicImageArray = [basic_nutrition, basic_water, basic_shelter, basic_safety];
     let FoundationImageArray = [foundations_knowledge, foundations_communication, foundations_health, foundations_environmental];
     let OpportunityImageArray = [opportunity_rights, opportunity_freedom, opportunity_inclusiveness, opportunity_education];
@@ -66,9 +72,16 @@ function ModalDefinitions({ modalRef, spiData, defContext }) {
     function tabulateModal(data) {
       // Dimension,Component,Indicator name, unit ,Definition,Source,Link
       // Group data on each column, indicator will hold the unique values.
-      let scoreData = data[0];
+      let scoreData = data[2];
       let keyDescriptions = data[1];
-      let groupedData = d3.group(scoreData, d => d["Dimension"], d => d["Component"], d => d['Indicator name'])
+      let dataDefinitions = data[0]
+      console.log('def', dataDefinitions)
+      console.log('keys', keyDescriptions)
+      console.log('spi', scoreData)
+      let cleanDef = dataDefinitions.filter(function( element ) {
+        return element["dimension"] !== undefined;
+     });
+      let groupedData = d3.group(cleanDef, d => d["dimension"], d => d["component"], d => d['indicator_name'])
 
       function keyMatcher(target) {
 
@@ -84,13 +97,13 @@ function ModalDefinitions({ modalRef, spiData, defContext }) {
       let dimDiv = modal.append('div').attr('class', 'modal');
 
       let dimensionsDiv = dimDiv.selectAll('.dimension')
-        .data(groupedData, d => d[0])
+        .data(groupedData, d=>d[0])
         .join(
           enter => enter
             .append("div")
             .attr("class", (d, i) => { return `dim-${i} dimension`; })
             .attr("id", d => {
-              if (d[0].length === 0) {
+              if (!d[0]) {
                 return "remove";
               }
               //class and ID to isolate footer
@@ -100,10 +113,10 @@ function ModalDefinitions({ modalRef, spiData, defContext }) {
 
       //Dimensions Title Bar
       let divTitle = dimensionsDiv.append('div').attr("id", d => {
-        if (d[0].length === 0) {
+        if (!d[0]) {
           return "footer";
         }
-        //class and ID to isolate footer
+        // //class and ID to isolate footer
         let id = (d[0]).replace(/ /g, "_");
         return `${id}_title`;
       }).attr('class', 'dimension-title').on('click', addComponents);
@@ -120,6 +133,7 @@ function ModalDefinitions({ modalRef, spiData, defContext }) {
       }).attr('class', 'dimension_img');
 
       divTitle.append('h4').text(d => {
+        console.log(d);
         let target = d[0]
         d[0] === '' ? target = '*' : target = d[0];
         if (target === "*" || undefined) {
@@ -228,8 +242,9 @@ function ModalDefinitions({ modalRef, spiData, defContext }) {
 
         indicator.append('tspan')
           .text(d => {
+            console.log(d[1][0]);
             if (!d[1]) return;
-            let match = d[1][0]['Unit of measurement'];
+            let match = d[1][0]['unit_of_measurement'];
             let subString = match ? match : null;
             return `    ${subString}`;
           }).attr('class', 'indicator-substring')
@@ -254,7 +269,7 @@ function ModalDefinitions({ modalRef, spiData, defContext }) {
           .attr('class', 'indicator-definitions');
         indicator.append('p')
           .text(d => {
-            return d[1][0]['Definition']
+            return d[1][0]['definition']
           })
           .attr("class", "indicator-definition");
         // ******************************************** Check for Multiple Links **********
@@ -275,7 +290,6 @@ function ModalDefinitions({ modalRef, spiData, defContext }) {
               .attr("target", "_blank")
               .attr("rel", "noopener noreferrer");
           });
-
       }
 
       function collapseIndicator() {
@@ -295,12 +309,12 @@ function ModalDefinitions({ modalRef, spiData, defContext }) {
       d3.selectAll('#remove').remove();
     };
 
-    Promise.all([parsedDefinitions, dataKeys]).then((data) => {
-      if (!spiData) return;
+    Promise.all([parsedDefinitions(), dataKeys, spiData]).then((data) => {
+      if (!data[2]) return;
       tabulateModal(data);
     });
 
-  }, [parsedDefinitions, modalRef, spiData, defContext]);
+  }, [modalRef, spiData, defContext]);
 
   return (
     <div className="modal-wrapper" ref={modalRef} >
