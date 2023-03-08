@@ -74,29 +74,32 @@ const ToolTip = ({ tooltipContext, zoomState, setClicked, setClickedSubCat }) =>
       let svg = d3.select(svgRef.current);
 
       svg.selectAll('.graphicTooltip').remove();
-      let x, y;
-      var bbox = svg.node().getBBox();
-      // return the center of the bounding box
-      let center = [bbox.x + bbox.width / 2, bbox.y + bbox.height / 2];
-      // World Tooltip is always center
-      if (data[0].spicountrycode === 'WWW') {
-        x = center[0];
-        y = center[1];
-        //set center to countries tooltip_target
-      } else {
-        x = svg.select(`#${data[0]['spicountrycode']}_target`).attr('cx');
-        y = svg.select(`#${data[0]['spicountrycode']}_target`).attr('cy');
-      }
-
-      let fontSize = 16 / zoomState.k;
 
       let toolTip = svg
         .insert('g')
         .data(parsedData(data[0]))
         .attr('class', 'graphicTooltip')
 
-      toolTip.attr('transform', `translate(${zoomState.x}, ${zoomState.y}) scale(${zoomState.k})`)
+      let x, y;
+      // return the center of the bounding box
+      var bbox = d3.select('#viewbox').node().getBBox();
+      let center = [bbox.x + bbox.width / 2, bbox.y + bbox.height / 2];
+      // World Tooltip is always center
+      if (data[0].spicountrycode === 'WWW') {
+        // x = center[0];
+        // y = center[1];
+        x = svg.select(`#world_target`).attr('cx');
+        y = svg.select(`#world_target`).attr('cy');
+      } else {
+        x = svg.select(`#${data[0]['spicountrycode']}_target`).attr('cx');
+        y = svg.select(`#${data[0]['spicountrycode']}_target`).attr('cy');
+        toolTip.attr('transform', `translate(${zoomState.x}, ${zoomState.y}) scale(${zoomState.k})`)
+      }
+      console.log(center, zoomState)
 
+
+      console.log(center, zoomState)
+      let fontSize = 16 / zoomState.k;
       //Outer Circle
       toolTip
         .selectAll('.outer')
