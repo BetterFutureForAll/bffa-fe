@@ -72,12 +72,8 @@ function ModalDefinitions({ modalRef, spiData, defContext }) {
     function tabulateModal(data) {
       // Dimension,Component,Indicator name, unit ,Definition,Source,Link
       // Group data on each column, indicator will hold the unique values.
-      let scoreData = data[2];
       let keyDescriptions = data[1];
       let dataDefinitions = data[0]
-      console.log('def', dataDefinitions)
-      console.log('keys', keyDescriptions)
-      console.log('spi', scoreData)
       let cleanDef = dataDefinitions.filter(function( element ) {
         return element["dimension"] !== undefined;
      });
@@ -133,7 +129,6 @@ function ModalDefinitions({ modalRef, spiData, defContext }) {
       }).attr('class', 'dimension_img');
 
       divTitle.append('h4').text(d => {
-        console.log(d);
         let target = d[0]
         d[0] === '' ? target = '*' : target = d[0];
         if (target === "*" || undefined) {
@@ -242,7 +237,6 @@ function ModalDefinitions({ modalRef, spiData, defContext }) {
 
         indicator.append('tspan')
           .text(d => {
-            console.log(d[1][0]);
             if (!d[1]) return;
             let match = d[1][0]['unit_of_measurement'];
             let subString = match ? match : null;

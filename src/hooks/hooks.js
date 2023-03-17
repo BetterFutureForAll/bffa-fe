@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import {
   makeYearsArray,
   getSpiDataByYear,
@@ -19,6 +19,14 @@ export const useClicked = () => {
   }, [clicked])
   return [clicked, setClicked];
 }
+export const useLoading = () =>{
+  let [loading, setLoading] = useState(true);
+  const setLoadingCallback = useCallback(() => {
+    setLoading(t => !t);
+  }, []);
+  return [loading, setLoadingCallback];
+}
+
 
 export const useClickedSubCat = () => {
   let [clickedSubCat, setClickedSubCat] = useState(null);
@@ -134,6 +142,7 @@ export function useDefinitions() {
   let [defContext, setDefContext] = useState({
     dimension: null,
     component: null,
+    indicator_number: null,
   })
   useEffect(() => {
     setDefContext(defContext);

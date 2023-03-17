@@ -7,18 +7,19 @@ import {
   opportunityColorScale
 } from '../services/SocialProgress';
 
-// needs X, Y, and SPI Data set
-const ToolTip = ({ tooltipContext, zoomState, setClicked, setClickedSubCat }) => {
+
+const ToolTip = ({ tooltipContext, setClicked, setClickedSubCat }) => {
 
   useEffect(() => {
-
+    let { loading, svgRef, data, zoomState } = tooltipContext;
     let spiScale = d3.scaleLinear().domain([0, 100]).range([0, 100]);
     let petalPath = 'M 0 0 c 100 100 80 0 100 0 C 80 0 100 -100 0 0';
     let subPetalPath = "M 0 0 L 85 15 A 1 1 0 0 0 85 -15 L 0 0";
 
     function ready() {
-      let { svgRef, data } = tooltipContext;
-      if (!data) return;
+      if(loading) 
+      if (!svgRef || !data) return;
+
 
       function parsedData(d) {
 
@@ -81,25 +82,20 @@ const ToolTip = ({ tooltipContext, zoomState, setClicked, setClickedSubCat }) =>
         .attr('class', 'graphicTooltip')
 
       let x, y;
-      // return the center of the bounding box
-      var bbox = d3.select('#viewbox').node().getBBox();
-      let center = [bbox.x + bbox.width / 2, bbox.y + bbox.height / 2];
+      let worldCheck = data[0].spicountrycode === 'WWW';
+      let worldCheckedScale = worldCheck? 1 : zoomState.k;
+
       // World Tooltip is always center
-      if (data[0].spicountrycode === 'WWW') {
-        // x = center[0];
-        // y = center[1];
+      if (worldCheck) {
         x = svg.select(`#world_target`).attr('cx');
         y = svg.select(`#world_target`).attr('cy');
       } else {
         x = svg.select(`#${data[0]['spicountrycode']}_target`).attr('cx');
         y = svg.select(`#${data[0]['spicountrycode']}_target`).attr('cy');
-        toolTip.attr('transform', `translate(${zoomState.x}, ${zoomState.y}) scale(${zoomState.k})`)
       }
-      console.log(center, zoomState)
+      toolTip.attr('transform', `translate(${worldCheck? 0 : zoomState.x}, ${worldCheck? 0 : zoomState.y}) scale(${worldCheck? 1 : zoomState.k})`)
 
-
-      console.log(center, zoomState)
-      let fontSize = 16 / zoomState.k;
+      let fontSize = 16 / worldCheckedScale;
       //Outer Circle
       toolTip
         .selectAll('.outer')
@@ -111,11 +107,11 @@ const ToolTip = ({ tooltipContext, zoomState, setClicked, setClickedSubCat }) =>
         })
         .attr("cx", x)
         .attr("cy", y)
-        .attr("r", 100 / zoomState.k)
+        .attr("r", 100 / worldCheckedScale)
         .style('fill', '#c4c2c4')
         .style("opacity", "0.5")
         .style('stroke', 'black')
-        .attr("stroke-width", 1 / zoomState.k);
+        .attr("stroke-width", 1 / worldCheckedScale);
 
       //inner circle scaled to SPI score
       toolTip
@@ -126,11 +122,11 @@ const ToolTip = ({ tooltipContext, zoomState, setClicked, setClickedSubCat }) =>
         .attr('id', d => `${Object.keys(d)[0]}_inner`)
         .attr("cx", x)
         .attr("cy", y)
-        .attr("r", d => +d.score_spi ? +d.score_spi / zoomState.k : 0)
+        .attr("r", d => +d.score_spi ? +d.score_spi / worldCheckedScale : 0)
         .style('fill', d => colorScale(d ? +d.score_spi : 0))
         .style('stroke', 'black')
         .attr("cursor", "pointer")
-        .attr("stroke-width", 1 / zoomState.k);
+        .attr("stroke-width", 1 / worldCheckedScale);
 
       // Three Major petals, 
       let subPetals = toolTip
@@ -142,7 +138,7 @@ const ToolTip = ({ tooltipContext, zoomState, setClicked, setClickedSubCat }) =>
           return `${Object.keys(d)[0]}_bp`
         })
         .attr('d', petalPath)
-        .attr('transform', d => `translate(${x}, ${y}) rotate(${d.angle}) scale(${spiScale(100) * .01 / zoomState.k})`)
+        .attr('transform', d => `translate(${x}, ${y}) rotate(${d.angle}) scale(${spiScale(100) * .01 / worldCheckedScale})`)
         .style('stroke', 'black')
         .style('fill', d => d.color)
         .style("opacity", "0.50")
@@ -163,7 +159,7 @@ const ToolTip = ({ tooltipContext, zoomState, setClicked, setClickedSubCat }) =>
         .style('fill', colorScale(0))
         .transition().duration(1000)
         .attr('transform', d => {
-          let scale = +d.scale ? d.scale * .01 / zoomState.k : 0;
+          let scale = +d.scale ? d.scale * .01 / worldCheckedScale : 0;
           return `translate(${x}, ${y}) rotate(${d.angle}) scale(${scale})`
         })
         .style('stroke', 'black')
@@ -181,7 +177,7 @@ const ToolTip = ({ tooltipContext, zoomState, setClicked, setClickedSubCat }) =>
               return `${d.country}`
             })
             .attr('x', 0)
-            .attr('y', spiScale(120) / zoomState.k)
+            .attr('y', spiScale(120) / worldCheckedScale)
             .attr('dy', '1em')
           enter
             .append("tspan")
@@ -194,7 +190,7 @@ const ToolTip = ({ tooltipContext, zoomState, setClicked, setClickedSubCat }) =>
             })
             .attr('x', 0)
             .attr('y', d => {
-              return spiScale(120) / zoomState.k
+              return spiScale(120) / worldCheckedScale
             })
             .attr('dy', '2em')
           return enter;
@@ -285,7 +281,7 @@ const ToolTip = ({ tooltipContext, zoomState, setClicked, setClickedSubCat }) =>
           .attr('class', 'subPetalBackgroundPath')
           .attr("id", d => `${Object.keys(d)[0]}_subPetalBackground`)
           .attr('d', subPetalPath)
-          .attr('transform', d => `translate(${x}, ${y}) rotate(${d.angle}) scale(${spiScale(1) / zoomState.k})`)
+          .attr('transform', d => `translate(${x}, ${y}) rotate(${d.angle}) scale(${spiScale(1) / worldCheckedScale})`)
           .style('stroke', 'black')
           .style('fill', d => {
             return d.colorFn(Object.values(d)[0])
@@ -301,7 +297,7 @@ const ToolTip = ({ tooltipContext, zoomState, setClicked, setClickedSubCat }) =>
           .attr("id", d => `${Object.keys(d)[0]}_subPetal`)
           .attr('d', subPetalPath)
           .attr('transform', d => {
-            let scale = +Object.values(d)[0] ? spiScale(Object.values(d)[0]) * .01 / zoomState.k : 0;
+            let scale = +Object.values(d)[0] ? spiScale(Object.values(d)[0]) * .01 / worldCheckedScale : 0;
             return `translate(${x}, ${y}) rotate(${d.angle}) scale(${scale})`
           })
           .style('stroke', 'black')
@@ -338,14 +334,14 @@ const ToolTip = ({ tooltipContext, zoomState, setClicked, setClickedSubCat }) =>
           })
           .attr('d', arc)
           .attr('fill', d => d.color)
-          .attr('transform', d => `translate(${x}, ${y}) rotate(${d.angle + 30}) scale(${1 / zoomState.k})`)
+          .attr('transform', d => `translate(${x}, ${y}) rotate(${d.angle + 30}) scale(${1 / worldCheckedScale})`)
           .attr("cursor", "alias")
 
         toolTip.selectAll('.petalText')
           .data([d])
           .join('text')
           .attr('class', 'petalText')
-          .attr("dy", -5 / zoomState.k)
+          .attr("dy", -5 / worldCheckedScale)
           .append('textPath')
           .style("text-anchor", "middle")
           .attr("xlink:href", d => {
@@ -355,13 +351,13 @@ const ToolTip = ({ tooltipContext, zoomState, setClicked, setClickedSubCat }) =>
           .attr("pointer-events", "none")
           .attr("startOffset", function (d) {
             if (d.angle === 270) {
-              return 370 / zoomState.k;
+              return 370 / worldCheckedScale;
             }
             if (d.angle === 30) {
-              return 130 / zoomState.k;
+              return 130 / worldCheckedScale;
             }
             else {
-              return 130 / zoomState.k;
+              return 130 / worldCheckedScale;
             }
           })
           .text(d => {
@@ -384,9 +380,11 @@ const ToolTip = ({ tooltipContext, zoomState, setClicked, setClickedSubCat }) =>
       d3.selectAll('.petalBackgroundPath').on('mouseenter', doItAll)
 
     };
-
+    console.log('ToolTipRendered', tooltipContext)
+    console.log('ToolTipRendered', tooltipContext.loading)
+    if(tooltipContext.loading || !tooltipContext.svgRef || !tooltipContext.data) return; 
     ready();
-  }, [tooltipContext, zoomState, setClickedSubCat, setClicked]);
+  }, [tooltipContext, setClickedSubCat, setClicked,]);
 
   return (
     <></>
