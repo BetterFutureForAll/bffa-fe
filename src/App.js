@@ -3,12 +3,11 @@ import './App.css';
 import MapMaker from './components/MapMaker';
 import ToolTip from './components/ToolTip';
 import {
-  useDataByCountry, useDataByYear, useYears,
+  useDataByCountry, useDataByYear, useYears, useWindowSize, useHandleCountryChange, useCountries,
   useToolTip, useHandleYearChange, useZoom, useLoading,
   useClickedSubCat, useClicked, useDefinitions, useMapSize
 } from './hooks/hooks';
 import ModalDefinitions from './containers/ModalDefinitions';
-import { useWindowSize, useHandleCountryChange, useCountries } from './hooks/hooks';
 import Legend from './components/Legend';
 import ControlBar from './components/ControlBar';
 

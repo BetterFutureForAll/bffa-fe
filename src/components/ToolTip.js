@@ -381,7 +381,6 @@ const ToolTip = ({ tooltipContext, setClicked, setClickedSubCat }) => {
 
     };
     console.log('ToolTipRendered', tooltipContext)
-    console.log('ToolTipRendered', tooltipContext.loading)
     if(tooltipContext.loading || !tooltipContext.svgRef || !tooltipContext.data) return; 
     ready();
   }, [tooltipContext, setClickedSubCat, setClicked,]);

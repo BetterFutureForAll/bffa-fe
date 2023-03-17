@@ -4,10 +4,7 @@ import { feature, mesh } from "topojson-client";
 import { colorScale } from '../services/SocialProgress';
 import { countryIdTable } from '../assets/iso.json'
 
-const MapMaker = ({
-  svgRef, width, height, spiData, setClicked, setClickedSubCat,
-  yearValue, setLoading, setZoomState,
-  setCountryValue }) => {
+const MapMaker = ({ svgRef, width, height, spiData, yearValue, setLoading, setZoomState, setCountryValue }) => {
 
   let mapData = d3.json("https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json")
     .then(data => {
@@ -19,8 +16,7 @@ const MapMaker = ({
         r.properties['mapId'] = (result[0] !== undefined) ? result[0]["alpha-3"] : null;
       })
       return data;
-    })
-
+    });
 
 
   useEffect(() => {
@@ -46,7 +42,6 @@ const MapMaker = ({
       }
 
       function countryMouseOver(event, d) {
-        console.log(event, d);
         let spiMatch = getSpiData(d);
         let name = spiMatch ? spiMatch[0].country : "World";
         setCountryValue(name);
@@ -54,7 +49,6 @@ const MapMaker = ({
 
       let zoomed = (event, d) => {
         const { transform } = event;
-
         // Save the Current Zoom level so we can scale tooltips. 
         setZoomState({ x: transform.x, y: transform.y, k: transform.k });
 
@@ -151,13 +145,11 @@ const MapMaker = ({
       ready(values);
     });
 
-
-    
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [yearValue, svgRef, height, width, spiData, setZoomState, setCountryValue]);
 
   return (
-<></>
+    <></>
   );
 };
 

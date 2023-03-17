@@ -7,11 +7,6 @@ import {
 } from '../services/SocialProgress';
 import * as d3 from 'd3';
 
-export const useContent = () => {
-  let [content, setContent] = useState('');
-  return [content, setContent];
-};
-
 export const useClicked = () => {
   let [clicked, setClicked] = useState(null);
   useEffect(() => {
@@ -27,7 +22,6 @@ export const useLoading = () =>{
   return [loading, setLoadingCallback];
 }
 
-
 export const useClickedSubCat = () => {
   let [clickedSubCat, setClickedSubCat] = useState(null);
   useEffect(() => {
@@ -35,16 +29,6 @@ export const useClickedSubCat = () => {
   }, [clickedSubCat])
   return [clickedSubCat, setClickedSubCat];
 }
-
-export const useMouse = () => {
-  let [mouse, setMouse] = useState('World');
-  return [mouse, setMouse];
-}
-
-export const useScore = () => {
-  let [score, setScore] = useState({ name: '', score: '' });
-  return [score, setScore];
-};
 
 export const useZoom = () => {
   let [zoomState, setZoomState] = useState(
@@ -115,16 +99,9 @@ export const useDataByCountry = (spiByYear, countryValue) => {
   return [spiByCountry, setSpiByCountry];
 };
 
-export function useTarget() {
-  let [selectedTarget, selectTarget] = useState(null);
-  useEffect(() => {
-    selectTarget(selectedTarget);
-  }, [selectTarget, selectedTarget])
-  return [selectedTarget, selectTarget]
-}
-
 export function useToolTip() {
   let [tooltipContext, setToolTipContext] = useState({
+    loading: true,
     svgRef: null,
     center: [0, 0],
     name: 'World',
@@ -156,7 +133,7 @@ export function scoreToColor(score) {
     .domain([0, 20, 40, 60, 80, 100])
     .range([
       '#c4c2c4',
-      // '#f64c5c',
+      '#f64c5c',
       '#c574fb',
       '#7484fb',
       '#00e4fb',
