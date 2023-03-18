@@ -5,7 +5,6 @@ import { colorScale } from '../services/SocialProgress';
 import { countryIdTable } from '../assets/iso.json'
 
 const MapMaker = ({ svgRef, width, height, spiData, yearValue, setLoading, setZoomState, setCountryValue }) => {
-
   let mapData = d3.json("https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json")
     .then(data => {
       data.objects.countries.geometries.forEach((r) => {
@@ -109,7 +108,6 @@ const MapMaker = ({ svgRef, width, height, spiData, yearValue, setLoading, setZo
         .attr('class', 'toolTipTarget')
         .attr('id', (d, i) => {
           let match = getSpiData(d);
-          if (d === 'WWW') console.log('target', match, d);
           //ID has to adjust for the spiMatch function to find it proper target.
           return (match ? `${match[0].spicountrycode}_target` : `${i}_target`)
         })

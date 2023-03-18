@@ -380,7 +380,6 @@ const ToolTip = ({ tooltipContext, setClicked, setClickedSubCat }) => {
       d3.selectAll('.petalBackgroundPath').on('mouseenter', doItAll)
 
     };
-    console.log('ToolTipRendered', tooltipContext)
     if(tooltipContext.loading || !tooltipContext.svgRef || !tooltipContext.data) return; 
     ready();
   }, [tooltipContext, setClickedSubCat, setClicked,]);
