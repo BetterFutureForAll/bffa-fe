@@ -1,23 +1,24 @@
-import React, { useEffect, useLayoutEffect, useRef, useMemo } from 'react';
+import React, { useEffect, useLayoutEffect, useRef } from 'react';
 import './App.css';
-import * as d3 from 'd3'
-import MapContainer from './containers/Map';
+import MapMaker from './components/MapMaker';
+import ToolTip from './components/ToolTip';
 import {
-  useDataByCountry, useDataByYear, useYears,
-  useToolTip, useHandleYearChange, useZoom,
+  useDataByCountry, useDataByYear, useYears, useWindowSize, useHandleCountryChange, useCountries,
+  useToolTip, useHandleYearChange, useZoom, useLoading,
   useClickedSubCat, useClicked, useDefinitions, useMapSize
 } from './hooks/hooks';
 import ModalDefinitions from './containers/ModalDefinitions';
-import { useWindowSize, useHandleCountryChange, useCountries } from './hooks/hooks';
 import Legend from './components/Legend';
 import ControlBar from './components/ControlBar';
 
-let localGeoData = process.env.PUBLIC_URL + '/cleanedMap.json';
-
 function App() {
+
+  let svgRef = useRef(null);
   let modalRef = useRef(null);
+
   // Total screen size available
   let [width, height] = useWindowSize();
+
   // Map Size
   let [mapHeight, mapWidth] = useMapSize(height, width);
   let [countryValue, setCountryValue] = useHandleCountryChange();
@@ -32,14 +33,11 @@ function App() {
   let [clickedSubCat, setClickedSubCat] = useClickedSubCat();
   let [defContext, setDefContext] = useDefinitions();
 
-  let mapData = useMemo(() => d3.json(localGeoData), []);
-
   let handleCountryChange = e => setCountryValue(e.target.value);
 
   let [spiByYear] = useDataByYear(yearValue);
   let [spiByCountry] = useDataByCountry(spiByYear, countryValue);
-
-  let svgRef = useRef(null);
+  let [loading, setLoading] = useLoading();
 
   let selectYears = (
     <>
@@ -67,40 +65,56 @@ function App() {
     </select>
   );
 
+  //State for the DefinitionsModal
   useLayoutEffect(() => {
     let id = clicked ? clicked.replace(/ /g, "_") : null;
     let subId = clickedSubCat ? clickedSubCat.replace(/ /g, "_") : null;
     setDefContext({
       dimension: id,
       component: subId,
-      countryValue: countryValue
+      countryValue: countryValue,
+      indicator_number: null,
     });
   }, [clicked, clickedSubCat, setDefContext, countryValue])
 
+  //State for the flower ToolTip
   useEffect(() => {
     setToolTipContext({
+      loading,
       svgRef,
-      countryValue,
+      countryValue: countryValue,
+      zoomState,
       data: spiByCountry,
     });
-  }, [countryValue, yearValue, spiByCountry, setToolTipContext])
+  }, [countryValue, yearValue, spiByCountry, setToolTipContext, zoomState, loading])
 
   return (
     <div className="App">
-      <MapContainer
+      <div id="MapContainer" >
+        <svg ref={svgRef} height={mapHeight} width={mapWidth} id="map">
+        </svg>
+      </div>
+      <MapMaker
         svgRef={svgRef}
-        width={mapWidth}
-        height={mapHeight}
-        selectYears={selectYears}
         yearValue={yearValue}
+        height={mapHeight}
+        width={mapWidth}
+        loading={loading}
+        setLoading={setLoading}
         countryValue={countryValue}
         setCountryValue={setCountryValue}
         tooltipContext={tooltipContext}
         setToolTipContext={setToolTipContext}
         spiData={spiByYear}
-        mapData={mapData}
         zoomState={zoomState}
         setZoomState={setZoomState}
+        setClicked={setClicked}
+        setClickedSubCat={setClickedSubCat}
+      >
+      </MapMaker>
+      <ToolTip
+        tooltipContext={tooltipContext}
+        zoomState={zoomState}
         setClicked={setClicked}
         setClickedSubCat={setClickedSubCat}
       />

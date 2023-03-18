@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 //refactor to  proper props, you know what you mean. 
 const ControlBar = ({ selectYears, yearValue, handleSubmit, selectCountries, handleCountryChange, countryValue, spiData }) => {
 
-  let scoreText = spiData ? spiData[0].score_spi : '';
+  let scoreText = spiData ? spiData[0].score_spi : 0;
 
   return (
     <>
@@ -13,7 +13,7 @@ const ControlBar = ({ selectYears, yearValue, handleSubmit, selectCountries, han
           <label id="country_list" value={countryValue} ></label>
           {selectCountries}
         </form>
-        <h3 id='score-text'>{`${scoreText}`}</h3>
+        <h3 id='score-text'>{`${scoreText ? scoreText : "Partial" }`}</h3>
       </div>
       <form onSubmit={handleSubmit}>
         <label id="years" value={yearValue} ></label>

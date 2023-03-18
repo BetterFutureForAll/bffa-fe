@@ -2,28 +2,32 @@ import React, { useEffect } from 'react';
 import * as d3 from 'd3';
 import { feature, mesh } from "topojson-client";
 import { colorScale } from '../services/SocialProgress';
-import ToolTip from './ToolTip';
+import { countryIdTable } from '../assets/iso.json'
 
-const MapMaker = ({
-  svgRef, width, height, spiData, mapData, setClicked, setClickedSubCat,
-  yearValue, loading, setLoading, zoomState, setZoomState,
-  setCountryValue, tooltipContext }) => {
+const MapMaker = ({ svgRef, width, height, spiData, yearValue, setLoading, setZoomState, setCountryValue }) => {
+  let mapData = d3.json("https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json")
+    .then(data => {
+      data.objects.countries.geometries.forEach((r) => {
+        var result = countryIdTable.filter(function (iso) {
+          return iso['country-code'] === r.id;
+        });
+        // assign an ISO-Alpha to each country geometry 
+        r.properties['mapId'] = (result[0] !== undefined) ? result[0]["alpha-3"] : null;
+      })
+      return data;
+    });
 
-  let loadingSpinner = require('../assets/loadingMap.gif');
-  
+
   useEffect(() => {
 
     function ready(data) {
-
       //Check Width for scale.
-
       let checkedSize = Math.min(width);
       let projection = d3.geoEqualEarth()
-        .scale(checkedSize / 5)
+        .scale(checkedSize / 6)
         .translate([width / 2, height / 2])
 
       let path = d3.geoPath().projection(projection);
-
       let mapFeatures = feature(data[0], data[0].objects.countries).features;
 
       let spiCountryGroup = d3.group(data[1], d => d.spicountrycode);
@@ -32,11 +36,7 @@ const MapMaker = ({
 
       function getSpiData(d) {
         let spiMatch;
-        if (d.properties.ISO_A3_EH === '-99') {
-          spiMatch = spiMatcher(d.properties.GU_A3);
-        } else {
-          spiMatch = spiMatcher(d.properties.ISO_A3_EH);
-        }
+        spiMatch = spiMatcher(d.properties.mapId);
         return spiMatch;
       }
 
@@ -75,10 +75,9 @@ const MapMaker = ({
 
       svg.call(zoom);
 
-
       // *** Country groupings ***
       let countries = g.selectAll(".country")
-        .data(mapFeatures.filter(d => d.properties.ISO_A3_EH !== "ATA"))
+        .data(mapFeatures.filter(d => d.properties.mapId !== "ATA"))
         .join("path")
         .attr("d", path)
         .attr("class", "country")
@@ -89,7 +88,7 @@ const MapMaker = ({
         .attr("cursor", "pointer")
         .attr("fill", d => {
           let match = getSpiData(d);
-          return match ? colorScale(match[0].score_spi) : "#c4c2c4"
+          return match ? colorScale((match[0].score_spi || 0)) : "#c4c2c4"
         })
         .on("click", countryMouseOver)
         .on("mouseenter", (event, d) => {
@@ -98,13 +97,13 @@ const MapMaker = ({
         .on("mouseleave",
           d => { d3.select(d.path[0]).style("opacity", "1"); })
         .append("title")
-        .text(d => { return `${d.properties.NAME_EN}` })
+        .text(d => { return `${d.properties.name}` })
 
       countries.exit().remove();
 
       g.selectAll(`.toolTipTarget`)
         //** Filter Country matches here  */
-        .data(mapFeatures.filter(d => d.properties.ISO_A3_EH !== "ATA"))
+        .data(mapFeatures.filter(d => d.properties.mapId !== "ATA"))
         .join('circle')
         .attr('class', 'toolTipTarget')
         .attr('id', (d, i) => {
@@ -116,6 +115,13 @@ const MapMaker = ({
         .attr("cy", d => path.centroid(d)[1])
         .attr("r", 0)
 
+      //append a centerTarget for the world.
+      g.selectAll(`.toolTipTarget`)
+        .append('circle')
+        .attr('id', "world_target")
+        .attr("cx", width / 2)
+        .attr("cy", height / 2)
+        .attr("r", 0);
 
       // // *** borders / whitespace mesh ***
       let borders = g.append("path")
@@ -137,21 +143,11 @@ const MapMaker = ({
       ready(values);
     });
 
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [yearValue, svgRef, height, width, spiData]);
-
-  while (loading) return (<img src={loadingSpinner} alt={'loading spinner'} id="loading-spinner" className="loading-spinner" />)
+  }, [yearValue, svgRef, height, width, spiData, setZoomState, setCountryValue]);
 
   return (
-    <svg ref={svgRef} height={height} width={width} id="map">
-      <ToolTip
-        tooltipContext={tooltipContext}
-        zoomState={zoomState}
-        setClicked={setClicked}
-        setClickedSubCat={setClickedSubCat}
-      />
-    </svg>
+    <></>
   );
 };
 
