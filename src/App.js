@@ -5,11 +5,13 @@ import ToolTip from './components/ToolTip';
 import {
   useDataByCountry, useDataByYear, useYears, useWindowSize, useHandleCountryChange, useCountries,
   useToolTip, useHandleYearChange, useZoom, useLoading,
-  useClickedSubCat, useClicked, useDefinitions, useMapSize
+  useClickedSubCat, useClicked, useDefinitions, useMapSize, useMapContext,
 } from './hooks/hooks';
+import { promisedMap } from './services/SocialProgress';
 import ModalDefinitions from './containers/ModalDefinitions';
 import Legend from './components/Legend';
 import ControlBar from './components/ControlBar';
+import { map } from 'd3';
 
 function App() {
 
@@ -25,6 +27,7 @@ function App() {
   let [countries] = useCountries();
   let [years] = useYears();
   let [yearValue, handleYearChange] = useHandleYearChange();
+  let [mapContext, setMapContext] = useMapContext();
 
   //  ToolTip State
   let [tooltipContext, setToolTipContext] = useToolTip();
@@ -88,6 +91,22 @@ function App() {
     });
   }, [countryValue, yearValue, spiByCountry, setToolTipContext, zoomState, loading])
 
+
+  //Map State
+  useEffect(()=>{
+    // setLoading(true);
+    setMapContext({
+      loading: loading,
+      svgRef: svgRef,
+      mapData: promisedMap,
+      size: [mapWidth, mapHeight],
+      spiData: spiByYear,
+      yearValue,
+    })
+    while(!promisedMap){ setLoading(false);}
+    console.log(mapContext, loading)
+  },[loading, svgRef, promisedMap, mapWidth, mapHeight, spiByYear, yearValue])
+
   return (
     <div className="App">
       <div id="MapContainer" >
@@ -95,29 +114,30 @@ function App() {
         </svg>
       </div>
       <MapMaker
-        svgRef={svgRef}
-        yearValue={yearValue}
-        height={mapHeight}
-        width={mapWidth}
-        loading={loading}
+        mapContext={mapContext}
+        // svgRef={svgRef}
+        // yearValue={yearValue}
+        // height={mapHeight}
+        // width={mapWidth}
+        // spiData={spiByYear}
+        // loading={loading}
+        // countryValue={countryValue}
         setLoading={setLoading}
-        countryValue={countryValue}
         setCountryValue={setCountryValue}
         tooltipContext={tooltipContext}
         setToolTipContext={setToolTipContext}
-        spiData={spiByYear}
         zoomState={zoomState}
         setZoomState={setZoomState}
         setClicked={setClicked}
         setClickedSubCat={setClickedSubCat}
       >
       </MapMaker>
-      <ToolTip
+      {/* <ToolTip
         tooltipContext={tooltipContext}
         zoomState={zoomState}
         setClicked={setClicked}
         setClickedSubCat={setClickedSubCat}
-      />
+      /> */}
       <Legend
         height={mapHeight}
         width={mapWidth}

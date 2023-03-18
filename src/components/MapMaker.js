@@ -4,19 +4,21 @@ import { feature, mesh } from "topojson-client";
 import { colorScale } from '../services/SocialProgress';
 import { countryIdTable } from '../assets/iso.json'
 
-const MapMaker = ({ svgRef, width, height, spiData, yearValue, setLoading, setZoomState, setCountryValue }) => {
-
-  let mapData = d3.json("https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json")
-    .then(data => {
-      data.objects.countries.geometries.forEach((r) => {
-        var result = countryIdTable.filter(function (iso) {
-          return iso['country-code'] === r.id;
-        });
-        // assign an ISO-Alpha to each country geometry 
-        r.properties['mapId'] = (result[0] !== undefined) ? result[0]["alpha-3"] : null;
-      })
-      return data;
-    });
+const MapMaker = ({ mapContext, setLoading, setZoomState, setCountryValue }) => {
+  console.log(mapContext)
+  let { loading, svgRef, mapData, size, spiData, yearValue } = mapContext;
+  let [width, height] = size;
+  // let mapData = d3.json("https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json")
+  //   .then(data => {
+  //     data.objects.countries.geometries.forEach((r) => {
+  //       var result = countryIdTable.filter(function (iso) {
+  //         return iso['country-code'] === r.id;
+  //       });
+  //       // assign an ISO-Alpha to each country geometry 
+  //       r.properties['mapId'] = (result[0] !== undefined) ? result[0]["alpha-3"] : null;
+  //     })
+  //     return data;
+  //   });
 
 
   useEffect(() => {
@@ -139,13 +141,13 @@ const MapMaker = ({ svgRef, width, height, spiData, yearValue, setLoading, setZo
 
     setLoading(true);
     if (spiData.length === 0) return;
-
-    Promise.all([mapData, spiData]).then(function (values) {
-      setLoading(false);
+    Promise.all([mapData, spiData]).then(function (values) {  
+      if(loading) return;
       ready(values);
     });
-
+//need ZoomState, and setCountryValue as callback isolated from mapMakers useEffect
     // eslint-disable-next-line react-hooks/exhaustive-deps
+
   }, [yearValue, svgRef, height, width, spiData, setZoomState, setCountryValue]);
 
   return (

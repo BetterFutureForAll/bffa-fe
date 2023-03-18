@@ -3,7 +3,8 @@ import {
   makeYearsArray,
   getSpiDataByYear,
   makeCountriesArray,
-  getSpiDataByCountry
+  getSpiDataByCountry,
+  mapData
 } from '../services/SocialProgress';
 import * as d3 from 'd3';
 
@@ -97,6 +98,24 @@ export const useDataByCountry = (spiByYear, countryValue) => {
   }, [spiByYear, countryValue]);
 
   return [spiByCountry, setSpiByCountry];
+};
+
+//need ZoomState, and setCountryValue as callback isolated from mapMakers useEffect
+export function useMapContext() {
+  let [mapContext, setMapContext] = useState({
+    loading: true,
+    svgRef: null,
+    mapData: null,
+    size: [0, 0],
+    spiData: [],
+    yearValue: 2022,
+  });
+
+  useEffect(() => {
+    setMapContext(mapContext);
+  }, [mapContext, setMapContext])
+
+  return [mapContext, setMapContext];
 };
 
 export function useToolTip() {

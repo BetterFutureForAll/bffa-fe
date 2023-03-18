@@ -230,8 +230,9 @@ const ToolTip = ({ tooltipContext, setClicked, setClickedSubCat }) => {
             return (currentData === targetData) ? "white" : `${d.colorFn(Object.values(d)[0])}`;
           });
 
-        let mouseZoomX = (+event.x - +zoomState.x) / zoomState.k;
-        let mouseZoomY = (+event.y - +zoomState.y) / zoomState.k;
+        let worldCheckedCoords = worldCheck? [+event.x,+event.y] : [(+event.x - +zoomState.x), (+event.y - +zoomState.y)];
+        let mouseZoomX = worldCheckedCoords[0] / worldCheckedScale;
+        let mouseZoomY = worldCheckedCoords[1] / worldCheckedScale;
         let roundedNum = (+Object.values(d)[0]).toFixed();
 
         textTooltip

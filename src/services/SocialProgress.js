@@ -4,16 +4,16 @@ import { countryIdTable } from '../assets/iso.json';
 
 const keyFixer = (key) => key.replace(/[\n\r]*\((.*)\)[ \n\r]*/g, '');
 
-export const parsedData = Promise.all([data, countryIdTable]).then(function (d) {
-  //Combine ISO3166 codes, ISO Alpha to ISO Numeric for ID
-  d[0].forEach((r) => {
-    var result = d[1].filter(function (iso) {
-      return iso['alpha-3'] === r.spicountrycode;
+export const promisedMap = d3.json("https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json")
+.then(data => {
+  data.objects.countries.geometries.forEach((r) => {
+    var result = countryIdTable.filter(function (iso) {
+      return iso['country-code'] === r.id;
     });
-    // assign a mapId to the spi data set 
-    r['mapId'] = (result[0] !== undefined) ? result[0]["country-code"] : null;
+    // assign an ISO-Alpha to each country geometry 
+    r.properties['mapId'] = (result[0] !== undefined) ? result[0]["alpha-3"] : null;
   })
-  return d;
+  return data;
 });
 
 export const dataKeys = data[0];
@@ -38,8 +38,6 @@ export async function getSpiDataByYear(year) {
 };
 
 export async function getSpiDataByCountry(data, countryValue) {
-  // let countries = d3.group(data, d => d['country']);
-  // let result = countries.get(countryValue);
   let found = data.find(d => d.country === countryValue)
   if (!found) return;
   const output = Object.keys(found).reduce((previous, key) => {
