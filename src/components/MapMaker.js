@@ -2,32 +2,26 @@ import React, { useEffect } from 'react';
 import * as d3 from 'd3';
 import { feature, mesh } from "topojson-client";
 import { colorScale } from '../services/SocialProgress';
-import { countryIdTable } from '../assets/iso.json'
 
-const MapMaker = ({ mapContext, setLoading, setZoomState, setCountryValue }) => {
-  console.log(mapContext)
-  let { loading, svgRef, mapData, size, spiData, yearValue } = mapContext;
+const MapMaker = ({ mapProps, setZoomState, setCountryValue }) => {
+
+  let {
+    loading,
+    mapData,
+    svgRef,
+    size,
+    spiData,
+  } = mapProps;
+
   let [width, height] = size;
-  // let mapData = d3.json("https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json")
-  //   .then(data => {
-  //     data.objects.countries.geometries.forEach((r) => {
-  //       var result = countryIdTable.filter(function (iso) {
-  //         return iso['country-code'] === r.id;
-  //       });
-  //       // assign an ISO-Alpha to each country geometry 
-  //       r.properties['mapId'] = (result[0] !== undefined) ? result[0]["alpha-3"] : null;
-  //     })
-  //     return data;
-  //   });
-
-
   useEffect(() => {
-
-    function ready(data) {
+    if (mapData && spiData && !loading) {
+      function ready(data) {
       //Check Width for scale.
-      let checkedSize = Math.min(width);
+      let checkedSize = Math.min(width, height);
+      console.log('size',checkedSize, width)
       let projection = d3.geoEqualEarth()
-        .scale(checkedSize / 6)
+        .scale(checkedSize / 5)
         .translate([width / 2, height / 2])
 
       let path = d3.geoPath().projection(projection);
@@ -61,7 +55,7 @@ const MapMaker = ({ mapContext, setLoading, setZoomState, setCountryValue }) => 
       };
 
       const zoom = d3.zoom()
-        .translateExtent([[-.25 * width, -.25 * height], [width * 1.5, height * 1.25]])
+        .translateExtent([[-.15 * width, -.15 * height], [width * 1.5, height * 1.25]])
         .scaleExtent([1, 10])
         .on('zoom', zoomed)
 
@@ -95,10 +89,10 @@ const MapMaker = ({ mapContext, setLoading, setZoomState, setCountryValue }) => 
         })
         .on("click", countryMouseOver)
         .on("mouseenter", (event, d) => {
-          d3.select(event.path[0]).style("opacity", ".8");
+          d3.select(event.target).style("opacity", ".8");
         })
         .on("mouseleave",
-          d => { d3.select(d.path[0]).style("opacity", "1"); })
+          d => { d3.select(d.target).style("opacity", "1"); })
         .append("title")
         .text(d => { return `${d.properties.name}` })
 
@@ -139,16 +133,10 @@ const MapMaker = ({ mapContext, setLoading, setZoomState, setCountryValue }) => 
 
     };
 
-    setLoading(true);
-    if (spiData.length === 0) return;
-    Promise.all([mapData, spiData]).then(function (values) {  
-      if(loading) return;
-      ready(values);
-    });
-//need ZoomState, and setCountryValue as callback isolated from mapMakers useEffect
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    ready([mapData, spiData]);
+  };
 
-  }, [yearValue, svgRef, height, width, spiData, setZoomState, setCountryValue]);
+  }, [loading, mapData, spiData, height, width, svgRef, setZoomState, setCountryValue]);
 
   return (
     <></>
@@ -156,3 +144,84 @@ const MapMaker = ({ mapContext, setLoading, setZoomState, setCountryValue }) => 
 };
 
 export default MapMaker;
+
+
+// import { useState, useCallback, useEffect } from 'react';
+// import * as d3 from 'd3';
+// import { feature, mesh } from 'topojson-client';
+// import { colorScale } from '../services/SocialProgress';
+
+// const useMapMaker = ({ setLoading, setZoomState, setCountryValue }) => {
+//   const [mapData, setMapData] = useState(null);
+//   const [spiData, setSpiData] = useState(null);
+//   const [width, setWidth] = useState(0);
+//   const [height, setHeight] = useState(0);
+//   const svgRef = useRef(null);
+
+//   const loadMapData = useCallback(() => {
+//     Promise.all([
+//       fetch('/path/to/mapData.json').then((response) => response.json()),
+//       fetch('/path/to/spiData.json').then((response) => response.json()),
+//     ]).then(([mapData, spiData]) => {
+//       setMapData(mapData);
+//       setSpiData(spiData);
+//       setLoading(false);
+//     });
+//   }, [setLoading]);
+
+//   useEffect(() => {
+//     loadMapData();
+//   }, [loadMapData]);
+
+//   useEffect(() => {
+//     if (mapData && spiData) {
+//       const { width: newWidth, height: newHeight } = svgRef.current.getBoundingClientRect();
+//       setWidth(newWidth);
+//       setHeight(newHeight);
+
+//       function ready(data) {
+//         // Check Width for scale.
+//         let checkedSize = Math.min(width);
+//         let projection = d3.geoEqualEarth()
+//           .scale(checkedSize / 6)
+//           .translate([width / 2, height / 2])
+
+//         let path = d3.geoPath().projection(projection);
+//         let mapFeatures = feature(data[0], data[0].objects.countries).features;
+
+//         let spiCountryGroup = d3.group(data[1], d => d.spicountrycode);
+
+//         function spiMatcher(id) { return spiCountryGroup.get(id); };
+
+//         function getSpiData(d) {
+//           let spiMatch;
+//           spiMatch = spiMatcher(d.properties.mapId);
+//           return spiMatch;
+//         }
+
+//         function countryMouseOver(event, d) {
+//           let spiMatch = getSpiData(d);
+//           let name = spiMatch ? spiMatch[0].country : 'World';
+//           setCountryValue(name);
+//         };
+
+//         let zoomed = (event, d) => {
+//           const { transform } = event;
+//           // Save the Current Zoom level so we can scale tooltips.
+//           setZoomState({ x: transform.x, y: transform.y, k: transform.k });
+
+//           svg.selectAll('.country, .border, .toolTipTarget')
+//             .attr('transform', transform)
+//             .attr('transform', `translate(${transform.x},${transform.y}) scale(${transform.k})`)
+//             .attr('stroke-width', 1 / transform.k);
+//         };
+
+//         const zoom = d3.zoom()
+//           .translateExtent([[-.25 * width, -.25 * height], [width * 1.5, height * 1.25]])
+//           .scaleExtent([1, 10])
+//           .on('zoom', zoomed);
+
+//         // *** Top Level Selector (ViewBox) ***
+//         let svg = d3.select(svgRef.current)
+//           .attr('id', 'viewbox')
+//           .
