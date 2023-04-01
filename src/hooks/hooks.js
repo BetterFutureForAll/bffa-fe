@@ -3,8 +3,7 @@ import {
   makeYearsArray,
   getSpiDataByYear,
   makeCountriesArray,
-  getSpiDataByCountry,
-  mapData
+  getSpiDataByCountry
 } from '../services/SocialProgress';
 import * as d3 from 'd3';
 
@@ -17,8 +16,8 @@ export const useClicked = () => {
 }
 export const useLoading = () =>{
   let [loading, setLoading] = useState(true);
-  const setLoadingCallback = useCallback(() => {
-    setLoading(t => !t);
+  const setLoadingCallback = useCallback((t) => {
+    setLoading(t);
   }, []);
   return [loading, setLoadingCallback];
 }
@@ -100,24 +99,6 @@ export const useDataByCountry = (spiByYear, countryValue) => {
   return [spiByCountry, setSpiByCountry];
 };
 
-//need ZoomState, and setCountryValue as callback isolated from mapMakers useEffect
-export function useMapContext() {
-  let [mapContext, setMapContext] = useState({
-    loading: true,
-    svgRef: null,
-    mapData: null,
-    size: [0, 0],
-    spiData: [],
-    yearValue: 2022,
-  });
-
-  useEffect(() => {
-    setMapContext(mapContext);
-  }, [mapContext, setMapContext])
-
-  return [mapContext, setMapContext];
-};
-
 export function useToolTip() {
   let [tooltipContext, setToolTipContext] = useState({
     loading: true,
@@ -186,7 +167,7 @@ export function useWindowSize() {
 };
 
 export function useMapSize(height, width) {
-  let heightCalc = (window.matchMedia('(orientation: landscape)').matches && window.matchMedia('(min-width: 600px)').matches) ? height : height * .4;
+  let heightCalc = (window.matchMedia('(orientation: landscape)').matches && window.matchMedia('(min-width: 600px)').matches) ? height : height * .5;
   let widthCalc = (window.matchMedia('(orientation: landscape)').matches && window.matchMedia('(min-width: 600px)').matches) ? width * .6 : width;
   const [mapHeight, setMapHeight] = useState([heightCalc, widthCalc]);
   useEffect(() => {
@@ -194,4 +175,26 @@ export function useMapSize(height, width) {
   }, [heightCalc, widthCalc]);
   return mapHeight;
 };
+
+//sets topoJSON map data into state, and only changes when the yearValue triggers a change in spiData
+export function useMapData(mapData, spiData, setLoadingCallback) {
+  const [stateMapData, setStateMapData] = useState(null);
+  const [stateSpiData, setStateSpiData] = useState(null);
+  const loadMapData = useCallback(() => {
+  mapData.then((m) => {
+      setStateMapData(m);
+    });
+  }, [mapData]);
+  
+  useEffect(() => {
+    setLoadingCallback(true);
+    setStateSpiData(spiData);
+    loadMapData();
+    console.log("loading toggled", spiData)
+    setLoadingCallback(false);
+  }, [spiData, loadMapData, setLoadingCallback]);
+
+  return [stateMapData, stateSpiData]
+}
+
 

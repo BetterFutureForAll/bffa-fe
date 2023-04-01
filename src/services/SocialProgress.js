@@ -2,7 +2,8 @@ import * as d3 from 'd3';
 import { data } from '../assets/spi.json';
 import { countryIdTable } from '../assets/iso.json';
 
-const keyFixer = (key) => key.replace(/[\n\r]*\((.*)\)[ \n\r]*/g, '');
+export const keyFixer = (key) => key.replace(/[\n\r]*\((.*)\)[ \n\r]*/g, '');
+export const nameFixer = (name) => name.replace(/,\s*|\s+/g, '_').toLowerCase();
 
 export const promisedMap = d3.json("https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json")
 .then(data => {
