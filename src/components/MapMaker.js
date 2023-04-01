@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import * as d3 from 'd3';
 import { feature, mesh } from "topojson-client";
-import { colorScale, nameFixer } from '../services/SocialProgress';
+import { colorScale } from '../services/SocialProgress';
 
 const MapMaker = ({ mapProps, setZoomState, setCountryValue, countryValue }) => {
 
@@ -64,7 +64,7 @@ const MapMaker = ({ mapProps, setZoomState, setCountryValue, countryValue }) => 
           let bounds = svg.select(targetId).node().getBBox();
           const cx = bounds.x + bounds.width / 2;
           const cy = bounds.y + bounds.height / 2;
-          const scale = 2;
+          const scale = 3;
           const transform = d3.zoomIdentity.translate(width / 2 - scale * cx, height / 2 - scale * cy).scale(scale);
           svg.transition().duration(500).call(zoom.transform, transform);
         }

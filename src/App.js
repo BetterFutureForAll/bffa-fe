@@ -3,9 +3,22 @@ import './App.css';
 import MapMaker from './components/MapMaker';
 import ToolTip from './components/ToolTip';
 import {
-  useDataByCountry, useDataByYear, useYears, useWindowSize, useHandleCountryChange, useCountries,
-  useToolTip, useHandleYearChange, useZoom, useLoading,
-  useClickedSubCat, useClicked, useDefinitions, useMapSize, useMapData,
+  useDataByCountry, 
+  useDataByYear, 
+  useYears, 
+  useWindowSize, 
+  useHandleCountryChange, 
+  useCountries,
+  useToolTipData,
+  useToolTip, 
+  useHandleYearChange, 
+  useZoom, 
+  useLoading,
+  useClickedSubCat, 
+  useClicked, 
+  useDefinitions, 
+  useMapSize, 
+  useMapData,
 } from './hooks/hooks';
 import { promisedMap } from './services/SocialProgress';
 import ModalDefinitions from './containers/ModalDefinitions';
@@ -28,7 +41,7 @@ function App() {
   let [yearValue, handleYearChange] = useHandleYearChange();
 
   //  ToolTip State
-  let [tooltipContext, setToolTipContext] = useToolTip();
+  // let [tooltipContext, setToolTipContext] = useToolTip();
   let [zoomState, setZoomState] = useZoom();
   let [clicked, setClicked] = useClicked();
   let [clickedSubCat, setClickedSubCat] = useClickedSubCat();
@@ -40,6 +53,8 @@ function App() {
   let [spiByCountry] = useDataByCountry(spiByYear, countryValue);
   let [loading, setLoadingCallback] = useLoading();
 
+
+  // if(loading) { console.log("loading") } else { console.log(spiByCountry, tooltipData) }
 
   let selectYears = (
     <>
@@ -66,22 +81,8 @@ function App() {
       ))}
     </select>
   );
-
-  //State for the DefinitionsModal
-  // const setDefContext = useCallback(() => {
-  //   const id = clicked ? clicked.replace(/ /g, "_") : null;
-  //   const subId = clickedSubCat ? clickedSubCat.replace(/ /g, "_") : null;
-  //   setDefContext({
-  //     dimension: id,
-  //     component: subId,
-  //     countryValue,
-  //     indicator_number: null,
-  //   });
-  // }, [clicked, clickedSubCat, setDefContext, countryValue]);
-
-  // useLayoutEffect(() => {
-  //   setDefContext();
-  // }, [setDefContext]);
+  
+  let [tooltipData] = useToolTipData(spiByCountry);
 
   useLayoutEffect(() => {
     let id = clicked ? clicked.replace(/ /g, "_") : null;
@@ -95,19 +96,7 @@ function App() {
     });
   }, [clicked, clickedSubCat, setDefContext, countryValue])
 
-  //State for the flower ToolTip
-  useEffect(() => {
-    setToolTipContext({
-      loading,
-      svgRef,
-      center: [mapWidth/2, mapHeight/2],
-      countryValue: countryValue,
-      data: spiByCountry,
-    });
-  }, [countryValue, yearValue, spiByCountry, setToolTipContext, loading, mapHeight, mapWidth])
-
   let [mapData, spiData] = useMapData(promisedMap, spiByYear, setLoadingCallback);
-
   let mapProps = {
     loading,
     mapData,
@@ -127,7 +116,6 @@ function App() {
         mapProps={mapProps}
         countryValue={countryValue}
         setCountryValue={setCountryValue}
-        tooltipContext={tooltipContext}
         zoomState={zoomState}
         setZoomState={setZoomState}
         setClicked={setClicked}
@@ -135,8 +123,10 @@ function App() {
       >
       </MapMaker>
       <ToolTip
-        tooltipContext={tooltipContext}
-        zoomState={zoomState}
+        svgRef={svgRef}
+        tooltipData={tooltipData}
+        loading={loading}
+        center={[mapWidth/2, mapHeight/2]}
         setClicked={setClicked}
         setClickedSubCat={setClickedSubCat}
       />
@@ -163,3 +153,19 @@ function App() {
 }
 
 export default App;
+
+  //State for the DefinitionsModal
+  // const setDefContext = useCallback(() => {
+  //   const id = clicked ? clicked.replace(/ /g, "_") : null;
+  //   const subId = clickedSubCat ? clickedSubCat.replace(/ /g, "_") : null;
+  //   setDefContext({
+  //     dimension: id,
+  //     component: subId,
+  //     countryValue,
+  //     indicator_number: null,
+  //   });
+  // }, [clicked, clickedSubCat, setDefContext, countryValue]);
+
+  // useLayoutEffect(() => {
+  //   setDefContext();
+  // }, [setDefContext]);

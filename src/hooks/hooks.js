@@ -1,9 +1,11 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useLayoutEffect, useCallback } from 'react';
 import {
   makeYearsArray,
   getSpiDataByYear,
   makeCountriesArray,
-  getSpiDataByCountry
+  getSpiDataByCountry,
+  parsedTooltipData,
+  getParsedTooltipData
 } from '../services/SocialProgress';
 import * as d3 from 'd3';
 
@@ -72,7 +74,6 @@ export const useCountries = () => {
 
 export const useHandleCountryChange = () => {
   let [countryValue, setCountryValue] = useState('World');
-
   useEffect(() => {
     setCountryValue(countryValue);
   }, [countryValue, setCountryValue]);
@@ -195,6 +196,21 @@ export function useMapData(mapData, spiData, setLoadingCallback) {
   }, [spiData, loadMapData, setLoadingCallback]);
 
   return [stateMapData, stateSpiData]
+}
+
+export function useToolTipData(spiByCountry) {
+  const [tooltipData, setTooltipData] = useState(null);
+
+  useLayoutEffect(()=>{
+    if(!spiByCountry) return;
+    console.log(spiByCountry)
+    getParsedTooltipData(spiByCountry[0]).then(r=>{
+      console.log(r)
+      setTooltipData(r);
+    });
+
+  },[spiByCountry])
+  return [tooltipData];
 }
 
 
