@@ -3,7 +3,7 @@ import * as d3 from 'd3';
 import { feature, mesh } from "topojson-client";
 import { colorScale } from '../services/SocialProgress';
 
-const MapMaker = ({ mapProps, setZoomState, setCountryValue, countryValue }) => {
+const MapMaker = ({ mapProps, setCountryValue, countryValue, yearValue }) => {
 
   let {
     loading,
@@ -17,8 +17,8 @@ const MapMaker = ({ mapProps, setZoomState, setCountryValue, countryValue }) => 
 
   useEffect(() => {
     if (mapData && spiData && !loading) {
+
       function ready(data) {
-        //Check Width for scale.
         let checkedSize = Math.min(width, height);
         let projection = d3.geoEqualEarth()
           .scale(checkedSize / 5)
@@ -43,9 +43,6 @@ const MapMaker = ({ mapProps, setZoomState, setCountryValue, countryValue }) => 
 
         let zoomed = (event, d) => {
           const { transform } = event;
-          // Save the Current Zoom level so we can scale tooltips. 
-          setZoomState({ x: transform.x, y: transform.y, k: transform.k });
-
           svg.selectAll(".country, .border, .toolTipTarget")
             .attr('transform', transform)
             .attr('transform', `translate(${transform.x},${transform.y}) scale(${transform.k})`)
@@ -81,9 +78,17 @@ const MapMaker = ({ mapProps, setZoomState, setCountryValue, countryValue }) => 
           .attr('preserveAspectRatio', 'xMinYMid')
           .on('zoom', zoom)
 
-        svg.selectAll('*').remove();
+        // svg.selectAll('*').remove();
+        
+        //White rectangle to allow clicks outside of countries to zoomToCenter
+        svg.selectAll('.background')
+        .data([1]).join('rect')
+        .attr('class', 'background')
+        .attr("width", width).attr("height", height)
+        .attr("fill", "white")
+        .on('click', zoomToCenter)
 
-        let g = svg.append("g").attr('class', 'countries');
+        let g = svg.selectAll('.countries').data([1]).join("g").attr('class', 'countries');
 
         svg.call(zoom);
 
@@ -143,10 +148,9 @@ const MapMaker = ({ mapProps, setZoomState, setCountryValue, countryValue }) => 
           .attr("stroke-linejoin", "round")
           .attr("d", path(mesh(data[0], data[0].objects.countries, (a, b) => a !== b)))
 
-
         borders.exit().remove();
 
-        //Programmatically call zoom after rerender due to values changing.
+        //Programmatically call zoom after rerender due to values possibly changing from dropdown.
         if(countryValue === "World") zoomToCenter();
         else zoomToTarget(countryValue);
       };
@@ -154,7 +158,7 @@ const MapMaker = ({ mapProps, setZoomState, setCountryValue, countryValue }) => 
       ready([mapData, spiData]);
     };
 
-  }, [loading, mapData, spiData, height, width, svgRef, setZoomState, setCountryValue, countryValue]);
+  }, [loading, mapData, spiData, height, width, svgRef, setCountryValue, countryValue, yearValue]);
 
   return (
     <></>

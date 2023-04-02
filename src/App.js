@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useRef } from 'react';
+import React, { useLayoutEffect, useRef } from 'react';
 import './App.css';
 import MapMaker from './components/MapMaker';
 import ToolTip from './components/ToolTip';
@@ -10,9 +10,7 @@ import {
   useHandleCountryChange, 
   useCountries,
   useToolTipData,
-  useToolTip, 
   useHandleYearChange, 
-  useZoom, 
   useLoading,
   useClickedSubCat, 
   useClicked, 
@@ -35,26 +33,22 @@ function App() {
 
   // Map Size
   let [mapHeight, mapWidth] = useMapSize(height, width);
-  let [countryValue, setCountryValue] = useHandleCountryChange();
+  let [countryValue, setCountryValue, handleCountryChange] = useHandleCountryChange();
   let [countries] = useCountries();
   let [years] = useYears();
   let [yearValue, handleYearChange] = useHandleYearChange();
 
+
   //  ToolTip State
-  // let [tooltipContext, setToolTipContext] = useToolTip();
-  let [zoomState, setZoomState] = useZoom();
   let [clicked, setClicked] = useClicked();
   let [clickedSubCat, setClickedSubCat] = useClickedSubCat();
   let [defContext, setDefContext] = useDefinitions();
 
-  let handleCountryChange = e => setCountryValue(e.target.value);
-
   let [spiByYear] = useDataByYear(yearValue);
   let [spiByCountry] = useDataByCountry(spiByYear, countryValue);
   let [loading, setLoadingCallback] = useLoading();
+  let [tooltipData] = useToolTipData(spiByCountry);
 
-
-  // if(loading) { console.log("loading") } else { console.log(spiByCountry, tooltipData) }
 
   let selectYears = (
     <>
@@ -81,8 +75,8 @@ function App() {
       ))}
     </select>
   );
-  
-  let [tooltipData] = useToolTipData(spiByCountry);
+
+
 
   useLayoutEffect(() => {
     let id = clicked ? clicked.replace(/ /g, "_") : null;
@@ -115,9 +109,8 @@ function App() {
       <MapMaker
         mapProps={mapProps}
         countryValue={countryValue}
+        yearValue={yearValue}
         setCountryValue={setCountryValue}
-        zoomState={zoomState}
-        setZoomState={setZoomState}
         setClicked={setClicked}
         setClickedSubCat={setClickedSubCat}
       >

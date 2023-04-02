@@ -87,54 +87,47 @@ function createPetal(label, score, colorScale, angle, subPetals) {
   const scale = spiScale(score || 0);
   const color = colorScale(score || 0);
   const petalPath = 'M 0 0 c 100 100 80 0 100 0 C 80 0 100 -100 0 0';
-
   return { label, score, scale, color, petalPath, angle, subPetals };
 }
 
 // Define the parsedData function using the createPetal function
-export function parsedTooltipData(d) {
+export function parseTooltipData(d) {
+  if(!d)return null;
   const name = d.country;
   const id = d.spicountrycode;
-  const score = d.score_spi;
+  const score = +d.score_spi;
 
   const basics = createPetal(
-    'Basic Human Needs', d.score_bhn, basicColorScale, 30,
+    'Basic Human Needs', +d.score_bhn, basicColorScale, 30,
     [
-      createPetal('Nutrition and Basic Medical Care', d.score_nbmc, basicColorScale, 0),
-      createPetal('Water and Sanitation', d.score_watsan, basicColorScale, 20),
-      createPetal('Shelter', d.score_shel, basicColorScale, 40),
-      createPetal('Personal Safety', d.score_ps, basicColorScale, 60),
+      createPetal('Nutrition and Basic Medical Care', +d.score_nbmc, basicColorScale, 0),
+      createPetal('Water and Sanitation', +d.score_ws, basicColorScale, 20),
+      createPetal('Shelter', +d.score_sh, basicColorScale, 40),
+      createPetal('Personal Safety', +d.score_ps, basicColorScale, 60),
     ],
   );
 
   const foundations = createPetal(
-    'Foundations of Wellbeing', d.score_fow, foundationsColorScale, 150,
+    'Foundations of Wellbeing', +d.score_fow, foundationsColorScale, 150,
     [
-      createPetal('Access to Basic Knowledge', d.score_abk, foundationsColorScale, 120),
-      createPetal('Access to Information and Communications', d.score_aic, foundationsColorScale, 140),
-      createPetal('Health and Wellness', d.score_hw, foundationsColorScale, 160),
-      createPetal('Environmental Quality', d.score_eq, foundationsColorScale, 180),
+      createPetal('Access to Basic Knowledge', +d.score_abk, foundationsColorScale, 120),
+      createPetal('Access to Information and Communications', +d.score_aic, foundationsColorScale, 140),
+      createPetal('Health and Wellness', +d.score_hw, foundationsColorScale, 160),
+      createPetal('Environmental Quality', +d.score_eq, foundationsColorScale, 180),
     ],
   );
 
   const opportunity = createPetal(
-    'Opportunity', d.score_opp, opportunityColorScale, 270,
+    'Opportunity', +d.score_opp, opportunityColorScale, 270,
     [
-      createPetal('Personal Rights', d.score_pr, opportunityColorScale, 240),
-      createPetal('Personal Freedom and Choice', d.score_pfc, opportunityColorScale, 260),
-      createPetal('Inclusiveness', d.score_inc, opportunityColorScale, 280),
-      createPetal('Access to Advanced Education', d.score_aae, opportunityColorScale, 300),
+      createPetal('Personal Rights', +d.score_pr, opportunityColorScale, 240),
+      createPetal('Personal Freedom and Choice', +d.score_pfc, opportunityColorScale, 260),
+      createPetal('Inclusiveness', +d.score_incl, opportunityColorScale, 280),
+      createPetal('Access to Advanced Education', +d.score_aae, opportunityColorScale, 300),
     ],
   );
 
-  return [{name, id, score, petals:[basics, foundations, opportunity]}];
-}
-
-export function getParsedTooltipData(d) {
-  return new Promise((resolve, reject) => {
-    const data = parsedTooltipData(d);
-    resolve(data);
-  });
+  return {name, id, score, petals:[basics, foundations, opportunity]};
 }
 
 
@@ -144,7 +137,7 @@ export function getParsedTooltipData(d) {
 
 // function parsedData(d) {
 //   let basics = Object.assign({},
-//     { "Basic Human Needs": d.score_bhn },
+//     { "Basic Human Needs": +d.score_bhn },
 //     { scale: spiScale(d.score_bhn || 0) },
 //     { color: basicColorScale(d.score_bhn || 0) },
 //     {
