@@ -275,6 +275,7 @@ const ToolTip = ({ svgRef, tooltipData, loading, setClicked, setClickedSubCat, c
 
       toolTip.raise();
     };
+    
     ready();
   }, [svgRef, tooltipData, loading, setClicked, setClickedSubCat, center]);
 

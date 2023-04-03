@@ -13,6 +13,8 @@ const MapMaker = ({ mapProps, setCountryValue, countryValue, yearValue }) => {
     spiData,
   } = mapProps;
 
+
+
   let [width, height] = size;
 
   useEffect(() => {
@@ -155,7 +157,9 @@ const MapMaker = ({ mapProps, setCountryValue, countryValue, yearValue }) => {
         else zoomToTarget(countryValue);
       };
 
+
       ready([mapData, spiData]);
+
     };
 
   }, [loading, mapData, spiData, height, width, svgRef, setCountryValue, countryValue, yearValue]);
