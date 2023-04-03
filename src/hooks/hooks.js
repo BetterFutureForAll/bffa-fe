@@ -3,7 +3,8 @@ import {
   makeYearsArray,
   getSpiDataByYear,
   makeCountriesArray,
-  getSpiDataByCountry
+  getSpiDataByCountry,
+  parseTooltipData
 } from '../services/SocialProgress';
 import * as d3 from 'd3';
 
@@ -14,10 +15,10 @@ export const useClicked = () => {
   }, [clicked])
   return [clicked, setClicked];
 }
-export const useLoading = () =>{
+export const useLoading = () => {
   let [loading, setLoading] = useState(true);
-  const setLoadingCallback = useCallback(() => {
-    setLoading(t => !t);
+  const setLoadingCallback = useCallback((t) => {
+    setLoading(t);
   }, []);
   return [loading, setLoadingCallback];
 }
@@ -29,13 +30,6 @@ export const useClickedSubCat = () => {
   }, [clickedSubCat])
   return [clickedSubCat, setClickedSubCat];
 }
-
-export const useZoom = () => {
-  let [zoomState, setZoomState] = useState(
-    { x: 0, y: 0, k: 1 }
-  );
-  return [zoomState, setZoomState];
-};
 
 export const useYears = () => {
   let [years, setYears] = useState([]);
@@ -72,12 +66,12 @@ export const useCountries = () => {
 
 export const useHandleCountryChange = () => {
   let [countryValue, setCountryValue] = useState('World');
-
+  let handleCountryChange = e => setCountryValue(e.target.value);
   useEffect(() => {
     setCountryValue(countryValue);
-  }, [countryValue, setCountryValue]);
+  }, [countryValue]);
 
-  return [countryValue, setCountryValue];
+  return [countryValue, setCountryValue, handleCountryChange];
 };
 
 export const useDataByYear = (yearValue) => {
@@ -96,23 +90,7 @@ export const useDataByCountry = (spiByYear, countryValue) => {
       .then(d => setSpiByCountry(d));
   }, [spiByYear, countryValue]);
 
-  return [spiByCountry, setSpiByCountry];
-};
-
-export function useToolTip() {
-  let [tooltipContext, setToolTipContext] = useState({
-    loading: true,
-    svgRef: null,
-    center: [0, 0],
-    name: 'World',
-    data: []
-  });
-
-  useEffect(() => {
-    setToolTipContext(tooltipContext);
-  }, [tooltipContext, setToolTipContext])
-
-  return [tooltipContext, setToolTipContext];
+  return [spiByCountry];
 };
 
 export function useDefinitions() {
@@ -167,7 +145,7 @@ export function useWindowSize() {
 };
 
 export function useMapSize(height, width) {
-  let heightCalc = (window.matchMedia('(orientation: landscape)').matches && window.matchMedia('(min-width: 600px)').matches) ? height : height * .4;
+  let heightCalc = (window.matchMedia('(orientation: landscape)').matches && window.matchMedia('(min-width: 600px)').matches) ? height : height * .5;
   let widthCalc = (window.matchMedia('(orientation: landscape)').matches && window.matchMedia('(min-width: 600px)').matches) ? width * .6 : width;
   const [mapHeight, setMapHeight] = useState([heightCalc, widthCalc]);
   useEffect(() => {
@@ -175,4 +153,35 @@ export function useMapSize(height, width) {
   }, [heightCalc, widthCalc]);
   return mapHeight;
 };
+
+//sets topoJSON map data into state, and only changes when the yearValue triggers a change in spiData
+export function useMapData(mapData, spiData, setLoadingCallback) {
+  const [stateMapData, setStateMapData] = useState(null);
+  const [stateSpiData, setStateSpiData] = useState(null);
+  const loadMapData = useCallback(() => {
+    mapData.then((m) => {
+      setStateMapData(m);
+    });
+  }, [mapData]);
+
+  useEffect(() => {
+    setLoadingCallback(true);
+    setStateSpiData(spiData);
+    loadMapData();
+    setLoadingCallback(false);
+  }, [spiData, loadMapData, setLoadingCallback]);
+
+  return [stateMapData, stateSpiData]
+}
+
+export function useToolTipData(spiByCountry) {
+  const [tooltipData, setTooltipData] = useState(null);
+  useEffect(() => {
+    const parsedTooltipData = spiByCountry? parseTooltipData(spiByCountry[0]) : null;
+    if(!parsedTooltipData)return;
+    setTooltipData(parsedTooltipData);
+  }, [spiByCountry])
+  return [tooltipData, setTooltipData];
+}
+
 

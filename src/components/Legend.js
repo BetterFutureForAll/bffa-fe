@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import * as d3 from 'd3';
 import { colorScale } from '../services/SocialProgress';
 
-const Legend = ({  width, height }) => {
+const Legend = ({ width, height }) => {
 
   let legendRef = useRef(null);
   let legendData = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
