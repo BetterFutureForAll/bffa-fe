@@ -18,7 +18,7 @@ import {
   useMapSize, 
   useMapData,
 } from './hooks/hooks';
-import { promisedMap } from './services/SocialProgress';
+import { promisedMap, useParsedCitations } from './services/SocialProgress';
 import ModalDefinitions from './containers/ModalDefinitions';
 import Legend from './components/Legend';
 import ControlBar from './components/ControlBar';
@@ -40,8 +40,8 @@ function App() {
 
 
   //  ToolTip State
-  let [clicked, setClicked] = useClicked();
-  let [clickedSubCat, setClickedSubCat] = useClickedSubCat();
+  let [clicked, setClickedCallback] = useClicked();
+  let [clickedSubCat, setClickedSubCatCallback] = useClickedSubCat();
   let [defContext, setDefContext] = useDefinitions();
 
   let [spiByYear] = useDataByYear(yearValue);
@@ -49,6 +49,7 @@ function App() {
   let [loading, setLoadingCallback] = useLoading();
   let [tooltipData] = useToolTipData(spiByCountry);
 
+  let parsedDefinitions = useParsedCitations();
 
   let selectYears = (
     <>
@@ -111,17 +112,16 @@ function App() {
         countryValue={countryValue}
         yearValue={yearValue}
         setCountryValue={setCountryValue}
-        setClicked={setClicked}
-        setClickedSubCat={setClickedSubCat}
       >
       </MapMaker>
       <ToolTip
         svgRef={svgRef}
         tooltipData={tooltipData}
         loading={loading}
-        center={[mapWidth/2, mapHeight/2]}
-        setClicked={setClicked}
-        setClickedSubCat={setClickedSubCat}
+        mapHeight={mapHeight}
+        mapWidth={mapWidth}
+        setClickedCallback={setClickedCallback}
+        setClickedSubCatCallback={setClickedSubCatCallback}
       />
       <Legend
         height={mapHeight}
@@ -138,8 +138,9 @@ function App() {
       </div>
       <ModalDefinitions
         modalRef={modalRef}
-        spiData={spiByCountry}
+        spiByCountry={spiByCountry}
         defContext={defContext}
+        parsedDefinitions={parsedDefinitions}
       />
     </div>
   );

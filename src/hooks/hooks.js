@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import {
   makeYearsArray,
   getSpiDataByYear,
@@ -10,11 +10,16 @@ import * as d3 from 'd3';
 
 export const useClicked = () => {
   let [clicked, setClicked] = useState(null);
-  useEffect(() => {
-    setClicked(clicked);
-  }, [clicked])
+
+  const setClickedCallback = useCallback((newClicked) => {
+    setClicked(newClicked);
+  }, []);
+
   return [clicked, setClicked];
 }
+// const setClickedMemoized = useCallback((newClicked) => {
+//   setClicked(newClicked);
+// }, []);
 export const useLoading = () => {
   let [loading, setLoading] = useState(true);
   const setLoadingCallback = useCallback((t) => {

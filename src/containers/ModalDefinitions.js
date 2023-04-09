@@ -20,9 +20,8 @@ import opportunity_inclusiveness from '../assets/bffa_icons/2_3_inclusiveness.pn
 import opportunity_education from '../assets/bffa_icons/2_4_education.png';
 
 import { dataKeys } from '../services/SocialProgress';
-import { definitionsArray } from '../assets/definitions.json';
 
-function ModalDefinitions({ modalRef, spiData, defContext }) {
+function ModalDefinitions({ modalRef, spiByCountry, defContext, parsedDefinitions }) {
 
   function componentQuestionMatch(d) {
     switch (d[0]) {
@@ -45,55 +44,43 @@ function ModalDefinitions({ modalRef, spiData, defContext }) {
     };
   };
 
+  
   useLayoutEffect(() => {
-
-  let parsedDefinitions = () => {
-
-    let parsedData = [];
-    definitionsArray.forEach(data => {
-      //Make a citation Array for indicators with multiple sources
-      let links = data.link.split(/\r?\n/);
-      let sources = data.source.split(/;/);
-      if (links.length === 0) return data;
-      let result = []
-      links.forEach(function (d, i) {
-        result.push({ citation: [links[i], sources[i]] })
-      });
-      data.citations = result;
-      parsedData.push(data);
-    })
-    return parsedData;
-  };
+    if(!spiByCountry) return;
 
     let BasicImageArray = [basic_nutrition, basic_water, basic_shelter, basic_safety];
     let FoundationImageArray = [foundations_knowledge, foundations_communication, foundations_health, foundations_environmental];
     let OpportunityImageArray = [opportunity_rights, opportunity_freedom, opportunity_inclusiveness, opportunity_education];
 
-    function tabulateModal(data) {
-      // Dimension,Component,Indicator name, unit ,Definition,Source,Link
+    function tabulateModal(spiData) {
+
+
       // Group data on each column, indicator will hold the unique values.
-      let keyDescriptions = data[1];
-      let dataDefinitions = data[0]
-      let cleanDef = dataDefinitions.filter(function( element ) {
+      let cleanDef = parsedDefinitions.filter(function (element) {
         return element["dimension"] !== undefined;
-     });
+      });
       let groupedData = d3.group(cleanDef, d => d["dimension"], d => d["component"], d => d['indicator_name'])
 
       function keyMatcher(target) {
-
-        const keyFixer = (key) => key.replace(/[\n\r]*\((.*)\)[ \n\r]*/g, '').replace(/and/, '&').replace(/[ \t]+$/, '').toLowerCase();
-        const targetFixer = (target) => target.replace(/and/, '&').replace(/[ \t]+$/, '').toLowerCase();
-
-        let result = Object.keys(keyDescriptions).find(value => keyFixer(keyDescriptions[value]) === targetFixer(target));
-        return result;
-      };
+        const dataKeysArray = Object.values(dataKeys);
+        const targetFixer = (target) => target.replace(/and/, '&').trim().toLowerCase();
+      
+        for (let i = 0; i < dataKeysArray.length; i++) {
+          const key = dataKeysArray[i];
+          const keyFixer = (key) => key.replace(/[\n\r]*\((.*)\)[ \n\r]*/g, '').replace(/and/, '&').trim().toLowerCase();
+          if (keyFixer(key) === targetFixer(target)) {
+            return Object.keys(dataKeys)[i];
+          }
+        }
+        return null;
+      }
 
       let modal = d3.select(modalRef.current);
       modal.selectAll('.modal').remove();
       let dimDiv = modal.append('div').attr('class', 'modal');
 
       let dimensionsDiv = dimDiv.selectAll('.dimension')
-        .data(groupedData, d=>d[0])
+        .data(groupedData, d => d[0])
         .join(
           enter => enter
             .append("div")
@@ -135,7 +122,8 @@ function ModalDefinitions({ modalRef, spiData, defContext }) {
           return "GDP is Not Destiny";
         } else {
           let value = +spiData[0][`${keyMatcher(target)}`];
-          let result = `${d[0]}:  ${value.toFixed()}`;
+          let score = value ? value.toFixed() : "N/A";
+          let result = `${d[0]}:  ${score}`;
           return result;
         }
       });
@@ -183,7 +171,8 @@ function ModalDefinitions({ modalRef, spiData, defContext }) {
         componentTitle.append('h4').text(d => {
           let target = d[0];
           let value = +spiData[0][`${keyMatcher(target)}`];
-          let result = `${d[0]}:  ${value.toFixed()}`;
+          let score = value ? value.toFixed() : "N/A";
+          let result = `${d[0]}:  ${score}`;
           return result;
         });
         componentTitle.append('p').text(d => {
@@ -227,7 +216,7 @@ function ModalDefinitions({ modalRef, spiData, defContext }) {
           .text((d, i) => {
             let target = d[0];
             let match = spiData[0][`${keyMatcher(target)}`]
-            if (!match) return;
+            if (!match) return "N/A";
             // //round the match value
             let rounded = (+match).toFixed(3);
             let result = `(${rounded})`;
@@ -303,12 +292,9 @@ function ModalDefinitions({ modalRef, spiData, defContext }) {
       d3.selectAll('#remove').remove();
     };
 
-    Promise.all([parsedDefinitions(), dataKeys, spiData]).then((data) => {
-      if (!data[2]) return;
-      tabulateModal(data);
-    });
+    tabulateModal(spiByCountry);
 
-  }, [modalRef, spiData, defContext]);
+  }, [modalRef, spiByCountry, defContext, parsedDefinitions]);
 
   return (
     <div className="modal-wrapper" ref={modalRef} >

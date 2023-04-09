@@ -1,6 +1,8 @@
 import * as d3 from 'd3';
+import { useMemo } from 'react';
 import { data } from '../assets/spi.json';
 import { countryIdTable } from '../assets/iso.json';
+import { definitionsArray } from '../assets/definitions.json';
 
 export const keyFixer = (key) => key.replace(/[\n\r]*\((.*)\)[ \n\r]*/g, '');
 export const nameFixer = (name) => name.replace(/,\s*|\s+/g, '_').toLowerCase();
@@ -95,40 +97,101 @@ export function parseTooltipData(d) {
   if(!d)return null;
   const name = d.country;
   const id = d.spicountrycode;
-  const score = +d.score_spi;
+  const score = +d.score_spi || 0;
 
   const basics = createPetal(
-    'Basic Human Needs', +d.score_bhn, basicColorScale, 30,
+    'Basic Human Needs', +d.score_bhn || 0, basicColorScale, 30,
     [
-      createPetal('Nutrition and Basic Medical Care', +d.score_nbmc, basicColorScale, 0),
-      createPetal('Water and Sanitation', +d.score_ws, basicColorScale, 20),
-      createPetal('Shelter', +d.score_sh, basicColorScale, 40),
-      createPetal('Personal Safety', +d.score_ps, basicColorScale, 60),
+      createPetal('Nutrition and Basic Medical Care', +d.score_nbmc || 0, basicColorScale, 0),
+      createPetal('Water and Sanitation', +d.score_ws || 0, basicColorScale, 20),
+      createPetal('Shelter', +d.score_sh || 0, basicColorScale, 40),
+      createPetal('Personal Safety', +d.score_ps || 0, basicColorScale, 60),
     ],
   );
 
   const foundations = createPetal(
-    'Foundations of Wellbeing', +d.score_fow, foundationsColorScale, 150,
+    'Foundations of Wellbeing', +d.score_fow || 0, foundationsColorScale, 150,
     [
-      createPetal('Access to Basic Knowledge', +d.score_abk, foundationsColorScale, 120),
-      createPetal('Access to Information and Communications', +d.score_aic, foundationsColorScale, 140),
-      createPetal('Health and Wellness', +d.score_hw, foundationsColorScale, 160),
-      createPetal('Environmental Quality', +d.score_eq, foundationsColorScale, 180),
+      createPetal('Access to Basic Knowledge', +d.score_abk || 0, foundationsColorScale, 120),
+      createPetal('Access to Information and Communications', +d.score_aic || 0, foundationsColorScale, 140),
+      createPetal('Health and Wellness', +d.score_hw || 0, foundationsColorScale, 160),
+      createPetal('Environmental Quality', +d.score_eq || 0, foundationsColorScale, 180),
     ],
   );
 
   const opportunity = createPetal(
-    'Opportunity', +d.score_opp, opportunityColorScale, 270,
+    'Opportunity', +d.score_opp || 0, opportunityColorScale, 270,
     [
-      createPetal('Personal Rights', +d.score_pr, opportunityColorScale, 240),
-      createPetal('Personal Freedom and Choice', +d.score_pfc, opportunityColorScale, 260),
-      createPetal('Inclusiveness', +d.score_incl, opportunityColorScale, 280),
-      createPetal('Access to Advanced Education', +d.score_aae, opportunityColorScale, 300),
+      createPetal('Personal Rights', +d.score_pr || 0, opportunityColorScale, 240),
+      createPetal('Personal Freedom and Choice', +d.score_pfc || 0, opportunityColorScale, 260),
+      createPetal('Inclusiveness', +d.score_incl || 0, opportunityColorScale, 280),
+      createPetal('Access to Advanced Education', +d.score_aae || 0, opportunityColorScale, 300),
     ],
   );
 
   return {name, id, score, petals:[basics, foundations, opportunity]};
 }
+
+export function useParsedCitations() {
+  const parsedDefinitions = useMemo(() => {
+    return definitionsArray.map(data => {
+      // Make a citation Array for indicators with multiple sources
+      let links = data.link.split(/\r?\n/);
+      let sources = data.source.split(/;/);
+      if (links.length === 0) return data;
+      let result = links.map((link, i) => ({ citation: [link, sources[i]] }));
+      return { ...data, citations: result };
+    });
+  }, []);
+  return parsedDefinitions;
+}
+
+
+export function parseDefinitionData(d) {
+
+  let parsedData = [];
+  definitionsArray.forEach(data => {
+    //Make a citation Array for indicators with multiple sources
+    let links = data.link.split(/\r?\n/);
+    let sources = data.source.split(/;/);
+    if (links.length === 0) return data;
+    let result = []
+    links.forEach(function (d, i) {
+      result.push({ citation: [links[i], sources[i]] })
+    });
+    data.citations = result;
+    parsedData.push(data);
+  })
+  return parsedData;
+};
+
+//   let BasicImageArray = [basic_nutrition, basic_water, basic_shelter, basic_safety];
+//   let FoundationImageArray = [foundations_knowledge, foundations_communication, foundations_health, foundations_environmental];
+//   let OpportunityImageArray = [opportunity_rights, opportunity_freedom, opportunity_inclusiveness, opportunity_education];
+
+function componentQuestionMatch(d) {
+  switch (d[0]) {
+    case "Nutrition and Basic Medical Care": return 'Do people have enough food to eat and are they receiving basic medical care? ';
+    case "Water and Sanitation": return 'Can people drink water and keep themselves clean without getting sick?';
+    case "Shelter": return 'Do people have adequate housing with basic utilities?';
+    case "Personal Safety": return 'Do people feel safe?';
+
+    case "Access to Basic Knowledge": return 'Do people have access to an educational foundation?';
+    case "Access to Information and Communications": return 'Can people freely access ideas and in formation from anywhere in the world?';
+    case "Health and Wellness": return 'Do people live long and healthy lives?';
+    case "Environmental Quality": return 'Is this society using its resources so they will be available for future generations?';
+
+    case "Personal Rights": return 'Are people’s rights as individuals protected?';
+    case "Personal Freedom and Choice": return 'Are people free to make their own life choices?';
+    case "Inclusiveness": return 'Is no one excluded from the opportunity to be a contributing member of society?';
+    case "Access to Advanced Education": return 'Do people have access to the world’s most advanced knowledge?';
+
+    default: return '';
+  };
+};
+
+
+// };
 
 
 // let spiScale = d3.scaleLinear().domain([0, 100]).range([0, 100]);
