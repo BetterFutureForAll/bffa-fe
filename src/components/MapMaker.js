@@ -3,7 +3,7 @@ import * as d3 from 'd3';
 import { feature, mesh } from "topojson-client";
 import { colorScale } from '../services/SocialProgress';
 
-const MapMaker = ({ mapProps, setCountryValue, countryValue, yearValue }) => {
+const MapMaker = ({ mapProps, setCountryValue, countryValue }) => {
 
   let {
     loading,
@@ -11,9 +11,8 @@ const MapMaker = ({ mapProps, setCountryValue, countryValue, yearValue }) => {
     svgRef,
     size,
     spiData,
+    yearValue
   } = mapProps;
-
-
 
   let [width, height] = size;
 
@@ -58,7 +57,7 @@ const MapMaker = ({ mapProps, setCountryValue, countryValue, yearValue }) => {
 
         function zoomToTarget(value) {
           let target = spiNameGroup.get(value)
-          let targetId = `#${target[0].spicountrycode}`;
+          let targetId = `#${target[0].spicountrycode}_target`;
           if(!target || svg.select(targetId).empty()) return zoomToCenter();
           let bounds = svg.select(targetId).node().getBBox();
           const cx = bounds.x + bounds.width / 2;
@@ -90,11 +89,11 @@ const MapMaker = ({ mapProps, setCountryValue, countryValue, yearValue }) => {
         .attr("fill", "white")
         .on('click', zoomToCenter)
 
-        let g = svg.selectAll('.countries').data([1]).join("g").attr('class', 'countries');
-
         svg.call(zoom);
-
+        svg.selectAll('.countries').remove();
+        
         // *** Country groupings ***
+        let g = svg.selectAll('.countries').data([1]).join("g").attr('class', 'countries');
         let countries = g.selectAll(".country")
           .data(mapFeatures.filter(d => d.properties.mapId !== "ATA"))
           .join("path")
@@ -155,8 +154,10 @@ const MapMaker = ({ mapProps, setCountryValue, countryValue, yearValue }) => {
         //Programmatically call zoom after rerender due to values possibly changing from dropdown.
         if(countryValue === "World") zoomToCenter();
         else zoomToTarget(countryValue);
-      };
 
+        //if that map renders after the tooltip, put the tooltip back on top. 
+        d3.selectAll('.graphicTooltip').raise();
+      };
 
       ready([mapData, spiData]);
 
@@ -170,20 +171,3 @@ const MapMaker = ({ mapProps, setCountryValue, countryValue, yearValue }) => {
 };
 
 export default MapMaker;
-
-
-
-//   const loadMapData = useCallback(() => {
-//     Promise.all([
-//       fetch('/path/to/mapData.json').then((response) => response.json()),
-//       fetch('/path/to/spiData.json').then((response) => response.json()),
-//     ]).then(([mapData, spiData]) => {
-//       setMapData(mapData);
-//       setSpiData(spiData);
-//       setLoading(false);
-//     });
-//   }, [setLoading]);
-
-//   useEffect(() => {
-//     loadMapData();
-//   }, [loadMapData]);

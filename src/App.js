@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useRef } from 'react';
+import React, { useRef } from 'react';
 import './App.css';
 import MapMaker from './components/MapMaker';
 import ToolTip from './components/ToolTip';
@@ -38,18 +38,21 @@ function App() {
   let [years] = useYears();
   let [yearValue, handleYearChange] = useHandleYearChange();
 
-
-  //  ToolTip State
-  let [clicked, setClickedCallback] = useClicked();
-  let [clickedSubCat, setClickedSubCatCallback] = useClickedSubCat();
-  let [defContext, setDefContext] = useDefinitions();
-
   let [spiByYear] = useDataByYear(yearValue);
   let [spiByCountry] = useDataByCountry(spiByYear, countryValue);
   let [loading, setLoadingCallback] = useLoading();
-  let [tooltipData] = useToolTipData(spiByCountry);
 
+  //  ToolTip State
+  let [clicked, setClickedCallback] = useClicked();
+  let [clickedSubCat, setClickedSubCat] = useClickedSubCat();
+  let [tooltipData] = useToolTipData(spiByCountry);
+  
   let parsedDefinitions = useParsedCitations();
+  
+  //Definitions State
+  let [defContext] = useDefinitions(clicked, clickedSubCat, countryValue);
+
+  let [mapData, spiData] = useMapData(promisedMap, spiByYear, setLoadingCallback);
 
   let selectYears = (
     <>
@@ -77,21 +80,6 @@ function App() {
     </select>
   );
 
-
-
-  useLayoutEffect(() => {
-    let id = clicked ? clicked.replace(/ /g, "_") : null;
-    let subId = clickedSubCat ? clickedSubCat.replace(/ /g, "_") : null;
-    setDefContext({
-      dimension: id,
-      component: subId,
-      countryValue: countryValue,
-      //set to state
-      indicator_number: null,
-    });
-  }, [clicked, clickedSubCat, setDefContext, countryValue])
-
-  let [mapData, spiData] = useMapData(promisedMap, spiByYear, setLoadingCallback);
   let mapProps = {
     loading,
     mapData,
@@ -110,7 +98,6 @@ function App() {
       <MapMaker
         mapProps={mapProps}
         countryValue={countryValue}
-        yearValue={yearValue}
         setCountryValue={setCountryValue}
       >
       </MapMaker>
@@ -120,8 +107,10 @@ function App() {
         loading={loading}
         mapHeight={mapHeight}
         mapWidth={mapWidth}
+        clicked={clicked}
+        clickedSubCat={clickedSubCat}
         setClickedCallback={setClickedCallback}
-        setClickedSubCatCallback={setClickedSubCatCallback}
+        setClickedSubCat={setClickedSubCat}
       />
       <Legend
         height={mapHeight}
@@ -141,6 +130,8 @@ function App() {
         spiByCountry={spiByCountry}
         defContext={defContext}
         parsedDefinitions={parsedDefinitions}
+        setClickedCallback={setClickedCallback}
+        setClickedSubCat={setClickedSubCat}
       />
     </div>
   );

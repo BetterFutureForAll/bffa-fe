@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useLayoutEffect, useCallback } from 'react';
 import {
   makeYearsArray,
   getSpiDataByYear,
@@ -15,11 +15,9 @@ export const useClicked = () => {
     setClicked(newClicked);
   }, []);
 
-  return [clicked, setClicked];
+  return [clicked, setClickedCallback];
 }
-// const setClickedMemoized = useCallback((newClicked) => {
-//   setClicked(newClicked);
-// }, []);
+
 export const useLoading = () => {
   let [loading, setLoading] = useState(true);
   const setLoadingCallback = useCallback((t) => {
@@ -30,6 +28,7 @@ export const useLoading = () => {
 
 export const useClickedSubCat = () => {
   let [clickedSubCat, setClickedSubCat] = useState(null);
+
   useEffect(() => {
     setClickedSubCat(clickedSubCat);
   }, [clickedSubCat])
@@ -98,18 +97,36 @@ export const useDataByCountry = (spiByYear, countryValue) => {
   return [spiByCountry];
 };
 
-export function useDefinitions() {
+export function useDefinitions(clicked, clickedSubCat, countryValue) {
   let [defContext, setDefContext] = useState({
     dimension: null,
     component: null,
     indicator_number: null,
   })
-  useEffect(() => {
-    setDefContext(defContext);
-  }, [defContext, setDefContext])
+  
+  useLayoutEffect(() => {
+    let id = clicked ? clicked.replace(/ /g, "_") : null;
+    let subId = clickedSubCat ? clickedSubCat.replace(/ /g, "_") : null;
+    setDefContext({
+      dimension: id,
+      component: subId,
+      countryValue: countryValue,
+    });
+  }, [setDefContext, clicked, clickedSubCat, countryValue])
 
   return [defContext, setDefContext];
 };
+
+
+// useLayoutEffect(() => {
+//   let id = clicked ? clicked.replace(/ /g, "_") : null;
+//   let subId = clickedSubCat ? clickedSubCat.replace(/ /g, "_") : null;
+//   setDefContext({
+//     dimension: id,
+//     component: subId,
+//     countryValue: countryValue,
+//   });
+// }, [clicked, clickedSubCat, setDefContext, countryValue])
 
 export function scoreToColor(score) {
   let scoreColor = d3.scaleLinear()
@@ -182,8 +199,8 @@ export function useMapData(mapData, spiData, setLoadingCallback) {
 export function useToolTipData(spiByCountry) {
   const [tooltipData, setTooltipData] = useState(null);
   useEffect(() => {
-    const parsedTooltipData = spiByCountry? parseTooltipData(spiByCountry[0]) : null;
-    if(!parsedTooltipData)return;
+    const parsedTooltipData = spiByCountry ? parseTooltipData(spiByCountry[0]) : null;
+    if (!parsedTooltipData) return;
     setTooltipData(parsedTooltipData);
   }, [spiByCountry])
   return [tooltipData, setTooltipData];

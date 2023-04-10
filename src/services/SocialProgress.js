@@ -89,6 +89,7 @@ function createPetal(label, score, colorScale, angle, subPetals) {
   const scale = spiScale(score || 0);
   const color = colorScale(score || 0);
   const petalPath = 'M 0 0 c 100 100 80 0 100 0 C 80 0 100 -100 0 0';
+  
   return { label, score, scale, color, petalPath, angle, subPetals };
 }
 
@@ -146,30 +147,7 @@ export function useParsedCitations() {
   return parsedDefinitions;
 }
 
-
-export function parseDefinitionData(d) {
-
-  let parsedData = [];
-  definitionsArray.forEach(data => {
-    //Make a citation Array for indicators with multiple sources
-    let links = data.link.split(/\r?\n/);
-    let sources = data.source.split(/;/);
-    if (links.length === 0) return data;
-    let result = []
-    links.forEach(function (d, i) {
-      result.push({ citation: [links[i], sources[i]] })
-    });
-    data.citations = result;
-    parsedData.push(data);
-  })
-  return parsedData;
-};
-
-//   let BasicImageArray = [basic_nutrition, basic_water, basic_shelter, basic_safety];
-//   let FoundationImageArray = [foundations_knowledge, foundations_communication, foundations_health, foundations_environmental];
-//   let OpportunityImageArray = [opportunity_rights, opportunity_freedom, opportunity_inclusiveness, opportunity_education];
-
-function componentQuestionMatch(d) {
+export function componentQuestionMatch(d) {
   switch (d[0]) {
     case "Nutrition and Basic Medical Care": return 'Do people have enough food to eat and are they receiving basic medical care? ';
     case "Water and Sanitation": return 'Can people drink water and keep themselves clean without getting sick?';

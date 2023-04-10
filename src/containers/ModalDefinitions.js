@@ -19,30 +19,30 @@ import opportunity_freedom from '../assets/bffa_icons/2_2_freedom.png';
 import opportunity_inclusiveness from '../assets/bffa_icons/2_3_inclusiveness.png';
 import opportunity_education from '../assets/bffa_icons/2_4_education.png';
 
-import { dataKeys } from '../services/SocialProgress';
+import { dataKeys, componentQuestionMatch } from '../services/SocialProgress';
 
-function ModalDefinitions({ modalRef, spiByCountry, defContext, parsedDefinitions }) {
+function ModalDefinitions({ modalRef, spiByCountry, defContext, parsedDefinitions, setClickedCallback, setClickedSubCat }) {
 
-  function componentQuestionMatch(d) {
-    switch (d[0]) {
-      case "Nutrition and Basic Medical Care": return 'Do people have enough food to eat and are they receiving basic medical care? ';
-      case "Water and Sanitation": return 'Can people drink water and keep themselves clean without getting sick?';
-      case "Shelter": return 'Do people have adequate housing with basic utilities?';
-      case "Personal Safety": return 'Do people feel safe?';
+  // function componentQuestionMatch(d) {
+  //   switch (d[0]) {
+  //     case "Nutrition and Basic Medical Care": return 'Do people have enough food to eat and are they receiving basic medical care? ';
+  //     case "Water and Sanitation": return 'Can people drink water and keep themselves clean without getting sick?';
+  //     case "Shelter": return 'Do people have adequate housing with basic utilities?';
+  //     case "Personal Safety": return 'Do people feel safe?';
 
-      case "Access to Basic Knowledge": return 'Do people have access to an educational foundation?';
-      case "Access to Information and Communications": return 'Can people freely access ideas and in formation from anywhere in the world?';
-      case "Health and Wellness": return 'Do people live long and healthy lives?';
-      case "Environmental Quality": return 'Is this society using its resources so they will be available for future generations?';
+  //     case "Access to Basic Knowledge": return 'Do people have access to an educational foundation?';
+  //     case "Access to Information and Communications": return 'Can people freely access ideas and in formation from anywhere in the world?';
+  //     case "Health and Wellness": return 'Do people live long and healthy lives?';
+  //     case "Environmental Quality": return 'Is this society using its resources so they will be available for future generations?';
 
-      case "Personal Rights": return 'Are people’s rights as individuals protected?';
-      case "Personal Freedom and Choice": return 'Are people free to make their own life choices?';
-      case "Inclusiveness": return 'Is no one excluded from the opportunity to be a contributing member of society?';
-      case "Access to Advanced Education": return 'Do people have access to the world’s most advanced knowledge?';
+  //     case "Personal Rights": return 'Are people’s rights as individuals protected?';
+  //     case "Personal Freedom and Choice": return 'Are people free to make their own life choices?';
+  //     case "Inclusiveness": return 'Is no one excluded from the opportunity to be a contributing member of society?';
+  //     case "Access to Advanced Education": return 'Do people have access to the world’s most advanced knowledge?';
 
-      default: return '';
-    };
-  };
+  //     default: return '';
+  //   };
+  // };
 
   
   useLayoutEffect(() => {
@@ -53,7 +53,6 @@ function ModalDefinitions({ modalRef, spiByCountry, defContext, parsedDefinition
     let OpportunityImageArray = [opportunity_rights, opportunity_freedom, opportunity_inclusiveness, opportunity_education];
 
     function tabulateModal(spiData) {
-
 
       // Group data on each column, indicator will hold the unique values.
       let cleanDef = parsedDefinitions.filter(function (element) {
@@ -133,6 +132,7 @@ function ModalDefinitions({ modalRef, spiByCountry, defContext, parsedDefinition
         d3.selectAll('.component-box').remove();
         d3.selectAll('.dimension_icon').text('+');
         d3.selectAll('.dimension-title').on('click', addComponents);
+        setClickedCallback(d[0]);
         d3.select(this).on('click', collapseDimension);
         d3.select(this).select('.dimension_icon').text('-');
         let component = d3.select(this.parentNode)
@@ -194,7 +194,7 @@ function ModalDefinitions({ modalRef, spiByCountry, defContext, parsedDefinition
         d3.selectAll('.component-title').on('click', addIndicators);
         d3.select(this).on('click', collapseComponent);
         d3.select(this).select('.component_icon').text('-');
-
+        setClickedSubCat(d[0]);
         let indicator = d3.select(this.parentNode).append('ul')
           .attr('class', 'indicator-box')
           .selectAll('.indicator')
@@ -294,7 +294,7 @@ function ModalDefinitions({ modalRef, spiByCountry, defContext, parsedDefinition
 
     tabulateModal(spiByCountry);
 
-  }, [modalRef, spiByCountry, defContext, parsedDefinitions]);
+  }, [modalRef, spiByCountry, defContext, parsedDefinitions, setClickedCallback, setClickedSubCat]);
 
   return (
     <div className="modal-wrapper" ref={modalRef} >
