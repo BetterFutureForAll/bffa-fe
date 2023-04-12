@@ -13,8 +13,8 @@ const ToolTip = ({ svgRef, tooltipData, loading, mapHeight, mapWidth, setClicked
     function ready() {
 
       if (!tooltipData) return;
-      let x = mapWidth / 2;
-      let y = mapHeight / 2;
+      let x = mapWidth / 2 || 0;
+      let y = mapHeight / 2 || 0;
       let fontSize = 16;
 
       let svg = d3.select(svgRef.current);
@@ -180,23 +180,17 @@ const ToolTip = ({ svgRef, tooltipData, loading, mapHeight, mapWidth, setClicked
         .style("opacity", 0);
 
       var mouseover = function (event, d) {
-        textTooltip
-          .style("opacity", 1)
-      };
-
-      var mousemove = function (event, d) {
-        toolTip.selectAll(".tooltip-text-area").remove();
+        console.log("mouseOver", d);
+        setClickedSubCat(d.label);
+        // toolTip.selectAll(".tooltip-text-area").remove();
 
         let [mouseX, mouseY] = [event.x || x, event.y || y];
         let targetData = `${d.label}`;
 
-        d3.selectAll('.subPetalBackgroundPath') //Background Petals
-          .style("opacity", (d, i) => (`${d.label}` === targetData) ? ".5" : ".01")
+        textTooltip
+          .style("opacity", 1)
 
-        d3.selectAll('.subPetalBackgroundPath') //Highlighted Petal
-          .style("fill", (d, i) => (`${d.label}` === targetData) ? "white" : `${d.color}`);
-
-        let mouseGroup = toolTip
+          let mouseGroup = toolTip
           .selectAll(".tooltip-text-area")
           .data([d])
           .join('g')
@@ -251,6 +245,76 @@ const ToolTip = ({ svgRef, tooltipData, loading, mapHeight, mapWidth, setClicked
           .attr('transform', d => `translate(${-(d.bbox.width / 2)}, ${10})`)
       };
 
+      var mousemove = function (event, d) {
+        let [mouseX, mouseY] = [event.x || x, event.y || y];
+        let targetData = `${d.label}`;
+        console.log('mousemove')
+        d3.selectAll('.subPetalBackgroundPath') //Background Petals
+          .style("opacity", (d, i) => (`${d.label}` === targetData) ? ".5" : ".01")
+
+        d3.selectAll('.subPetalBackgroundPath') //Highlighted Petal
+          .style("fill", (d, i) => (`${d.label}` === targetData) ? "white" : `${d.color}`);
+
+        toolTip
+          .selectAll(".tooltip-text-area")
+          .attr('x', mouseX)
+          .attr('y', mouseY)
+
+        // let mouseGroup = toolTip
+        //   .selectAll(".tooltip-text-area")
+        //   .data([d])
+        //   .join('g')
+        //   .attr('class', "tooltip-text-area")
+        //   .attr("pointer-events", "none")
+
+        // mouseGroup.selectAll('.nameBox')
+        //   .data([d])
+        //   .join('rect')
+        //   .attr('class', 'nameBox')
+        //   .attr('x', mouseX)
+        //   .attr('y', mouseY)
+        //   .attr('rx', 10)
+        //   .attr('ry', 10)
+        //   .style("fill", "rgba(255, 255, 255, 0.5)")
+
+        // let mouseText = mouseGroup
+        //   .selectAll("text")
+        //   .data([d])
+        //   .join('text')
+        //   .style("opacity", 1)
+        //   .attr('x', mouseX)
+        //   .attr('y', mouseY)
+        //   .attr("font-size", fontSize)
+        //   .attr('text-anchor', 'middle')
+        //   .attr("font-weight", 600)
+
+        // mouseText.selectAll('.nameSpan')
+        //   .data([d])
+        //   .join("tspan")
+        //   .attr('class', "nameSpan")
+        //   .text(d => `${d.label}`)
+        //   .attr('x', mouseX)
+        //   .attr('y', mouseY)
+        //   .attr('dy', '1.5em')
+
+        // mouseText.selectAll('.scoreSpan')
+        //   .data([d])
+        //   .join("tspan")
+        //   .attr('class', "nameSpan")
+        //   .attr('x', mouseX)
+        //   .attr('y', mouseY)
+        //   .text(d => `${(+d.score).toFixed()}`)
+        //   .attr('dy', '+2.5em')
+
+
+        // mouseGroup.call(getBB)
+
+        // mouseGroup.select(".nameBox")
+        //   .attr("width", function (d) { return d.bbox.width })
+        //   .attr("height", function (d) { return d.bbox.height })
+        //   .attr('transform', d => `translate(${-(d.bbox.width / 2)}, ${10})`)
+      };
+
       function showSubPetals(event, d) {
         let subPetalPath = "M 0 0 L 85 15 A 1 1 0 0 0 85 -15 L 0 0";
         setClickedCallback(d.label);
@@ -285,7 +349,7 @@ const ToolTip = ({ svgRef, tooltipData, loading, mapHeight, mapWidth, setClicked
           .attr("cursor", "crosshair");
 
         d3.selectAll('.subPetalPath, .subPetalBackgroundPath')
-          .on("mouseover", mouseover)
+          .on("mouseenter", mouseover)
           .on("mousemove", mousemove)
           .on("mouseout", mouseOut)
           .on("click", mouseClick);
@@ -303,6 +367,7 @@ const ToolTip = ({ svgRef, tooltipData, loading, mapHeight, mapWidth, setClicked
         d3.select(`#${nameFixer(clicked)}_bp`).dispatch("mouseenter")
       }
       if (clickedSubCat) {
+        d3.select(`#${nameFixer(clickedSubCat)}_subPetalBackground`).dispatch("mouseenter")
         d3.select(`#${nameFixer(clickedSubCat)}_subPetalBackground`).dispatch("mousemove")
       }
       toolTip.raise();
