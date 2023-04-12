@@ -47,9 +47,7 @@ const ToolTip = ({ svgRef, tooltipData, loading, mapHeight, mapWidth, setClicked
         .data(data)
         .join("circle")
         .attr('class', 'inner')
-        .attr('id', d => {
-          return `${d.id}_inner`
-        })
+        .attr('id', d => `${d.id}_inner`)
         .attr("cx", x)
         .attr("cy", y)
         .attr("r", d => +d.score ?? 0)
@@ -126,8 +124,9 @@ const ToolTip = ({ svgRef, tooltipData, loading, mapHeight, mapWidth, setClicked
             .attr("pointer-events", "none")
             .attr("startOffset", d => { return (d.angle === 270) ? 370 : 130; })
             .text(d => {
+              //Handles Partial Scores
               let rounded = (+d.score).toFixed() || 0;
-              return `${d.label}-${rounded}`;
+              return `${d.label}-${+rounded === 0? " N / A" : rounded}`;
             });
           return textArc;
         })
@@ -158,7 +157,7 @@ const ToolTip = ({ svgRef, tooltipData, loading, mapHeight, mapWidth, setClicked
         .attr('class', 'nameText')
         .text(d => {
           let score = (+d.score).toFixed() === 0 ? 'N / A' : (+d.score).toFixed();
-          return `${d.name} SPI: ${score}`
+          return `${d.name}-${score}`
         })
         .attr('x', 0)
         .attr('y', -130)
@@ -173,19 +172,14 @@ const ToolTip = ({ svgRef, tooltipData, loading, mapHeight, mapWidth, setClicked
         .attr("width", function (d) { return d.bbox.width })
         .attr("height", function (d) { return d.bbox.height })
         .attr('transform', d => `translate(${x - (d.bbox.width / 2)}, ${(y - (d.bbox.height))})`)
-      // .style("fill", "white");
 
       // ****** MouseOver Functions start here ******** ///
       var textTooltip = toolTip.selectAll(".tooltip-text-area")
         .style("opacity", 0);
 
       var mouseover = function (event, d) {
-        console.log("mouseOver", d);
         setClickedSubCat(d.label);
-        // toolTip.selectAll(".tooltip-text-area").remove();
-
         let [mouseX, mouseY] = [event.x || x, event.y || y];
-        let targetData = `${d.label}`;
 
         textTooltip
           .style("opacity", 1)
@@ -248,7 +242,6 @@ const ToolTip = ({ svgRef, tooltipData, loading, mapHeight, mapWidth, setClicked
       var mousemove = function (event, d) {
         let [mouseX, mouseY] = [event.x || x, event.y || y];
         let targetData = `${d.label}`;
-        console.log('mousemove')
         d3.selectAll('.subPetalBackgroundPath') //Background Petals
           .style("opacity", (d, i) => (`${d.label}` === targetData) ? ".5" : ".01")
 
@@ -259,60 +252,6 @@ const ToolTip = ({ svgRef, tooltipData, loading, mapHeight, mapWidth, setClicked
           .selectAll(".tooltip-text-area")
           .attr('x', mouseX)
           .attr('y', mouseY)
-
-        // let mouseGroup = toolTip
-        //   .selectAll(".tooltip-text-area")
-        //   .data([d])
-        //   .join('g')
-        //   .attr('class', "tooltip-text-area")
-        //   .attr("pointer-events", "none")
-
-        // mouseGroup.selectAll('.nameBox')
-        //   .data([d])
-        //   .join('rect')
-        //   .attr('class', 'nameBox')
-        //   .attr('x', mouseX)
-        //   .attr('y', mouseY)
-        //   .attr('rx', 10)
-        //   .attr('ry', 10)
-        //   .style("fill", "rgba(255, 255, 255, 0.5)")
-
-        // let mouseText = mouseGroup
-        //   .selectAll("text")
-        //   .data([d])
-        //   .join('text')
-        //   .style("opacity", 1)
-        //   .attr('x', mouseX)
-        //   .attr('y', mouseY)
-        //   .attr("font-size", fontSize)
-        //   .attr('text-anchor', 'middle')
-        //   .attr("font-weight", 600)
-
-        // mouseText.selectAll('.nameSpan')
-        //   .data([d])
-        //   .join("tspan")
-        //   .attr('class', "nameSpan")
-        //   .text(d => `${d.label}`)
-        //   .attr('x', mouseX)
-        //   .attr('y', mouseY)
-        //   .attr('dy', '1.5em')
-
-        // mouseText.selectAll('.scoreSpan')
-        //   .data([d])
-        //   .join("tspan")
-        //   .attr('class', "nameSpan")
-        //   .attr('x', mouseX)
-        //   .attr('y', mouseY)
-        //   .text(d => `${(+d.score).toFixed()}`)
-        //   .attr('dy', '+2.5em')
-
-
-        // mouseGroup.call(getBB)
-
-        // mouseGroup.select(".nameBox")
-        //   .attr("width", function (d) { return d.bbox.width })
-        //   .attr("height", function (d) { return d.bbox.height })
-        //   .attr('transform', d => `translate(${-(d.bbox.width / 2)}, ${10})`)
       };
 
       function showSubPetals(event, d) {
@@ -351,16 +290,11 @@ const ToolTip = ({ svgRef, tooltipData, loading, mapHeight, mapWidth, setClicked
         d3.selectAll('.subPetalPath, .subPetalBackgroundPath')
           .on("mouseenter", mouseover)
           .on("mousemove", mousemove)
-          .on("mouseout", mouseOut)
           .on("click", mouseClick);
       }
 
       let mouseClick = function (event, d) {
         setClickedSubCat(d.label);
-      };
-
-      let mouseOut = () => {
-        d3.select(".tooltip-text-area").remove();
       };
 
       if (clicked) {

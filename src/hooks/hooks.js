@@ -117,17 +117,6 @@ export function useDefinitions(clicked, clickedSubCat, countryValue) {
   return [defContext, setDefContext];
 };
 
-
-// useLayoutEffect(() => {
-//   let id = clicked ? clicked.replace(/ /g, "_") : null;
-//   let subId = clickedSubCat ? clickedSubCat.replace(/ /g, "_") : null;
-//   setDefContext({
-//     dimension: id,
-//     component: subId,
-//     countryValue: countryValue,
-//   });
-// }, [clicked, clickedSubCat, setDefContext, countryValue])
-
 export function scoreToColor(score) {
   let scoreColor = d3.scaleLinear()
     .domain([0, 20, 40, 60, 80, 100])

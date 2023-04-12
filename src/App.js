@@ -138,19 +138,3 @@ function App() {
 }
 
 export default App;
-
-  //State for the DefinitionsModal
-  // const setDefContext = useCallback(() => {
-  //   const id = clicked ? clicked.replace(/ /g, "_") : null;
-  //   const subId = clickedSubCat ? clickedSubCat.replace(/ /g, "_") : null;
-  //   setDefContext({
-  //     dimension: id,
-  //     component: subId,
-  //     countryValue,
-  //     indicator_number: null,
-  //   });
-  // }, [clicked, clickedSubCat, setDefContext, countryValue]);
-
-  // useLayoutEffect(() => {
-  //   setDefContext();
-  // }, [setDefContext]);

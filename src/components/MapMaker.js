@@ -78,8 +78,6 @@ const MapMaker = ({ mapProps, setCountryValue, countryValue }) => {
           .attr("viewBox", [0, 0, width, height])
           .attr('preserveAspectRatio', 'xMinYMid')
           .on('zoom', zoom)
-
-        // svg.selectAll('*').remove();
         
         //White rectangle to allow clicks outside of countries to zoomToCenter
         svg.selectAll('.background')
