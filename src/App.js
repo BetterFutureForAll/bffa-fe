@@ -1,12 +1,24 @@
-import React, { useEffect, useLayoutEffect, useRef } from 'react';
+import React, { useRef } from 'react';
 import './App.css';
 import MapMaker from './components/MapMaker';
 import ToolTip from './components/ToolTip';
 import {
-  useDataByCountry, useDataByYear, useYears, useWindowSize, useHandleCountryChange, useCountries,
-  useToolTip, useHandleYearChange, useZoom, useLoading,
-  useClickedSubCat, useClicked, useDefinitions, useMapSize
+  useDataByCountry, 
+  useDataByYear, 
+  useYears, 
+  useWindowSize, 
+  useHandleCountryChange, 
+  useCountries,
+  useToolTipData,
+  useHandleYearChange, 
+  useLoading,
+  useClickedSubCat, 
+  useClicked, 
+  useDefinitions, 
+  useMapSize, 
+  useMapData,
 } from './hooks/hooks';
+import { promisedMap, useParsedCitations } from './services/SocialProgress';
 import ModalDefinitions from './containers/ModalDefinitions';
 import Legend from './components/Legend';
 import ControlBar from './components/ControlBar';
@@ -21,23 +33,26 @@ function App() {
 
   // Map Size
   let [mapHeight, mapWidth] = useMapSize(height, width);
-  let [countryValue, setCountryValue] = useHandleCountryChange();
+  let [countryValue, setCountryValue, handleCountryChange] = useHandleCountryChange();
   let [countries] = useCountries();
   let [years] = useYears();
   let [yearValue, handleYearChange] = useHandleYearChange();
 
-  //  ToolTip State
-  let [tooltipContext, setToolTipContext] = useToolTip();
-  let [zoomState, setZoomState] = useZoom();
-  let [clicked, setClicked] = useClicked();
-  let [clickedSubCat, setClickedSubCat] = useClickedSubCat();
-  let [defContext, setDefContext] = useDefinitions();
-
-  let handleCountryChange = e => setCountryValue(e.target.value);
-
   let [spiByYear] = useDataByYear(yearValue);
   let [spiByCountry] = useDataByCountry(spiByYear, countryValue);
-  let [loading, setLoading] = useLoading();
+  let [loading, setLoadingCallback] = useLoading();
+
+  //  ToolTip State
+  let [clicked, setClickedCallback] = useClicked();
+  let [clickedSubCat, setClickedSubCat] = useClickedSubCat();
+  let [tooltipData] = useToolTipData(spiByCountry);
+  
+  let parsedDefinitions = useParsedCitations();
+  
+  //Definitions State
+  let [defContext] = useDefinitions(clicked, clickedSubCat, countryValue);
+
+  let [mapData, spiData] = useMapData(promisedMap, spiByYear, setLoadingCallback);
 
   let selectYears = (
     <>
@@ -65,28 +80,14 @@ function App() {
     </select>
   );
 
-  //State for the DefinitionsModal
-  useLayoutEffect(() => {
-    let id = clicked ? clicked.replace(/ /g, "_") : null;
-    let subId = clickedSubCat ? clickedSubCat.replace(/ /g, "_") : null;
-    setDefContext({
-      dimension: id,
-      component: subId,
-      countryValue: countryValue,
-      indicator_number: null,
-    });
-  }, [clicked, clickedSubCat, setDefContext, countryValue])
-
-  //State for the flower ToolTip
-  useEffect(() => {
-    setToolTipContext({
-      loading,
-      svgRef,
-      countryValue: countryValue,
-      zoomState,
-      data: spiByCountry,
-    });
-  }, [countryValue, yearValue, spiByCountry, setToolTipContext, zoomState, loading])
+  let mapProps = {
+    loading,
+    mapData,
+    svgRef,
+    spiData,
+    size: [mapWidth, mapHeight],
+    yearValue,
+  }
 
   return (
     <div className="App">
@@ -95,27 +96,20 @@ function App() {
         </svg>
       </div>
       <MapMaker
-        svgRef={svgRef}
-        yearValue={yearValue}
-        height={mapHeight}
-        width={mapWidth}
-        loading={loading}
-        setLoading={setLoading}
+        mapProps={mapProps}
         countryValue={countryValue}
         setCountryValue={setCountryValue}
-        tooltipContext={tooltipContext}
-        setToolTipContext={setToolTipContext}
-        spiData={spiByYear}
-        zoomState={zoomState}
-        setZoomState={setZoomState}
-        setClicked={setClicked}
-        setClickedSubCat={setClickedSubCat}
       >
       </MapMaker>
       <ToolTip
-        tooltipContext={tooltipContext}
-        zoomState={zoomState}
-        setClicked={setClicked}
+        svgRef={svgRef}
+        tooltipData={tooltipData}
+        loading={loading}
+        mapHeight={mapHeight}
+        mapWidth={mapWidth}
+        clicked={clicked}
+        clickedSubCat={clickedSubCat}
+        setClickedCallback={setClickedCallback}
         setClickedSubCat={setClickedSubCat}
       />
       <Legend
@@ -133,8 +127,11 @@ function App() {
       </div>
       <ModalDefinitions
         modalRef={modalRef}
-        spiData={spiByCountry}
+        spiByCountry={spiByCountry}
         defContext={defContext}
+        parsedDefinitions={parsedDefinitions}
+        setClickedCallback={setClickedCallback}
+        setClickedSubCat={setClickedSubCat}
       />
     </div>
   );

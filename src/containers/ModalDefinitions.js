@@ -19,81 +19,46 @@ import opportunity_freedom from '../assets/bffa_icons/2_2_freedom.png';
 import opportunity_inclusiveness from '../assets/bffa_icons/2_3_inclusiveness.png';
 import opportunity_education from '../assets/bffa_icons/2_4_education.png';
 
-import { dataKeys } from '../services/SocialProgress';
-import { definitionsArray } from '../assets/definitions.json';
+import { dataKeys, componentQuestionMatch } from '../services/SocialProgress';
 
-function ModalDefinitions({ modalRef, spiData, defContext }) {
-
-  function componentQuestionMatch(d) {
-    switch (d[0]) {
-      case "Nutrition and Basic Medical Care": return 'Do people have enough food to eat and are they receiving basic medical care? ';
-      case "Water and Sanitation": return 'Can people drink water and keep themselves clean without getting sick?';
-      case "Shelter": return 'Do people have adequate housing with basic utilities?';
-      case "Personal Safety": return 'Do people feel safe?';
-
-      case "Access to Basic Knowledge": return 'Do people have access to an educational foundation?';
-      case "Access to Information and Communications": return 'Can people freely access ideas and in formation from anywhere in the world?';
-      case "Health and Wellness": return 'Do people live long and healthy lives?';
-      case "Environmental Quality": return 'Is this society using its resources so they will be available for future generations?';
-
-      case "Personal Rights": return 'Are people’s rights as individuals protected?';
-      case "Personal Freedom and Choice": return 'Are people free to make their own life choices?';
-      case "Inclusiveness": return 'Is no one excluded from the opportunity to be a contributing member of society?';
-      case "Access to Advanced Education": return 'Do people have access to the world’s most advanced knowledge?';
-
-      default: return '';
-    };
-  };
-
+function ModalDefinitions({ modalRef, spiByCountry, defContext, parsedDefinitions, setClickedCallback, setClickedSubCat }) {
+  
   useLayoutEffect(() => {
-
-  let parsedDefinitions = () => {
-
-    let parsedData = [];
-    definitionsArray.forEach(data => {
-      //Make a citation Array for indicators with multiple sources
-      let links = data.link.split(/\r?\n/);
-      let sources = data.source.split(/;/);
-      if (links.length === 0) return data;
-      let result = []
-      links.forEach(function (d, i) {
-        result.push({ citation: [links[i], sources[i]] })
-      });
-      data.citations = result;
-      parsedData.push(data);
-    })
-    return parsedData;
-  };
+    if(!spiByCountry) return;
 
     let BasicImageArray = [basic_nutrition, basic_water, basic_shelter, basic_safety];
     let FoundationImageArray = [foundations_knowledge, foundations_communication, foundations_health, foundations_environmental];
     let OpportunityImageArray = [opportunity_rights, opportunity_freedom, opportunity_inclusiveness, opportunity_education];
 
-    function tabulateModal(data) {
-      // Dimension,Component,Indicator name, unit ,Definition,Source,Link
+    function tabulateModal(spiData) {
+
       // Group data on each column, indicator will hold the unique values.
-      let keyDescriptions = data[1];
-      let dataDefinitions = data[0]
-      let cleanDef = dataDefinitions.filter(function( element ) {
+      let cleanDef = parsedDefinitions.filter(function (element) {
         return element["dimension"] !== undefined;
-     });
+      });
+      
       let groupedData = d3.group(cleanDef, d => d["dimension"], d => d["component"], d => d['indicator_name'])
 
       function keyMatcher(target) {
-
-        const keyFixer = (key) => key.replace(/[\n\r]*\((.*)\)[ \n\r]*/g, '').replace(/and/, '&').replace(/[ \t]+$/, '').toLowerCase();
-        const targetFixer = (target) => target.replace(/and/, '&').replace(/[ \t]+$/, '').toLowerCase();
-
-        let result = Object.keys(keyDescriptions).find(value => keyFixer(keyDescriptions[value]) === targetFixer(target));
-        return result;
-      };
+        const dataKeysArray = Object.values(dataKeys);
+        const targetFixer = (target) => target.replace(/and/, '&').trim().toLowerCase();
+      
+        for (let i = 0; i < dataKeysArray.length; i++) {
+          const key = dataKeysArray[i];
+          const keyFixer = (key) => key.replace(/[\n\r]*\((.*)\)[ \n\r]*/g, '').replace(/and/, '&').trim().toLowerCase();
+          if (keyFixer(key) === targetFixer(target)) {
+            return Object.keys(dataKeys)[i];
+          }
+        }
+        return null;
+      }
 
       let modal = d3.select(modalRef.current);
       modal.selectAll('.modal').remove();
       let dimDiv = modal.append('div').attr('class', 'modal');
 
       let dimensionsDiv = dimDiv.selectAll('.dimension')
-        .data(groupedData, d=>d[0])
+        .data(groupedData, d => d[0])
         .join(
           enter => enter
             .append("div")
@@ -135,7 +100,8 @@ function ModalDefinitions({ modalRef, spiData, defContext }) {
           return "GDP is Not Destiny";
         } else {
           let value = +spiData[0][`${keyMatcher(target)}`];
-          let result = `${d[0]}:  ${value.toFixed()}`;
+          let score = value ? value.toFixed() : "N/A";
+          let result = `${d[0]}:  ${score}`;
           return result;
         }
       });
@@ -145,6 +111,7 @@ function ModalDefinitions({ modalRef, spiData, defContext }) {
         d3.selectAll('.component-box').remove();
         d3.selectAll('.dimension_icon').text('+');
         d3.selectAll('.dimension-title').on('click', addComponents);
+        setClickedCallback(d[0]);
         d3.select(this).on('click', collapseDimension);
         d3.select(this).select('.dimension_icon').text('-');
         let component = d3.select(this.parentNode)
@@ -183,7 +150,8 @@ function ModalDefinitions({ modalRef, spiData, defContext }) {
         componentTitle.append('h4').text(d => {
           let target = d[0];
           let value = +spiData[0][`${keyMatcher(target)}`];
-          let result = `${d[0]}:  ${value.toFixed()}`;
+          let score = value ? value.toFixed() : "N/A";
+          let result = `${d[0]}:  ${score}`;
           return result;
         });
         componentTitle.append('p').text(d => {
@@ -205,7 +173,7 @@ function ModalDefinitions({ modalRef, spiData, defContext }) {
         d3.selectAll('.component-title').on('click', addIndicators);
         d3.select(this).on('click', collapseComponent);
         d3.select(this).select('.component_icon').text('-');
-
+        setClickedSubCat(d[0]);
         let indicator = d3.select(this.parentNode).append('ul')
           .attr('class', 'indicator-box')
           .selectAll('.indicator')
@@ -227,7 +195,7 @@ function ModalDefinitions({ modalRef, spiData, defContext }) {
           .text((d, i) => {
             let target = d[0];
             let match = spiData[0][`${keyMatcher(target)}`]
-            if (!match) return;
+            if (!match) return "N/A";
             // //round the match value
             let rounded = (+match).toFixed(3);
             let result = `(${rounded})`;
@@ -246,8 +214,7 @@ function ModalDefinitions({ modalRef, spiData, defContext }) {
 
       }
       function collapseComponent() {
-        d3.select(this).select('.component_img').text('+');
-        d3.select(this).select('.component_img').style('background-color', 'transparent');;
+        d3.select(this).select('.component_icon').text('+');
         d3.select(this).on('click', addIndicators);
         d3.selectAll('.indicator-box').remove();
       }
@@ -303,12 +270,9 @@ function ModalDefinitions({ modalRef, spiData, defContext }) {
       d3.selectAll('#remove').remove();
     };
 
-    Promise.all([parsedDefinitions(), dataKeys, spiData]).then((data) => {
-      if (!data[2]) return;
-      tabulateModal(data);
-    });
+    tabulateModal(spiByCountry);
 
-  }, [modalRef, spiData, defContext]);
+  }, [modalRef, spiByCountry, defContext, parsedDefinitions, setClickedCallback, setClickedSubCat]);
 
   return (
     <div className="modal-wrapper" ref={modalRef} >
