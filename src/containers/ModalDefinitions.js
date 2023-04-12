@@ -22,28 +22,6 @@ import opportunity_education from '../assets/bffa_icons/2_4_education.png';
 import { dataKeys, componentQuestionMatch } from '../services/SocialProgress';
 
 function ModalDefinitions({ modalRef, spiByCountry, defContext, parsedDefinitions, setClickedCallback, setClickedSubCat }) {
-
-  // function componentQuestionMatch(d) {
-  //   switch (d[0]) {
-  //     case "Nutrition and Basic Medical Care": return 'Do people have enough food to eat and are they receiving basic medical care? ';
-  //     case "Water and Sanitation": return 'Can people drink water and keep themselves clean without getting sick?';
-  //     case "Shelter": return 'Do people have adequate housing with basic utilities?';
-  //     case "Personal Safety": return 'Do people feel safe?';
-
-  //     case "Access to Basic Knowledge": return 'Do people have access to an educational foundation?';
-  //     case "Access to Information and Communications": return 'Can people freely access ideas and in formation from anywhere in the world?';
-  //     case "Health and Wellness": return 'Do people live long and healthy lives?';
-  //     case "Environmental Quality": return 'Is this society using its resources so they will be available for future generations?';
-
-  //     case "Personal Rights": return 'Are people’s rights as individuals protected?';
-  //     case "Personal Freedom and Choice": return 'Are people free to make their own life choices?';
-  //     case "Inclusiveness": return 'Is no one excluded from the opportunity to be a contributing member of society?';
-  //     case "Access to Advanced Education": return 'Do people have access to the world’s most advanced knowledge?';
-
-  //     default: return '';
-  //   };
-  // };
-
   
   useLayoutEffect(() => {
     if(!spiByCountry) return;
@@ -58,6 +36,7 @@ function ModalDefinitions({ modalRef, spiByCountry, defContext, parsedDefinition
       let cleanDef = parsedDefinitions.filter(function (element) {
         return element["dimension"] !== undefined;
       });
+      
       let groupedData = d3.group(cleanDef, d => d["dimension"], d => d["component"], d => d['indicator_name'])
 
       function keyMatcher(target) {
@@ -235,8 +214,7 @@ function ModalDefinitions({ modalRef, spiByCountry, defContext, parsedDefinition
 
       }
       function collapseComponent() {
-        d3.select(this).select('.component_img').text('+');
-        d3.select(this).select('.component_img').style('background-color', 'transparent');;
+        d3.select(this).select('.component_icon').text('+');
         d3.select(this).on('click', addIndicators);
         d3.selectAll('.indicator-box').remove();
       }
