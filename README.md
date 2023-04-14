@@ -1,81 +1,74 @@
 ## Better Future For All
+***
+#### Can you remember the first time you thought to yourself:  I want to leave the world a better place than I found it? <br />
 
-## Project Description
-This app is for rendering data visualizations from [Social Progress Imperative](https://www.socialprogress.org)  
+Maybe it was something personal and easy.  More likely it was a big task involving yourself and your community and aimed at creating a [Better Future For All (BFFA)](https://bffa.org/). <br />
 
-It is available as standalone at [BetterFutureForAll](https://betterfutureforall.netlify.app/)
+How do you approach creating a BFFA without defining and measuring what matters to people? Especially without going down the rabbit hole of economics, jobs, and GDP.  Big task.<br />
 
-Visit our Homepage at [Better Future For All](https://bffa.org/)
+A Better Future For All framework (called SPI) exists that has measurable outcomes that are actionable, can make a difference, inspire people to think positively, and has been proven to be useful.  It works, because it measures  the capacity of a community, or society, to provide for the dimensions of: Basic Human Needs, the Foundations of Well Being, and Opportunity.  
+<br />
 
-The goal of this app is to provide visual representations of data gathered by Social Progress Imperative with a aim to make it easily accessible and understood by users. Rendering visualizations will help people in leadership roles to identify needs and strengths of their community in order to help improve the quality of life for the communities in meaningful and impactful ways.
+This app is for displaying and viewing data from [Social Progress Imperative](https://www.socialprogress.org)  
 
-##
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+---
+## View it Live
 
-## Available Scripts
+  > Homepage: [Better Future For All, https://bffa.org/](https://bffa.org/)
 
-In the project directory, you can run:
+  > Standalone: [https://betterfutureforall.netlify.app/](https://betterfutureforall.netlify.app/)
 
-### `npm start`
+---
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+## Installation and Setup Instructions
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+Clone down this repository. You will need `node` and `npm` installed globally on your machine.  
 
-### `npm test`
+  - Installation:
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+    `npm install`  
+  - To Run Test Suite:  
 
-### `npm run build`
+    `npm test`  
 
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
+  - To Start Server:
 
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
+    `npm start`  
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+  - To Visit App:
 
-### `npm run eject`
+    `localhost:3000`  
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+---
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+## Reflection
+>This project was commissioned by Better Future For All and is available as a tool for enabling social progress.
+>Tools used are React, D3.js, TopoJSON, CSS, and a lot of vanilla JavaScript.
+>- D3.js is great for rendering data into graphic representations. It is very good at applying accurate projections to scale datasets in custom ways. The freedom to generate custom SVGs allowed for the artistic creativity this project required. React seemed the natural framework to hold it all together, as it is easy to make modular and embed in other websites. 
 
-## Learn More
+---
+### Goals
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+>The goal of this project is to provide visual representations of data gathered by Social Progress Imperative with a aim to make it easily accessible and understood by users. Rendering visualizations will help people in leadership roles to identify needs and strengths of their community in order to help improve the quality of life for the communities in meaningful and impactful ways.
+---
+### Road Map
+  >This process was started with using the `create-react-app` boilerplate, then adding `d3` and `topojson-client`. A topoJSON map was created from the [Natural Earth Data project](https://www.naturalearthdata.com/), and then matched up to ISO identifiers that line up with the [Social Progress Imperative](https://www.socialprogress.org)'s data sets. Those data sets are originally `.xlsx` format and had to be converted to JSON exports in order for D3 to quickly parse them as we change user selections. 
+---
+### Challenges
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+> One of the main challenges was DOM manipulation. 
+>- D3 wants to create real DOM objects and manipulate them directly, 
+>- React wants to have virtual references and only render changes. <br />
+>The first step is to use react's `useRef` as a way for React to keep a reference of the DOM created by D3. This creates a challenge for Testing as Jest will not be able to access these refs or even load in the D3 scripts properly. 
 
-### Code Splitting
+>Other challenges are in running the D3 code as a `useEffect` hook that is called to adjust the DOM as changes are needed. Often this lead to tearing it down and reconstructing it, but fortunately the math is handled quickly as the references can be Memoized. 
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
-
-### Analyzing the Bundle Size
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
-
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `npm run build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+>At the end of the day, the technologies implemented in this project are React, D3, and a significant amount of VanillaJS, JSX, and CSS. We opted for the `create-react-app` boilerplate to minimize initial setup and invest more time in diving into creative and technological rabbit holes. 
+---
+### Moving Forward
+>Next iterations 
+>- implementing `redux` would allow the handling of state in a much cleaner way. Dispatching actions would probably allow the fight for DOM control to be handled much smoother. Rapidly prototyping new concepts in conception proved difficult to know the full state. 
+>- Finding a valid testing solution to ensure stability is another needed next step. `Jest` will not properly address D3 rendered svg's
