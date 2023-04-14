@@ -11,16 +11,8 @@
   height: 100vh;
   line-height: 1.2em;
   overflow: hidden;
-  -moz-box-sizing: border-box;
-  -webkit-box-sizing: border-box;
+  text-rendering: geometricPrecision;
   box-sizing: border-box;
-}
-
-#MapContainer {
-  width: 100%;
-  display: flex;
-  flex: 0 0 auto;
-  height: 50%;
 }
 
 .graphicTooltip {
@@ -29,13 +21,6 @@
 
 .petalPath {
   text-align: justify;
-}
-
-#loading-spinner {
-  position: absolute;
-  height: 100vh;
-  width: 100vw;
-  z-index: 1;
 }
 
 .legend {
@@ -48,7 +33,7 @@
 .ControlBar {
   display: flex;
   flex-wrap: wrap;
-  flex-direction: row;
+  flex-direction: column;
   width: 100%;
   align-items: center;
   justify-content: space-evenly;
@@ -56,30 +41,18 @@
 }
 
 .select-years {
-  padding: 0;
-  margin: 0;
-  width: min-content;
   border: 1px solid black;
   border-radius: 2px;
-  overflow: hidden !important;
-  align-items: center;
-  text-align: center;
   background-color: white;
 }
 
 .select-countries {
-  padding: 0;
-  margin: 0;
   width: 88%;
   border: 1px solid black;
   border-radius: 2px;
-  overflow: hidden !important;
-  align-items: center;
-  text-align: center;
-  font-size: large;
+  font-size: 16px;
   font-weight: bold;
   background-color: white;
-
 }
 
 .select-countries-div {
@@ -94,7 +67,7 @@
   width: min-content;
   border: 1px solid black;
   border-radius: 2px;
-  padding: 1px 4px 1px 4px;
+  padding: 0px 2px 0px 2px;
   margin-right: 1%;
 }
 
@@ -119,9 +92,6 @@
 .modal-wrapper {
   justify-content: flex-end;
   align-items: center;
-  width: 100vw;
-  margin: 0;
-  padding: 0;
   overflow-y: scroll;
   overflow-x: hidden;
   height: 100%;
@@ -133,7 +103,7 @@
   .App {
     display: grid;
     grid-template-columns: 60vw 40vw;
-    grid-template-rows: 10vh 80vh 10vh;
+    grid-template-rows: 12vh 80vh 10vh;
     grid-template-areas:
       "map control"
       "map def"
@@ -141,8 +111,6 @@
   }
 
   #MapContainer {
-    width: 100%;
-    height: 100% !important;
     grid-area: map;
   }
 
@@ -163,8 +131,6 @@
   }
 
   .modal-wrapper {
-    height: 100vh !important;
-    width: 40vw !important;
     grid-area: def;
   }
 }
@@ -186,15 +152,12 @@
 .modal {
   width: 100%;
   height: 100%;
-  padding: 1px;
   overflow-y: scroll !important;
   overflow-x: hidden;
   text-align: left;
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  margin: 0;
-  padding: 0;
   background-color: rgba(0, 0, 0, 0.101);
 }
 
@@ -231,7 +194,7 @@
 .dimension_img {
   grid-area: img;
   max-width: 100%;
-  max-height: 1.2em;
+  height: 1em;
 }
 
 .dimension_icon {
@@ -245,18 +208,19 @@
   width: auto;
   display: grid;
   align-items: stretch;
+  border-bottom: .05em dashed rgba(255, 255, 255, 0.6);
   grid-template-areas:
-    "image icon h4"
-    "image icon p";
+    "image image h4"
+    "icon icon p";
 }
 
 .component_icon {
   grid-area: icon;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: right;
   height: 100%;
-  width: 1.2em;
+  width: 1em;
   box-sizing: border-box;
 }
 
@@ -289,30 +253,29 @@
 }
 
 .component p {
-  padding-right: .5em;
+  padding: 0 5px 2px ;
   text-align: left;
   font-style: italic;
 }
 
 ::marker {
   font-size: 1.2em;
+  font-style: bold;
 }
 
 .indicator {
-  width: 95%;
   grid-area: i;
   grid-row: auto;
   grid-column: auto;
   grid-auto-flow: dense;
   flex-direction: column;
+  padding: 0 .25em 0;
 }
 
 .indicator-box {
   list-style-type: disclosure-closed;
   padding-left: 2.5em;
   background-color: rgba(255, 255, 255, 0.4);
-  -moz-box-sizing: border-box;
-  -webkit-box-sizing: border-box;
   box-sizing: border-box;
 }
 
@@ -325,7 +288,10 @@
 }
 
 .indicator-definitions {
+  display: flex;
   background-color: rgba(255, 255, 255, 0.4);
+  box-sizing: border-box;
+  margin-left: 5px;
 }
 
 .indicator-substring {
@@ -334,14 +300,11 @@
 
 .indicator-definition {
   list-style-type: none;
-  display: flex;
   font-style: italic;
-  text-indent: 1rem;
-  box-sizing: border-box;
-  padding: 0 .5rem 0;
+  text-indent: 1.2rem;
 }
 
 .indicator-link {
-  white-space: pre-line;
-  overflow-wrap: anywhere;
+  font-size: 12px;
+  text-indent: .5rem;
 }

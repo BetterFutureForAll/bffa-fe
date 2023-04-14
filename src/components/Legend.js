@@ -8,7 +8,7 @@ const Legend = ({ width, height }) => {
   let legendRef = useRef(null);
   let legendData = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
 
-  let squareSize = ((width * .75) / 12 > 25) ? (width * .75) / 12 : 26;
+  let squareSize = ((width) / 13 > 25) ? (width) / 13 : 26;
 
   if (width < 376) {
     squareSize = 26;
