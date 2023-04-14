@@ -19,7 +19,7 @@ const ControlBar = ({
           <label id="country_list" value={countryValue} ></label>
           {selectCountries}
         </form>
-        <h3 id='score-text'>{`${scoreText ? scoreText : "Partial"}`}</h3>
+        <h4 id='score-text'>{`${scoreText ? scoreText : "Partial"}`}</h4>
       </div>
       <form onSubmit={handleSubmit}>
         <label id="years" value={yearValue} ></label>

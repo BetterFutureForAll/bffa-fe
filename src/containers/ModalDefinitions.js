@@ -22,9 +22,9 @@ import opportunity_education from '../assets/bffa_icons/2_4_education.png';
 import { dataKeys, componentQuestionMatch } from '../services/SocialProgress';
 
 function ModalDefinitions({ modalRef, spiByCountry, defContext, parsedDefinitions, setClickedCallback, setClickedSubCat }) {
-  
+
   useLayoutEffect(() => {
-    if(!spiByCountry) return;
+    if (!spiByCountry) return;
 
     let BasicImageArray = [basic_nutrition, basic_water, basic_shelter, basic_safety];
     let FoundationImageArray = [foundations_knowledge, foundations_communication, foundations_health, foundations_environmental];
@@ -36,13 +36,13 @@ function ModalDefinitions({ modalRef, spiByCountry, defContext, parsedDefinition
       let cleanDef = parsedDefinitions.filter(function (element) {
         return element["dimension"] !== undefined;
       });
-      
+
       let groupedData = d3.group(cleanDef, d => d["dimension"], d => d["component"], d => d['indicator_name'])
 
       function keyMatcher(target) {
         const dataKeysArray = Object.values(dataKeys);
         const targetFixer = (target) => target.replace(/and/, '&').trim().toLowerCase();
-      
+
         for (let i = 0; i < dataKeysArray.length; i++) {
           const key = dataKeysArray[i];
           const keyFixer = (key) => key.replace(/[\n\r]*\((.*)\)[ \n\r]*/g, '').replace(/and/, '&').trim().toLowerCase();
@@ -210,9 +210,8 @@ function ModalDefinitions({ modalRef, spiByCountry, defContext, parsedDefinition
             let subString = match ? match : null;
             return `    ${subString}`;
           }).attr('class', 'indicator-substring')
-
-
       }
+
       function collapseComponent() {
         d3.select(this).select('.component_icon').text('+');
         d3.select(this).on('click', addIndicators);
@@ -233,7 +232,7 @@ function ModalDefinitions({ modalRef, spiByCountry, defContext, parsedDefinition
             return d[1][0]['definition']
           })
           .attr("class", "indicator-definition");
-        // ******************************************** Check for Multiple Links **********
+
         indicator
           .selectAll('.citation')
           .data(d[1][0].citations)
@@ -245,7 +244,7 @@ function ModalDefinitions({ modalRef, spiByCountry, defContext, parsedDefinition
               })
               .text(d => {
                 let result = d.citation[1] ? d.citation[1] : d.citation[0];
-                return `${result}\n`
+                return `-${result}\n`
               })
               .attr("class", "indicator-link")
               .attr("target", "_blank")

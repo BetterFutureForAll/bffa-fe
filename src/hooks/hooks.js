@@ -136,7 +136,9 @@ export function useWindowSize() {
   const isWindowClient = typeof window === "object";
 
   const [windowSize, setWindowSize] = useState(
-    isWindowClient ? [window.innerWidth, window.innerHeight] : undefined
+    isWindowClient && window.innerWidth && window.innerHeight
+    ? [window.innerWidth, window.innerHeight] 
+    : undefined
   );
 
   useEffect(() => {
@@ -147,9 +149,13 @@ export function useWindowSize() {
     if (isWindowClient) {
       //register the window resize listener
       window.addEventListener("resize", setSize);
+      window.addEventListener("orientationchange", setSize);
 
       //un-register the listener
-      return () => window.removeEventListener("resize", setSize);
+      return () => {
+      window.removeEventListener("resize", setSize);
+      window.removeEventListener("orientationchange", setSize);
+      }
     }
   }, [isWindowClient, setWindowSize]);
   return windowSize;
@@ -157,9 +163,11 @@ export function useWindowSize() {
 
 export function useMapSize(height, width) {
 
-  let heightCalc = (window.matchMedia('(orientation: landscape)').matches && window.matchMedia('(min-width: 600px)').matches) ? height : height * .5;
-  let widthCalc = (window.matchMedia('(orientation: landscape)').matches && window.matchMedia('(min-width: 600px)').matches) ? width * .6 : width;
-  
+  const windowSize = useWindowSize();
+  const isLandscape = windowSize[0] > windowSize[1];
+  let heightCalc = isLandscape && windowSize[0] >= 600 ? height : height * 0.5;
+  let widthCalc = isLandscape && windowSize[0] >= 600 ? width * 0.6 : width;
+
   const [mapHeight, setMapHeight] = useState([heightCalc, widthCalc]);
   useEffect(() => {
     setMapHeight([heightCalc, widthCalc]);

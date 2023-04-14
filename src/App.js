@@ -92,7 +92,7 @@ function App() {
   return (
     <div className="App">
       <div id="MapContainer" >
-        <svg ref={svgRef} height={mapHeight} width={mapWidth} id="map">
+        <svg ref={svgRef} height={mapHeight} width={mapWidth} id="map" >
         </svg>
       </div>
       <MapMaker
