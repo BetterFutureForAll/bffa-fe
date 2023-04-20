@@ -165,6 +165,8 @@ function ModalDefinitions({ modalRef, spiByCountry, defContext, parsedDefinition
         d3.select(this).select('.dimension_icon').text('+');
         d3.select(this).on('click', addComponents);
         d3.selectAll('.component-box').remove();
+        setClickedCallback(null);
+        setClickedSubCat(null);
       }
 
       function addIndicators(event, d) {
@@ -216,6 +218,7 @@ function ModalDefinitions({ modalRef, spiByCountry, defContext, parsedDefinition
         d3.select(this).select('.component_icon').text('+');
         d3.select(this).on('click', addIndicators);
         d3.selectAll('.indicator-box').remove();
+        setClickedSubCat(null);
       }
 
       function expandIndicators(event, d) {
