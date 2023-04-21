@@ -108,7 +108,11 @@ const ToolTip = ({ svgRef, tooltipData, loading, mapHeight, mapWidth, setClicked
         .attr('y', y)
         .attr('fill', d => d.color)
         .attr('transform', d => `translate(${x}, ${y}) rotate(${d.angle + 30}) scale(${1})`)
-
+        .on("click", (event, d) => {
+          //clears components and selects dimension
+          setClickedCallback(d.label);
+          setClickedSubCat(null);
+        })
 
       toolTip.selectAll('.petalArcText').remove();
       toolTip.selectAll('.petalArcText')
@@ -126,16 +130,18 @@ const ToolTip = ({ svgRef, tooltipData, loading, mapHeight, mapWidth, setClicked
             .text(d => {
               //Handles Partial Scores
               let rounded = (+d.score).toFixed() || 0;
-              return `${d.label}-${+rounded === 0? " N / A" : rounded}`;
+              return `${d.label}-${+rounded === 0 ? " N / A" : rounded}`;
             });
           return textArc;
         })
 
       toolTip.selectAll(".nameText").remove();
+
       function getBB(selection) {
         selection.each(function (d) { d.bbox = this.getBBox(); })
       }
-      let nameText = toolTip.selectAll(".nameText")
+
+      let nameText = toolTip.selectAll(".nameText") // Country name and score
         .data(data)
         .join("g")
         .attr("class", "textGroup")
@@ -166,25 +172,30 @@ const ToolTip = ({ svgRef, tooltipData, loading, mapHeight, mapWidth, setClicked
         .attr("font-weight", 700)
         .attr("font-size", fontSize)
 
-      nameText.call(getBB);
+      nameText.call(getBB)//sets the size of the text as d.bbox;
 
       nameText.select(".nameBox")
-        .attr("width", function (d) { return d.bbox.width })
-        .attr("height", function (d) { return d.bbox.height })
-        .attr('transform', d => `translate(${x - (d.bbox.width / 2)}, ${(y - (d.bbox.height))})`)
+        .attr("width", function (d) { return d.bbox.width + 2 })
+        .attr("height", function (d) { return d.bbox.height + 2 })
+        .attr('transform', d => `translate(${x - ((d.bbox.width + 2) / 2)}, ${(y - (d.bbox.height + 2))})`)
 
-      // ****** MouseOver Functions start here ******** ///
+// ****** MouseOver Functions start here ************************************************************************** ///
       var textTooltip = toolTip.selectAll(".tooltip-text-area")
         .style("opacity", 0);
 
       var mouseover = function (event, d) {
-        setClickedSubCat(d.label);
+
+        textTooltip.style("opacity", 1)
+
+        setClickedSubCat(d.label); //Change the Category
+
+        // petal angles [0-60], [120-180], [240,300]
+        let shiftY = false;
+        if (+d.angle > 180) shiftY = true;
+
         let [mouseX, mouseY] = [event.x || x, event.y || y];
 
-        textTooltip
-          .style("opacity", 1)
-
-          let mouseGroup = toolTip
+        let mouseGroup = toolTip
           .selectAll(".tooltip-text-area")
           .data([d])
           .join('g')
@@ -219,7 +230,7 @@ const ToolTip = ({ svgRef, tooltipData, loading, mapHeight, mapWidth, setClicked
           .text(d => `${d.label}`)
           .attr('x', mouseX)
           .attr('y', mouseY)
-          .attr('dy', '1.5em')
+          .attr('dy', `1em`)
 
         mouseText.selectAll('.scoreSpan')
           .data([d])
@@ -228,15 +239,17 @@ const ToolTip = ({ svgRef, tooltipData, loading, mapHeight, mapWidth, setClicked
           .attr('x', mouseX)
           .attr('y', mouseY)
           .text(d => `${(+d.score).toFixed()}`)
-          .attr('dy', '+2.5em')
+          .attr('dy', `2em`)
 
 
-        mouseGroup.call(getBB)
+        mouseGroup.call(getBB)//sets the size of the text as d.bbox
 
-        mouseGroup.select(".nameBox")
-          .attr("width", function (d) { return d.bbox.width })
-          .attr("height", function (d) { return d.bbox.height })
-          .attr('transform', d => `translate(${-(d.bbox.width / 2)}, ${10})`)
+        mouseGroup.select(".nameBox") //scales the namebox and translates it to middle of text
+          .attr("width", function (d) { return d.bbox.width + 2 })
+          .attr("height", function (d) { return d.bbox.height + 2 })
+          .attr('transform', d => `translate(${-(d.bbox.width / 2)}, 0)`)
+
+        mouseGroup.attr('transform', d => `translate(0, ${shiftY ? 25 : -60})`) //Shifts TextBox up or down according to d.angle
       };
 
       var mousemove = function (event, d) {
@@ -248,7 +261,7 @@ const ToolTip = ({ svgRef, tooltipData, loading, mapHeight, mapWidth, setClicked
         d3.selectAll('.subPetalBackgroundPath') //Highlighted Petal
           .style("fill", (d, i) => (`${d.label}` === targetData) ? "white" : `${d.color}`);
 
-        toolTip
+        toolTip //moves tooltip to mouse location
           .selectAll(".tooltip-text-area")
           .attr('x', mouseX)
           .attr('y', mouseY)
