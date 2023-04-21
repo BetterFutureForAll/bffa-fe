@@ -54,33 +54,24 @@ function ModalDefinitions({ modalRef, spiByCountry, defContext, parsedDefinition
       }
 
       let modal = d3.select(modalRef.current);
+
       modal.selectAll('.modal').remove();
+
       let dimDiv = modal.append('div').attr('class', 'modal');
 
       let dimensionsDiv = dimDiv.selectAll('.dimension')
         .data(groupedData, d => d[0])
-        .join(
-          enter => enter
-            .append("div")
-            .attr("class", (d, i) => { return `dim-${i} dimension`; })
-            .attr("id", d => {
-              if (!d[0]) {
-                return "remove";
-              }
-              //class and ID to isolate footer
-              let id = (d[0]).replace(/ /g, "_");
-              return id;
-            }));
+        .join("div")
+        .attr("class", (d, i) => { return `dim-${i} dimension`; })
+        .attr("id", d => (d[0]).replace(/ /g, "_"))
+
 
       //Dimensions Title Bar
-      let divTitle = dimensionsDiv.append('div').attr("id", d => {
-        if (!d[0]) {
-          return "footer";
-        }
-        // //class and ID to isolate footer
-        let id = (d[0]).replace(/ /g, "_");
-        return `${id}_title`;
-      }).attr('class', 'dimension-title').on('click', addComponents);
+      let divTitle = dimensionsDiv.append('div').attr("id", d => `${(d[0]).replace(/ /g, "_")}_title`)
+        .attr('class', 'dimension-title')
+        .attr("cursor", "pointer")
+        .on('click', addComponents);
+
       //indicator icon 
       divTitle.append("h3").text('+').attr("class", "dimension_icon");
       //images
@@ -94,26 +85,22 @@ function ModalDefinitions({ modalRef, spiByCountry, defContext, parsedDefinition
       }).attr('class', 'dimension_img');
 
       divTitle.append('h4').text(d => {
-        let target = d[0]
-        d[0] === '' ? target = '*' : target = d[0];
-        if (target === "*" || undefined) {
-          return "GDP is Not Destiny";
-        } else {
-          let value = +spiData[0][`${keyMatcher(target)}`];
-          let score = value ? value.toFixed() : "N/A";
-          let result = `${d[0]}:  ${score}`;
-          return result;
-        }
+        let value = +spiData[0][`${keyMatcher(d[0])}`];
+        let score = value ? value.toFixed() : "N/A";
+        let result = `${d[0]}:  ${score}`;
+        return result;
       });
 
       // Components
       function addComponents(event, d) {
+        setClickedCallback(d[0]);
+
         d3.selectAll('.component-box').remove();
         d3.selectAll('.dimension_icon').text('+');
         d3.selectAll('.dimension-title').on('click', addComponents);
-        setClickedCallback(d[0]);
         d3.select(this).on('click', collapseDimension);
         d3.select(this).select('.dimension_icon').text('-');
+        
         let component = d3.select(this.parentNode)
           .append('div').attr('class', 'component-box')
           .selectAll('.component')
@@ -165,6 +152,8 @@ function ModalDefinitions({ modalRef, spiByCountry, defContext, parsedDefinition
         d3.select(this).select('.dimension_icon').text('+');
         d3.select(this).on('click', addComponents);
         d3.selectAll('.component-box').remove();
+        setClickedCallback(null);
+        setClickedSubCat(null);
       }
 
       function addIndicators(event, d) {
@@ -216,6 +205,7 @@ function ModalDefinitions({ modalRef, spiByCountry, defContext, parsedDefinition
         d3.select(this).select('.component_icon').text('+');
         d3.select(this).on('click', addIndicators);
         d3.selectAll('.indicator-box').remove();
+        setClickedSubCat(null);
       }
 
       function expandIndicators(event, d) {
