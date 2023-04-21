@@ -175,9 +175,9 @@ const ToolTip = ({ svgRef, tooltipData, loading, mapHeight, mapWidth, setClicked
       nameText.call(getBB)//sets the size of the text as d.bbox;
 
       nameText.select(".nameBox")
-        .attr("width", function (d) { return d.bbox.width + 2 })
-        .attr("height", function (d) { return d.bbox.height + 2 })
-        .attr('transform', d => `translate(${x - ((d.bbox.width + 2) / 2)}, ${(y - (d.bbox.height + 2))})`)
+        .attr("width", function (d) { return d.bbox.width})
+        .attr("height", function (d) { return d.bbox.height})
+        .attr('transform', d => `translate(${x - (d.bbox.width / 2)}, ${(y - d.bbox.height)})`)
 
 // ****** MouseOver Functions start here ************************************************************************** ///
       var textTooltip = toolTip.selectAll(".tooltip-text-area")
@@ -208,8 +208,9 @@ const ToolTip = ({ svgRef, tooltipData, loading, mapHeight, mapWidth, setClicked
           .attr('class', 'nameBox')
           .attr('x', mouseX)
           .attr('y', mouseY)
-          .attr('rx', 10)
-          .attr('ry', 10)
+          // .attr("style", "outline: thin solid rgba(0, 0, 0, 0.5);") 
+          .attr('rx', 8)
+          .attr('ry', 8)
           .style("fill", "rgba(255, 255, 255, 0.5)")
 
         let mouseText = mouseGroup
@@ -245,8 +246,8 @@ const ToolTip = ({ svgRef, tooltipData, loading, mapHeight, mapWidth, setClicked
         mouseGroup.call(getBB)//sets the size of the text as d.bbox
 
         mouseGroup.select(".nameBox") //scales the namebox and translates it to middle of text
-          .attr("width", function (d) { return d.bbox.width + 2 })
-          .attr("height", function (d) { return d.bbox.height + 2 })
+          .attr("width", function (d) { return d.bbox.width })
+          .attr("height", function (d) { return d.bbox.height })
           .attr('transform', d => `translate(${-(d.bbox.width / 2)}, 0)`)
 
         mouseGroup.attr('transform', d => `translate(0, ${shiftY ? 25 : -60})`) //Shifts TextBox up or down according to d.angle
