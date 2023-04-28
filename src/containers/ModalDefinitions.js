@@ -93,7 +93,6 @@ function ModalDefinitions({ modalRef, spiByCountry, defContext, parsedDefinition
 
       // Components
       function addComponents(event, d) {
-        setClickedCallback(d[0]);
 
         d3.selectAll('.component-box').remove();
         d3.selectAll('.dimension_icon').text('+');
@@ -146,6 +145,8 @@ function ModalDefinitions({ modalRef, spiByCountry, defContext, parsedDefinition
           return result;
         })
         d3.select(this).exit().remove();
+        setClickedCallback(d[0]);
+
       };
 
       function collapseDimension() {
