@@ -1,4 +1,4 @@
-const { data: raw } = require('./assets/spi.json');
+const { data: raw } = require('../../src/assets/spi.json');
 
 console.log('raw data', raw.length)
 let noHeader = raw.filter(({ spiyear }) => spiyear !== 'SPI \r\nyear');

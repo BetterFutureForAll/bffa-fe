@@ -1,0 +1,73 @@
+
+
+
+const rawKeys2022 = 'rank_score_spi	country	spicountrycode	spiyear	status	score_spi	score_bhn	score_fow	score_opp	score_nbmc	score_ws	score_sh	score_ps	score_abk	score_aic	score_hw	score_eq	score_pr	score_pfc	score_incl	score_aae	nbmc_stunting	nbmc_infectiousdaly	nbmc_matmort	nbmc_childmort	nbmc_undernourish	nbmc_dietlowfruitveg	ws_washmortdalys	ws_sanitation	ws_water	ws_watersat	sh_hhairpolldalys	sh_affhousingdissat	sh_electricity	sh_cleanfuels	ps_politicalkillings	ps_intpersvioldaly	ps_transportdaly	ps_intimpartnviol	ps_moneystolen	abk_qualeduc	abk_propnoeduc	abk_popsomesec	abk_totprimenrol	abk_educpar	aic_altinfo	aic_mobiles	aic_internet	aic_eparticip	hw_qualityhealth	hw_lifex60	hw_ncdmort	hw_univhealthcov	hw_qualhealthsat	eq_airpolldalys	eq_leadexpdalys	eq_pm25	eq_spindex	pr_freerelig	pr_proprightswomen	pr_peaceassemb	pr_accessjustice	pr_freediscuss	pr_polrights	pfc_freedomestmov	pfc_earlymarriage	pfc_contracept	pfc_neet	pfc_vulnemploy	pfc_corruption	incl_equalprotect	incl_equalaccess	incl_sexualorient	incl_accpubsersocgr	incl_gayslesb	incl_discrimin	aae_acadfreed	aae_femterteduc	aae_tertschlife	aae_citabledocs	aae_qualuniversities';
+
+const keys2022 = rawKeys2022.split(/\s+/);
+const def2022 = [
+    [1, 'Basic Human Needs', 'Nutrition and Basic Medical Care', 'Infectious diseases'],
+    [2, 'Basic Human Needs', 'Nutrition and Basic Medical Care', 'Child mortality rate'],
+    [3, 'Basic Human Needs', 'Nutrition and Basic Medical Care', 'Child stunting'],
+    [4, 'Basic Human Needs', 'Nutrition and Basic Medical Care', 'Maternal mortality rate'],
+    [5, 'Basic Human Needs', 'Nutrition and Basic Medical Care', 'Undernourishment'],
+    [6, 'Basic Human Needs', 'Nutrition and Basic Medical Care', 'Diet low in fruits and vegetables'],
+    [7, 'Basic Human Needs', 'Water and Sanitation', 'Access to improved sanitation'],
+    [8, 'Basic Human Needs', 'Water and Sanitation', 'Access to improved water source'],
+    [9, 'Basic Human Needs', 'Water and Sanitation', 'Unsafe water, sanitation and hygiene'],
+    [10, 'Basic Human Needs', 'Water and Sanitation', 'Satisfaction with water quality'],
+    [11, 'Basic Human Needs', 'Shelter', 'Household air pollution'],
+    [12, 'Basic Human Needs', 'Shelter', 'Dissatisfaction with housing affordability'],
+    [13, 'Basic Human Needs', 'Shelter', 'Access to electricity'],
+    [14, 'Basic Human Needs', 'Shelter', 'Usage of clean fuels and technology for cooking'],
+    [15, 'Basic Human Needs', 'Personal Safety', 'Interpersonal violence '],
+    [16, 'Basic Human Needs', 'Personal Safety', 'Transportation related injuries'],
+    [17, 'Basic Human Needs', 'Personal Safety', 'Political killings and torture'],
+    [18, 'Basic Human Needs', 'Personal Safety', 'Intimate partner violence'],
+    [19, 'Basic Human Needs', 'Personal Safety', 'Money stolen'],
+    [20, 'Foundations of Wellbeing', 'Access to Basic Knowledge', 'Population with no schooling'],
+    [21, 'Foundations of Wellbeing', 'Access to Basic Knowledge', 'Equal access to quality education'],
+    [22, 'Foundations of Wellbeing', 'Access to Basic Knowledge', 'Primary school enrollment'],
+    [23, 'Foundations of Wellbeing', 'Access to Basic Knowledge', 'Secondary school attainment'],
+    [24, 'Foundations of Wellbeing', 'Access to Basic Knowledge', 'Gender parity in secondary attainment'],
+    [25, 'Foundations of Wellbeing', 'Access to Information and Communications', 'Access to online governance'],
+    [26, 'Foundations of Wellbeing', 'Access to Information and Communications', 'Internet users'],
+    [27, 'Foundations of Wellbeing', 'Access to Information and Communications', 'Mobile telephone subscriptions'],
+    [28, 'Foundations of Wellbeing', 'Access to Information and Communications', 'Alternative sources of information index'],
+    [29, 'Foundations of Wellbeing', 'Health and Wellness', 'Life expectancy at 60'],
+    [30, 'Foundations of Wellbeing', 'Health and Wellness', 'Premature deaths from non-communicable diseases'],
+    [31, 'Foundations of Wellbeing', 'Health and Wellness', 'Equal access to quality healthcare'],
+    [32, 'Foundations of Wellbeing', 'Health and Wellness', 'Access to essential health services'],
+    [33, 'Foundations of Wellbeing', 'Health and Wellness', 'Satisfaction with availability of quality healthcare'],
+    [34, 'Foundations of Wellbeing', 'Environmental Quality', 'Outdoor air pollution'],
+    [35, 'Foundations of Wellbeing', 'Environmental Quality', 'Lead exposure'],
+    [36, 'Foundations of Wellbeing', 'Environmental Quality', 'Particulate matter pollution'],
+    [37, 'Foundations of Wellbeing', 'Environmental Quality', 'Species protection'],
+    [38, 'Opportunity', 'Personal Rights', 'Access to justice'],
+    [39, 'Opportunity', 'Personal Rights', 'Freedom of religion'],
+    [40, 'Opportunity', 'Personal Rights', 'Political rights'],
+    [41, 'Opportunity', 'Personal Rights', 'Property rights for women'],
+    [42, 'Opportunity', 'Personal Rights', 'Freedom of peaceful assembly'],
+    [43, 'Opportunity', 'Personal Rights', 'Freedom of discussion'],
+    [44, 'Opportunity', 'Personal Freedom and Choice', 'Satisfied demand for contraception'],
+    [45, 'Opportunity', 'Personal Freedom and Choice', 'Perception of corruption'],
+    [46, 'Opportunity', 'Personal Freedom and Choice', 'Early marriage'],
+    [47, 'Opportunity', 'Personal Freedom and Choice', 'Young people not in education, employment or training'],
+    [48, 'Opportunity', 'Personal Freedom and Choice', 'Vulnerable employment'],
+    [49, 'Opportunity', 'Personal Freedom and Choice', 'Freedom of domestic movement'],
+    [50, 'Opportunity', 'Inclusiveness', 'Equal protection index'],
+    [51, 'Opportunity', 'Inclusiveness', 'Equal access index'],
+    [52, 'Opportunity', 'Inclusiveness', 'Power distributed by sexual orientation'],
+    [53, 'Opportunity', 'Inclusiveness', 'Access to public services distributed by social group'],
+    [54, 'Opportunity', 'Inclusiveness', 'Discrimination and violence against minorities'],
+    [55, 'Opportunity', 'Inclusiveness', 'Acceptance of gays and lesbians'],
+    [56, 'Opportunity', 'Access to Advanced Education', 'Citable documents'],
+    [57, 'Opportunity', 'Access to Advanced Education', 'Academic freedom'],
+    [58, 'Opportunity', 'Access to Advanced Education', 'Women with advanced education'],
+    [59, 'Opportunity', 'Access to Advanced Education', 'Expected years of tertiary schooling'],
+    [60, 'Opportunity', 'Access to Advanced Education', 'Quality weighted universities '],
+];
+
+for(let i = 0; i < keys2022.length; i++) {
+    const def = def2022[i - 6];
+    console.log(i, keys2022[i], def)
+}
