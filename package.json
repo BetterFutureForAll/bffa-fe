@@ -21,7 +21,9 @@
         "start": "NODE_OPTIONS=--openssl-legacy-provider react-scripts start",
         "build": "react-scripts build",
         "test": "react-scripts test",
-        "eject": "react-scripts eject"
+        "eject": "react-scripts eject",
+        "transform:watch": "nodemon ./data/import/csv-to-json.js -w ./data/import/csv-to-json.js;",
+        "transform": "node ./data/import/csv-to-json.js"
     },
     "eslintConfig": {
         "extends": "react-app"
@@ -40,6 +42,7 @@
     },
     "devDependencies": {
         "eslint-plugin-react-hooks": "^4.2.0",
+        "neat-csv": "^7.0.0",
         "redux-devtools": "^3.7.0"
     }
 }

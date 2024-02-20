@@ -38,7 +38,7 @@ export const useClickedSubCat = () => {
 export const useYears = () => {
   let [years, setYears] = useState([]);
   useEffect(() => {
-    if (years.length < 1 || !years) {
+    if(years.length < 1 || !years) {
       makeYearsArray()
         .then(parsedYears => setYears(parsedYears));
     }
@@ -47,7 +47,7 @@ export const useYears = () => {
 };
 
 export const useHandleYearChange = () => {
-  let [yearValue, setYearValue] = useState('2022');
+  let [yearValue, setYearValue] = useState('2023');
   let handleYearChange = (e) => {
     setYearValue(e.target.value);
   };
@@ -60,7 +60,7 @@ export const useHandleYearChange = () => {
 export const useCountries = () => {
   let [countries, setCountries] = useState(["World"]);
   useEffect(() => {
-    if (countries.length < 2 || !countries) {
+    if(countries.length < 2 || !countries) {
       makeCountriesArray()
         .then(parsedCountries => setCountries(parsedCountries));
     }
@@ -103,7 +103,7 @@ export function useDefinitions(clicked, clickedSubCat, countryValue) {
     component: null,
     indicator_number: null,
   })
-  
+
   useLayoutEffect(() => {
     let id = clicked ? clicked.replace(/ /g, "_") : null;
     let subId = clickedSubCat ? clickedSubCat.replace(/ /g, "_") : null;
@@ -137,8 +137,8 @@ export function useWindowSize() {
 
   const [windowSize, setWindowSize] = useState(
     isWindowClient && window.innerWidth && window.innerHeight
-    ? [window.innerWidth, window.innerHeight] 
-    : undefined
+      ? [window.innerWidth, window.innerHeight]
+      : undefined
   );
 
   useEffect(() => {
@@ -146,15 +146,15 @@ export function useWindowSize() {
     function setSize() {
       setWindowSize([window.innerWidth, window.innerHeight]);
     }
-    if (isWindowClient) {
+    if(isWindowClient) {
       //register the window resize listener
       window.addEventListener("resize", setSize);
       window.addEventListener("orientationchange", setSize);
 
       //un-register the listener
       return () => {
-      window.removeEventListener("resize", setSize);
-      window.removeEventListener("orientationchange", setSize);
+        window.removeEventListener("resize", setSize);
+        window.removeEventListener("orientationchange", setSize);
       }
     }
   }, [isWindowClient, setWindowSize]);
@@ -199,7 +199,7 @@ export function useToolTipData(spiByCountry) {
   const [tooltipData, setTooltipData] = useState(null);
   useEffect(() => {
     const parsedTooltipData = spiByCountry ? parseTooltipData(spiByCountry[0]) : null;
-    if (!parsedTooltipData) return;
+    if(!parsedTooltipData) return;
     setTooltipData(parsedTooltipData);
   }, [spiByCountry])
   return [tooltipData, setTooltipData];

@@ -1,8 +1,8 @@
 import * as d3 from 'd3';
 import { useMemo } from 'react';
-import { data } from '../assets/spi.json';
+import data from '../assets/spi.json';
 import { countryIdTable } from '../assets/iso.json';
-import { definitionsArray } from '../assets/definitions.json';
+import definitionsArray from '../assets/definitions.json';
 
 export const keyFixer = (key) => key.replace(/[\n\r]*\((.*)\)[ \n\r]*/g, '');
 export const nameFixer = (name) => name.replace(/,\s*|\s+/g, '_').toLowerCase();
@@ -10,7 +10,7 @@ export const nameFixer = (name) => name.replace(/,\s*|\s+/g, '_').toLowerCase();
 export const promisedMap = d3.json("https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json")
   .then(data => {
     data.objects.countries.geometries.forEach((r) => {
-      var result = countryIdTable.filter(function (iso) {
+      var result = countryIdTable.filter(function(iso) {
         return iso['country-code'] === r.id;
       });
       // assign an ISO-Alpha to each country geometry 
@@ -42,7 +42,7 @@ export async function getSpiDataByYear(year) {
 
 export async function getSpiDataByCountry(data, countryValue) {
   let found = data.find(d => d.country === countryValue)
-  if (!found) return;
+  if(!found) return;
   const output = Object.keys(found).reduce((previous, key) => {
     return { ...previous, [`${keyFixer(key)}`]: found[key] };
   }, {});
@@ -52,11 +52,11 @@ export async function getSpiDataByCountry(data, countryValue) {
 
 export async function getScore(ISO_A3, data) {
   var score = null;
-  if (!data || data === undefined) {
+  if(!data || data === undefined) {
     return 0;
   }
   data.filter((element) => {
-    if (element['SPI country code'] === ISO_A3) {
+    if(element['SPI country code'] === ISO_A3) {
       return score = element['Social Progress Index'];
     }
     else return 0;
@@ -89,33 +89,33 @@ function createPetal(label, score, colorScale, angle, subPetals) {
   const scale = spiScale(score || 0);
   const color = colorScale(score || 0);
   const petalPath = 'M 0 0 c 100 100 80 0 100 0 C 80 0 100 -100 0 0';
-  
+
   return { label, score, scale, color, petalPath, angle, subPetals };
 }
 
 // Define the parsedData function using the createPetal function
 export function parseTooltipData(d) {
-  if(!d)return null;
+  if(!d) return null;
   const name = d.country;
   const id = d.spicountrycode;
   const score = +d.score_spi || 0;
 
   const basics = createPetal(
-    'Basic Human Needs', +d.score_bhn || 0, basicColorScale, 30,
+    'Basic Needs', +d.score_bhn || 0, basicColorScale, 30,
     [
-      createPetal('Nutrition and Basic Medical Care', +d.score_nbmc || 0, basicColorScale, 0),
+      createPetal('Nutrition and Medical Care', +d.score_nbmc || 0, basicColorScale, 0),
       createPetal('Water and Sanitation', +d.score_ws || 0, basicColorScale, 20),
-      createPetal('Shelter', +d.score_sh || 0, basicColorScale, 40),
-      createPetal('Personal Safety', +d.score_ps || 0, basicColorScale, 60),
+      createPetal('Housing', +d.score_sh || 0, basicColorScale, 40),
+      createPetal('Safety', +d.score_ps || 0, basicColorScale, 60),
     ],
   );
 
   const foundations = createPetal(
     'Foundations of Wellbeing', +d.score_fow || 0, foundationsColorScale, 150,
     [
-      createPetal('Access to Basic Knowledge', +d.score_abk || 0, foundationsColorScale, 120),
-      createPetal('Access to Information and Communications', +d.score_aic || 0, foundationsColorScale, 140),
-      createPetal('Health and Wellness', +d.score_hw || 0, foundationsColorScale, 160),
+      createPetal('Basic Education', +d.score_abk || 0, foundationsColorScale, 120),
+      createPetal('Information and Communications', +d.score_aic || 0, foundationsColorScale, 140),
+      createPetal('Health', +d.score_hw || 0, foundationsColorScale, 160),
       createPetal('Environmental Quality', +d.score_eq || 0, foundationsColorScale, 180),
     ],
   );
@@ -123,14 +123,14 @@ export function parseTooltipData(d) {
   const opportunity = createPetal(
     'Opportunity', +d.score_opp || 0, opportunityColorScale, 270,
     [
-      createPetal('Personal Rights', +d.score_pr || 0, opportunityColorScale, 240),
-      createPetal('Personal Freedom and Choice', +d.score_pfc || 0, opportunityColorScale, 260),
-      createPetal('Inclusiveness', +d.score_incl || 0, opportunityColorScale, 280),
-      createPetal('Access to Advanced Education', +d.score_aae || 0, opportunityColorScale, 300),
+      createPetal('Rights and Voice', +d.score_pr || 0, opportunityColorScale, 240),
+      createPetal('Freedom and Choice', +d.score_pfc || 0, opportunityColorScale, 260),
+      createPetal('Inclusive Society', +d.score_incl || 0, opportunityColorScale, 280),
+      createPetal('Advanced Education', +d.score_aae || 0, opportunityColorScale, 300),
     ],
   );
 
-  return {name, id, score, petals:[basics, foundations, opportunity]};
+  return { name, id, score, petals: [basics, foundations, opportunity] };
 }
 
 export function useParsedCitations() {
@@ -139,7 +139,7 @@ export function useParsedCitations() {
       // Make a citation Array for indicators with multiple sources
       let links = data.link.split(/\r?\n/);
       let sources = data.source.split(/;/);
-      if (links.length === 0) return data;
+      if(links.length === 0) return data;
       let result = links.map((link, i) => ({ citation: [link, sources[i]] }));
       return { ...data, citations: result };
     });
@@ -148,21 +148,22 @@ export function useParsedCitations() {
 }
 
 export function componentQuestionMatch(d) {
-  switch (d[0]) {
-    case "Nutrition and Basic Medical Care": return 'Do people have enough food to eat and are they receiving basic medical care? ';
-    case "Water and Sanitation": return 'Can people drink water and keep themselves clean without getting sick?';
-    case "Shelter": return 'Do people have adequate housing with basic utilities?';
-    case "Personal Safety": return 'Do people feel safe?';
+  switch(d[0]) {
 
-    case "Access to Basic Knowledge": return 'Do people have access to an educational foundation?';
-    case "Access to Information and Communications": return 'Can people freely access ideas and in formation from anywhere in the world?';
-    case "Health and Wellness": return 'Do people live long and healthy lives?';
+    case 'Nutrition and Medical Care': return 'Do people have enough food to eat and are they receiving basic medical care? ';
+    case 'Water and Sanitation': return 'Can people drink water and keep themselves clean without getting sick?';
+    case 'Housing': return 'Do people have adequate housing with basic utilities?';
+    case 'Safety': return 'Do people feel safe?';
+
+    case "Basic Education": return 'Do people have access to an educational foundation?';
+    case "Information and Communications": return 'Can people freely access ideas and in formation from anywhere in the world?';
+    case "Health": return 'Do people live long and healthy lives?';
     case "Environmental Quality": return 'Is this society using its resources so they will be available for future generations?';
 
-    case "Personal Rights": return 'Are people’s rights as individuals protected?';
-    case "Personal Freedom and Choice": return 'Are people free to make their own life choices?';
-    case "Inclusiveness": return 'Is no one excluded from the opportunity to be a contributing member of society?';
-    case "Access to Advanced Education": return 'Do people have access to the world’s most advanced knowledge?';
+    case "Rights and Voice": return 'Are people’s rights as individuals protected?';
+    case "Freedom and Choice": return 'Are people free to make their own life choices?';
+    case "Inclusive Society": return 'Is no one excluded from the opportunity to be a contributing member of society?';
+    case "Advanced Education": return 'Do people have access to the world’s most advanced knowledge?';
 
     default: return '';
   };

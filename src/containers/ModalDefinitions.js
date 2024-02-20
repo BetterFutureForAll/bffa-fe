@@ -24,7 +24,7 @@ import { dataKeys, componentQuestionMatch } from '../services/SocialProgress';
 function ModalDefinitions({ modalRef, spiByCountry, defContext, parsedDefinitions, setClickedCallback, setClickedSubCat }) {
 
   useLayoutEffect(() => {
-    if (!spiByCountry) return;
+    if(!spiByCountry) return;
 
     let BasicImageArray = [basic_nutrition, basic_water, basic_shelter, basic_safety];
     let FoundationImageArray = [foundations_knowledge, foundations_communication, foundations_health, foundations_environmental];
@@ -33,20 +33,25 @@ function ModalDefinitions({ modalRef, spiByCountry, defContext, parsedDefinition
     function tabulateModal(spiData) {
 
       // Group data on each column, indicator will hold the unique values.
-      let cleanDef = parsedDefinitions.filter(function (element) {
-        return element["dimension"] !== undefined;
+      let cleanDef = parsedDefinitions.filter(function(element) {
+        return !!element["dimension"];
       });
 
-      let groupedData = d3.group(cleanDef, d => d["dimension"], d => d["component"], d => d['indicator_name'])
+      let groupedData = d3.group(
+        cleanDef,
+        d => d["dimension"],
+        d => d["component"],
+        d => d['indicator_name']
+      )
 
       function keyMatcher(target) {
         const dataKeysArray = Object.values(dataKeys);
         const targetFixer = (target) => target.replace(/and/, '&').trim().toLowerCase();
 
-        for (let i = 0; i < dataKeysArray.length; i++) {
+        for(let i = 0; i < dataKeysArray.length; i++) {
           const key = dataKeysArray[i];
           const keyFixer = (key) => key.replace(/[\n\r]*\((.*)\)[ \n\r]*/g, '').replace(/and/, '&').trim().toLowerCase();
-          if (keyFixer(key) === targetFixer(target)) {
+          if(keyFixer(key) === targetFixer(target)) {
             return Object.keys(dataKeys)[i];
           }
         }
@@ -54,7 +59,6 @@ function ModalDefinitions({ modalRef, spiByCountry, defContext, parsedDefinition
       }
 
       let modal = d3.select(modalRef.current);
-
       modal.selectAll('.modal').remove();
 
       let dimDiv = modal.append('div').attr('class', 'modal');
@@ -76,7 +80,7 @@ function ModalDefinitions({ modalRef, spiByCountry, defContext, parsedDefinition
       divTitle.append("h3").text('+').attr("class", "dimension_icon");
       //images
       divTitle.append("img").attr("src", (d, i) => {
-        switch (i) {
+        switch(i) {
           case 0: return basic_needs;
           case 1: return foundations;
           case 2: return opportunity;
@@ -99,7 +103,7 @@ function ModalDefinitions({ modalRef, spiByCountry, defContext, parsedDefinition
         d3.selectAll('.dimension-title').on('click', addComponents);
         d3.select(this).on('click', collapseDimension);
         d3.select(this).select('.dimension_icon').text('-');
-        
+
         let component = d3.select(this.parentNode)
           .append('div').attr('class', 'component-box')
           .selectAll('.component')
@@ -121,7 +125,7 @@ function ModalDefinitions({ modalRef, spiByCountry, defContext, parsedDefinition
         //Append Icons 
         componentTitle.append("img").attr("src", (d, i) => {
           let target = this.parentNode.id;
-          switch (target) {
+          switch(target) {
             case "Basic_Human_Needs": return BasicImageArray[i];
             case "Foundations_of_Wellbeing": return FoundationImageArray[i];
             case "Opportunity": return OpportunityImageArray[i];
@@ -185,7 +189,7 @@ function ModalDefinitions({ modalRef, spiByCountry, defContext, parsedDefinition
           .text((d, i) => {
             let target = d[0];
             let match = spiData[0][`${keyMatcher(target)}`]
-            if (!match) return "N/A";
+            if(!match) return "N/A";
             // //round the match value
             let rounded = (+match).toFixed(3);
             let result = `(${rounded})`;
@@ -195,7 +199,7 @@ function ModalDefinitions({ modalRef, spiByCountry, defContext, parsedDefinition
 
         indicator.append('tspan')
           .text(d => {
-            if (!d[1]) return;
+            if(!d[1]) return;
             let match = d[1][0]['unit_of_measurement'];
             let subString = match ? match : null;
             return `    ${subString}`;
@@ -249,11 +253,11 @@ function ModalDefinitions({ modalRef, spiByCountry, defContext, parsedDefinition
         d3.selectAll('.indicator-definitions').remove();
       }
 
-      if (defContext.dimension) {
+      if(defContext.dimension) {
         d3.select(`#${defContext.dimension}_title`).dispatch('click');
       }
 
-      if (defContext.component && d3.select(`#${defContext.component}_title`)) {
+      if(defContext.component && d3.select(`#${defContext.component}_title`)) {
         d3.select(`#${defContext.component}_title`).dispatch('click');
       }
 
